@@ -1,7 +1,6 @@
 package org.example.inputs;
 
 import org.example.GamePanel;
-import org.example.utils.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,29 +25,41 @@ public class KeyboardInputs implements KeyListener {
         switch (e.getKeyCode()){
             case KeyEvent.VK_W -> {
                 log.trace("keyPressed : W");
-                gamePanel.setPlayerDirection(Direction.UP);
+                gamePanel.getGame().getPlayer().getDirection().setMovingUp(true);
             }
             case KeyEvent.VK_S -> {
                 log.trace("keyPressed : S");
-                gamePanel.setPlayerDirection(Direction.DOWN);
+                gamePanel.getGame().getPlayer().getDirection().setMovingDown(true);
             }
             case KeyEvent.VK_D -> {
                 log.trace("keyPressed : D");
-                gamePanel.setPlayerDirection(Direction.RIGHT);
+                gamePanel.getGame().getPlayer().getDirection().setMovingRight(true);
             }
             case KeyEvent.VK_A -> {
                 log.trace("keyPressed : A");
-                gamePanel.setPlayerDirection(Direction.LEFT);
+                gamePanel.getGame().getPlayer().getDirection().setMovingLeft(true);
             }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (e.getKeyCode()){
-            case KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_S -> {
-                log.trace("keyPressed : W");
-                gamePanel.setPlayerDirection(Direction.STILL);
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_W -> {
+                log.trace("keyReleased : W");
+                gamePanel.getGame().getPlayer().getDirection().setMovingUp(false);
+            }
+            case KeyEvent.VK_S -> {
+                log.trace("keyReleased : S");
+                gamePanel.getGame().getPlayer().getDirection().setMovingDown(false);
+            }
+            case KeyEvent.VK_D -> {
+                log.trace("keyReleased : D");
+                gamePanel.getGame().getPlayer().getDirection().setMovingRight(false);
+            }
+            case KeyEvent.VK_A -> {
+                log.trace("keyReleased : A");
+                gamePanel.getGame().getPlayer().getDirection().setMovingLeft(false);
             }
         }
     }

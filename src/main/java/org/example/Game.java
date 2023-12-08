@@ -1,8 +1,10 @@
 package org.example;
 
+import org.example.entities.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.concurrent.Executors;
 
 public class Game implements Runnable{
@@ -11,11 +13,16 @@ public class Game implements Runnable{
     private final static int FPS = 120;
     private final static int UPS = 200;
     private final GamePanel gamePanel;
+    private Player player;
+
+
     public Game() {
-        gamePanel = new GamePanel();
+        player = new Player(200, 200);
+        gamePanel = new GamePanel(this);
         GameWindow gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
-        startGameLoop();
+
+        startGameLoop(); // should be called last!
     }
 
 
@@ -75,7 +82,18 @@ public class Game implements Runnable{
         }
     }
 
+    public void render(Graphics g) {
+        player.render(g);
+    }
+
+    public Player getPlayer() {
+        return player;}
+
+    public void pauseGame() {
+        player.getDirection().reset();
+    }
+
     private void update() {
-        gamePanel.updateGameLogic();
+        player.update();
     }
 }

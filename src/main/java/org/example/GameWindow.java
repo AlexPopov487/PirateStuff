@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 public class GameWindow {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -23,5 +25,17 @@ public class GameWindow {
         jFrame.pack();
         jFrame.setResizable(false);
         jFrame.setVisible(true);
+
+        jFrame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                gamePanel.getGame().pauseGame();
+            }
+        });
     }
 }
