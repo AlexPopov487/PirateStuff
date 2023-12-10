@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 
+import static org.example.Game.*;
+
 public class GamePanel extends JPanel {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Game game;
@@ -33,7 +35,16 @@ public class GamePanel extends JPanel {
      include window borders
     */
     private void setPanelSize() {
-        setPreferredSize(new Dimension(1280, 800));
+        int currentTileSize = getCurrentTileSize();
+        int windowWidth = currentTileSize * TILE_COUNT_WIDTH;
+        int windowHeight = currentTileSize * TILE_COUNT_HEIGHT;
+
+        setPreferredSize(new Dimension(windowWidth, windowHeight));
+        log.debug("setPanelSize(), game window size is {}x{}", windowWidth, windowHeight);
+    }
+
+    public static int getCurrentTileSize() {
+        return (int) (DEFAULT_TILE_SIZE * SCALE);
     }
 
     /* For the sake of understanding, refer to a Graphics g as a Brush with which we can draw

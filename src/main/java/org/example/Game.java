@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.entities.Player;
+import org.example.levels.LevelManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,14 +11,21 @@ import java.util.concurrent.Executors;
 public class Game implements Runnable{
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    public final static int DEFAULT_TILE_SIZE = 32;
+    public final static float SCALE = 1.5f;
+    public final static int TILE_COUNT_WIDTH = 26;
+    public final static int TILE_COUNT_HEIGHT = 14;
     private final static int FPS = 120;
     private final static int UPS = 200;
+
     private final GamePanel gamePanel;
     private Player player;
+    private final LevelManager levelManager;
 
 
     public Game() {
         player = new Player(200, 200);
+        levelManager = new LevelManager(this);
         gamePanel = new GamePanel(this);
         GameWindow gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
@@ -84,6 +92,7 @@ public class Game implements Runnable{
 
     public void render(Graphics g) {
         player.render(g);
+        levelManager.render(g);
     }
 
     public Player getPlayer() {
@@ -94,6 +103,7 @@ public class Game implements Runnable{
     }
 
     private void update() {
+        levelManager.update();
         player.update();
     }
 }
