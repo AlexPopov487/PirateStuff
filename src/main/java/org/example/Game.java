@@ -11,21 +11,26 @@ import java.util.concurrent.Executors;
 public class Game implements Runnable{
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    // todo move to a separate util class
+    public static final int CHARACTER_SPRITE_HEIGHT = 40;
+    public static final int CHARACTER_SPRITE_WIDTH = 64;
     public final static int DEFAULT_TILE_SIZE = 32;
-    public final static float SCALE = 1.5f;
+    public final static float SCALE = 1f;
     public final static int TILE_COUNT_WIDTH = 26;
     public final static int TILE_COUNT_HEIGHT = 14;
     private final static int FPS = 120;
     private final static int UPS = 200;
 
     private final GamePanel gamePanel;
-    private Player player;
+    private final Player player;
     private final LevelManager levelManager;
 
 
     public Game() {
-        player = new Player(200, 200);
         levelManager = new LevelManager(this);
+        player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE));
+        player.setCurrentLevelData(levelManager.getCurrentLevel().getLevelData());
+
         gamePanel = new GamePanel(this);
         GameWindow gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
@@ -91,8 +96,8 @@ public class Game implements Runnable{
     }
 
     public void render(Graphics g) {
-        player.render(g);
         levelManager.render(g);
+        player.render(g);
     }
 
     public Player getPlayer() {

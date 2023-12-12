@@ -16,9 +16,10 @@ public class LevelManager {
     public static final int LVL_TEMPLATE_SPRITES_IN_WIDTH = 12;
 
     private final Game game;
-    private final Level levelOne;
-    private BufferedImage[] levelSprites;
 
+    private final Level levelOne;
+
+    private BufferedImage[] levelSprites;
     public LevelManager(Game game) {
         this.game = game;
         importOutsideSprite();
@@ -62,5 +63,9 @@ public class LevelManager {
                 indexCount++;
             }
         }
+    }
+
+    public Level getCurrentLevel() {
+        return levelOne;
     }
 }

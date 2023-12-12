@@ -35,12 +35,21 @@ public class GamePanel extends JPanel {
      include window borders
     */
     private void setPanelSize() {
-        int currentTileSize = getCurrentTileSize();
-        int windowWidth = currentTileSize * TILE_COUNT_WIDTH;
-        int windowHeight = currentTileSize * TILE_COUNT_HEIGHT;
+        int windowWidth = getWindowWidth();
+        int windowHeight = getWindowHeight();
 
         setPreferredSize(new Dimension(windowWidth, windowHeight));
         log.debug("setPanelSize(), game window size is {}x{}", windowWidth, windowHeight);
+    }
+
+    public static int getWindowHeight() {
+        int currentTileSize = getCurrentTileSize();
+        return currentTileSize * TILE_COUNT_HEIGHT;
+    }
+
+    public static int getWindowWidth() {
+        int currentTileSize = getCurrentTileSize();
+        return currentTileSize * TILE_COUNT_WIDTH;
     }
 
     public static int getCurrentTileSize() {
