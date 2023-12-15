@@ -10,14 +10,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static org.example.Game.*;
+import static org.example.utils.CollisionHelper.*;
 import static org.example.utils.PlayerConstants.*;
 
 public class Player extends Entity {
     private final static int ANIMATION_SPEED = 15;
     private final static int PLAYER_SPEED = 1;
     private final static int CHARACTER_HITBOX_WIDTH = 20;
-    private final static int CHARACTER_HITBOX_HEIGHT = 28;
+    private final static int CHARACTER_HITBOX_HEIGHT = 27;
     private final Directions directions;
+    private final GravitySettings gravitySettings;
     private final Actions actions;
     private BufferedImage[][] animations;
     private int animationTick;
@@ -35,6 +37,7 @@ public class Player extends Entity {
         actions = new Actions();
         loadAnimations();
         initHitBox(x, y, CHARACTER_HITBOX_WIDTH * SCALE, CHARACTER_HITBOX_HEIGHT * SCALE);
+        gravitySettings = new GravitySettings(0f, 0.04f, -2.25f, 0.5f);
     }
 
     public void setCurrentLevelData(int[][] currentLevelData) {
@@ -66,34 +69,84 @@ public class Player extends Entity {
                 width,
                 height,
                 null);
-        drawHitBox(g);
+//        drawHitBox(g);
 
     }
 
     private void updateCharacterPosition() {
         directions.setMoving(false);
 
+        if (directions.isJumping()) {
+            handleJump();
+        }
+        
         if (directions.isNoDirectionSet()) return;
 
         float xDestination = hitBox.x;
-        float yDestination = hitBox.y;
 
-        if (directions.isMovingLeft() && !directions.isMovingRight()) {
+        if (directions.isMovingLeft()) {
             xDestination -= PLAYER_SPEED;
-        } else if (directions.isMovingRight() && !directions.isMovingLeft()) {
+        }
+        if (directions.isMovingRight()) {
             xDestination += PLAYER_SPEED;
         }
 
-        if (directions.isMovingUp() && !directions.isMovingDown()) {
-            yDestination -= PLAYER_SPEED;
-        } else if (directions.isMovingDown() && !directions.isMovingUp()) {
-            yDestination += PLAYER_SPEED;
+        if (!directions.isInAir() && !isOnTheFloor(hitBox, currentLevelData)) {
+            directions.setInAir(true);
         }
 
-        if (CollisionHelper.canMoveHere(xDestination, yDestination, hitBox.width, hitBox.height, currentLevelData)) {
+        if (directions.isInAir()) {
+            float yDestination = hitBox.y + gravitySettings.getAirSpeed();
+
+            if (CollisionHelper.canMoveHere(hitBox.x, yDestination, hitBox.width, hitBox.height, currentLevelData)) {
+                hitBox.y = yDestination;
+                gravitySettings.setAirSpeed(gravitySettings.getAirSpeed() + gravitySettings.getGravityForce());
+                updatePlayerXPos(xDestination);
+            } else {
+             /*
+             if we assume that updating position will lead to collision, the pos update will not be made,
+             meaning that there still will be some space between the player and the obstacle. Thus, we need to
+             move the player as close to the obstacle as possible
+            */
+                hitBox.y = getClosestToObstacleYPos(hitBox, yDestination);
+
+                if (gravitySettings.getAirSpeed() > 0) { // falling on the floor
+                    resetInAir();
+                } else { // colliding with the roof, need to bounce
+                    gravitySettings.setAirSpeed(gravitySettings.getPostCollisionFallSpeed());
+                }
+                updatePlayerXPos(xDestination);
+            }
+
+        } else {
+            updatePlayerXPos(xDestination);
+        }
+
+        directions.setMoving(true);
+    }
+
+    private void handleJump() {
+        if (directions.isInAir()) return;
+
+        directions.setInAir(true);
+        gravitySettings.setAirSpeed(gravitySettings.getJumpSpeed());
+    }
+
+    private void resetInAir() {
+        directions.setInAir(false);
+        gravitySettings.setAirSpeed(0);
+    }
+
+    private void updatePlayerXPos(float xDestination) {
+        if (CollisionHelper.canMoveHere(xDestination, hitBox.y, hitBox.width, hitBox.height, currentLevelData)) {
             hitBox.x = xDestination;
-            hitBox.y = yDestination;
-            directions.setMoving(true);
+        } else {
+            /*
+             if we assume that updating position will lead to collision, the pos update will not be made,
+             meaning that there still will be some space between the player and the obstacle. Thus, we need to
+             move the player as close to the obstacle as possible
+            */
+            hitBox.x = getClosestToObstacleXPos(hitBox, xDestination);
         }
     }
 
@@ -105,6 +158,14 @@ public class Player extends Entity {
             currentAnimation = SPRITE_RUNNING;
         } else {
             currentAnimation = SPRITE_IDLE;
+        }
+
+        if (directions.isInAir()) {
+            if (directions.isJumping()) {
+                currentAnimation = SPRITE_JUMPING;
+            } else {
+                currentAnimation = SPRITE_FALLING;
+            }
         }
 
         if (actions.isAttacking()) {

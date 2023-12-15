@@ -2,6 +2,7 @@ package org.example;
 
 import org.example.entities.Player;
 import org.example.levels.LevelManager;
+import org.example.utils.CollisionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ public class Game implements Runnable{
     public static final int CHARACTER_SPRITE_HEIGHT = 40;
     public static final int CHARACTER_SPRITE_WIDTH = 64;
     public final static int DEFAULT_TILE_SIZE = 32;
-    public final static float SCALE = 1f;
+    public final static float SCALE = 2f;
     public final static int TILE_COUNT_WIDTH = 26;
     public final static int TILE_COUNT_HEIGHT = 14;
     private final static int FPS = 120;
@@ -29,7 +30,9 @@ public class Game implements Runnable{
     public Game() {
         levelManager = new LevelManager(this);
         player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE));
-        player.setCurrentLevelData(levelManager.getCurrentLevel().getLevelData());
+        int[][] currentLevelData = levelManager.getCurrentLevel().getLevelData();
+        player.setCurrentLevelData(currentLevelData);
+        setInAirIfPlayerNotOnFloor(player, currentLevelData);
 
         gamePanel = new GamePanel(this);
         GameWindow gameWindow = new GameWindow(gamePanel);
@@ -38,7 +41,11 @@ public class Game implements Runnable{
         startGameLoop(); // should be called last!
     }
 
-
+    private void setInAirIfPlayerNotOnFloor(Player player, int[][] currentLevelData) {
+        if (!CollisionHelper.isOnTheFloor(player.getHitBox(), currentLevelData)) {
+            player.getDirection().setInAir(true);
+        }
+    }
 
     private void startGameLoop() {
         Executors.newSingleThreadExecutor().submit(this);

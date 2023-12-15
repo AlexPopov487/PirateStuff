@@ -39,6 +39,10 @@ public class KeyboardInputs implements KeyListener {
                 log.trace("keyPressed : A");
                 gamePanel.getGame().getPlayer().getDirection().setMovingLeft(true);
             }
+            case KeyEvent.VK_SPACE -> {
+                log.trace("keyPressed : SPACE");
+                gamePanel.getGame().getPlayer().getDirection().setJumping(true);
+            }
         }
     }
 
@@ -60,6 +64,10 @@ public class KeyboardInputs implements KeyListener {
             case KeyEvent.VK_A -> {
                 log.trace("keyReleased : A");
                 gamePanel.getGame().getPlayer().getDirection().setMovingLeft(false);
+            }
+            case KeyEvent.VK_SPACE -> {
+                log.trace("keyReleased : SPACE");
+                gamePanel.getGame().getPlayer().getDirection().setJumping(false);
             }
         }
     }
