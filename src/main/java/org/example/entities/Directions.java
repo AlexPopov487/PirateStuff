@@ -4,8 +4,6 @@ public class Directions {
     private boolean isMoving = false;
     private boolean isMovingLeft;
     private boolean isMovingRight;
-    private boolean isMovingUp; // todo redundant
-    private boolean isMovingDown; // todo redundant
     private boolean isInAir; // todo probably move to gravitySettings
     private boolean isJumping;
 
@@ -41,23 +39,6 @@ public class Directions {
     public void setMovingRight(boolean movingRight) {
         isMovingRight = movingRight;
     }
-
-    public boolean isMovingUp() {
-        return isMovingUp;
-    }
-
-    public void setMovingUp(boolean movingUp) {
-        isMovingUp = movingUp;
-    }
-
-    public boolean isMovingDown() {
-        return isMovingDown;
-    }
-
-    public void setMovingDown(boolean movingDown) {
-        isMovingDown = movingDown;
-    }
-
     public boolean isMoving() {
         return isMoving;
     }
@@ -68,8 +49,6 @@ public class Directions {
 
     public void reset() {
         isMoving = false;
-        isMovingUp = false;
-        isMovingDown = false;
         isMovingLeft = false;
         isMovingRight = false;
         isJumping = false;

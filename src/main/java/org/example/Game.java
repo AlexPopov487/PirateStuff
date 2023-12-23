@@ -1,6 +1,9 @@
 package org.example;
 
 import org.example.entities.Player;
+import org.example.gameState.GameState;
+import org.example.gameState.Menu;
+import org.example.gameState.Playing;
 import org.example.levels.LevelManager;
 import org.example.utils.CollisionHelper;
 import org.slf4j.Logger;
@@ -9,12 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.util.concurrent.Executors;
 
-public class Game implements Runnable{
+public class Game implements Runnable {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-    // todo move to a separate util class
-    public static final int CHARACTER_SPRITE_HEIGHT = 40;
-    public static final int CHARACTER_SPRITE_WIDTH = 64;
     public final static int DEFAULT_TILE_SIZE = 32;
     public final static float SCALE = 2f;
     public final static int TILE_COUNT_WIDTH = 26;
@@ -23,28 +22,18 @@ public class Game implements Runnable{
     private final static int UPS = 200;
 
     private final GamePanel gamePanel;
-    private final Player player;
-    private final LevelManager levelManager;
-
+    private final Playing playing;
+    private final Menu menu;
 
     public Game() {
-        levelManager = new LevelManager(this);
-        player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE));
-        int[][] currentLevelData = levelManager.getCurrentLevel().getLevelData();
-        player.setCurrentLevelData(currentLevelData);
-        setInAirIfPlayerNotOnFloor(player, currentLevelData);
-
         gamePanel = new GamePanel(this);
+        menu = new Menu(this);
+        playing = new Playing(this);
         GameWindow gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
 
         startGameLoop(); // should be called last!
-    }
 
-    private void setInAirIfPlayerNotOnFloor(Player player, int[][] currentLevelData) {
-        if (!CollisionHelper.isOnTheFloor(player.getHitBox(), currentLevelData)) {
-            player.getDirection().setInAir(true);
-        }
     }
 
     private void startGameLoop() {
@@ -102,20 +91,34 @@ public class Game implements Runnable{
         }
     }
 
-    public void render(Graphics g) {
-        levelManager.render(g);
-        player.render(g);
+    public Playing getPlaying() {
+        return playing;
     }
 
-    public Player getPlayer() {
-        return player;}
+    public Menu getMenu() {
+        return menu;
+    }
 
     public void pauseGame() {
-        player.getDirection().reset();
+        if (GameState.PLAYING.equals(GameState.state)) {
+            playing.getPlayer().getDirection().reset();
+        }
+    }
+
+    public void render(Graphics g) {
+        switch (GameState.state) {
+            case PLAYING -> playing.render(g);
+            case MENU -> menu.render(g);
+        }
     }
 
     private void update() {
-        levelManager.update();
-        player.update();
+        switch (GameState.state) {
+            case PLAYING -> playing.update();
+            case MENU -> menu.update();
+            case OPTIONS -> {
+            }
+            case QUIT -> System.exit(0);
+        }
     }
 }

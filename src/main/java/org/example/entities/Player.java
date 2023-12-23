@@ -10,12 +10,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static org.example.Game.*;
+import static org.example.gameState.Playing.CHARACTER_SPRITE_HEIGHT;
+import static org.example.gameState.Playing.CHARACTER_SPRITE_WIDTH;
 import static org.example.utils.CollisionHelper.*;
 import static org.example.utils.PlayerConstants.*;
 
 public class Player extends Entity {
     private final static int ANIMATION_SPEED = 15;
-    private final static int PLAYER_SPEED = 1;
+    private final static float PLAYER_SPEED = 1f * SCALE;
     private final static int CHARACTER_HITBOX_WIDTH = 20;
     private final static int CHARACTER_HITBOX_HEIGHT = 27;
     private final Directions directions;
@@ -36,7 +38,7 @@ public class Player extends Entity {
         directions = new Directions();
         actions = new Actions();
         loadAnimations();
-        initHitBox(x, y, CHARACTER_HITBOX_WIDTH * SCALE, CHARACTER_HITBOX_HEIGHT * SCALE);
+        initHitBox(x, y, (int) (CHARACTER_HITBOX_WIDTH * SCALE), (int) (CHARACTER_HITBOX_HEIGHT * SCALE));
         gravitySettings = new GravitySettings(0f, 0.04f, -2.25f, 0.5f);
     }
 
@@ -70,7 +72,6 @@ public class Player extends Entity {
                 height,
                 null);
 //        drawHitBox(g);
-
     }
 
     private void updateCharacterPosition() {
@@ -79,7 +80,7 @@ public class Player extends Entity {
         if (directions.isJumping()) {
             handleJump();
         }
-        
+
         if (directions.isNoDirectionSet()) return;
 
         float xDestination = hitBox.x;
