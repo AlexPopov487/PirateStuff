@@ -57,4 +57,7 @@ public class Directions {
     public boolean isNoDirectionSet() {
         return !isMovingLeft && !isMovingRight && !isInAir;
     }
+
+    public boolean isMovingToRightAndLeft() {
+        return isMovingRight && isMovingLeft;}
 }

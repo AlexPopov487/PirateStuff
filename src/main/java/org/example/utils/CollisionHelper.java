@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import org.example.Game;
 import org.example.GamePanel;
 
 import java.awt.geom.Rectangle2D;
@@ -20,7 +21,8 @@ public class CollisionHelper {
     // todo do not understand how this works
     // check, whether a certain position (x, y) is either a solid lvl object or is out of bounds of the game window
     private static boolean isSolid(float x, float y, int[][] currentLevelData) {
-        if (x < 0 || x >= GamePanel.getWindowWidth()) return true;
+        int maxLevelWidth = currentLevelData[0].length * GamePanel.getCurrentTileSize();
+        if (x < 0 || x >= maxLevelWidth) return true;
         if (y < 0 || y >= GamePanel.getWindowHeight()) return true;
 
         int xIndex = (int) x / GamePanel.getCurrentTileSize();

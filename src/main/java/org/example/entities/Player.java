@@ -64,9 +64,9 @@ public class Player extends Entity {
     public void setPlayerDirection(Directions directions) {
     }
 
-    public void render(Graphics g) {
+    public void render(Graphics g, int xLevelOffset) {
         g.drawImage(animations[currentAnimation.getSpriteIndex()][animationIndex],
-                (int) (hitBox.x - xDrawOffset),
+                (int) (hitBox.x - xDrawOffset) - xLevelOffset,
                 (int) (hitBox.y - yDrawOffset),
                 width,
                 height,
@@ -155,7 +155,7 @@ public class Player extends Entity {
 
         var previousAnimation = currentAnimation;
 
-        if (directions.isMoving()) {
+        if (directions.isMoving() && !directions.isMovingToRightAndLeft()) {
             currentAnimation = SPRITE_RUNNING;
         } else {
             currentAnimation = SPRITE_IDLE;

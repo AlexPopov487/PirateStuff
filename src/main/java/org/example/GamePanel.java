@@ -44,12 +44,12 @@ public class GamePanel extends JPanel {
 
     public static int getWindowHeight() {
         int currentTileSize = getCurrentTileSize();
-        return currentTileSize * TILE_COUNT_HEIGHT;
+        return currentTileSize * TILE_VISIBLE_COUNT_HEIGHT;
     }
 
     public static int getWindowWidth() {
         int currentTileSize = getCurrentTileSize();
-        return currentTileSize * TILE_COUNT_WIDTH;
+        return currentTileSize * TILE_VISIBLE_COUNT_WIDTH;
     }
 
     public static int getCurrentTileSize() {

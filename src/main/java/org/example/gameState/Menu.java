@@ -17,7 +17,8 @@ import static org.example.utils.ButtonUtils.isHoveredOverButton;
 public class Menu extends StateBase implements GameStateActions, Drawable {
 
     private MenuButton[] menuButtons = new MenuButton[3];
-    private BufferedImage backgroundImg;
+    private BufferedImage menuTemplateImg;
+    private BufferedImage menuBackground;
     private int menuX;
     private int menuY;
     private int menuHeight;
@@ -26,7 +27,7 @@ public class Menu extends StateBase implements GameStateActions, Drawable {
     public Menu(Game game) {
         super(game);
         preloadButtons();
-        preloadBackground();
+        preloadImages();
     }
 
     @Override
@@ -38,7 +39,9 @@ public class Menu extends StateBase implements GameStateActions, Drawable {
 
     @Override
     public void render(Graphics g) {
-        g.drawImage(backgroundImg, menuX, menuY, menuWidth, menuHeight, null);
+        g.drawImage(menuBackground, 0, 0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight(), null);
+
+        g.drawImage(menuTemplateImg, menuX, menuY, menuWidth, menuHeight, null);
         for (MenuButton menuButton : menuButtons) {
             menuButton.render(g);
         }
@@ -109,12 +112,14 @@ public class Menu extends StateBase implements GameStateActions, Drawable {
 
     }
 
-    private void preloadBackground() {
-        backgroundImg = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_MENU_BACKGROUND);
-        menuWidth = (int) (backgroundImg.getWidth() * SCALE);
-        menuHeight = (int) (backgroundImg.getHeight() * SCALE);
+    private void preloadImages() {
+        menuTemplateImg = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_MENU_TEMPLATE);
+        menuWidth = (int) (menuTemplateImg.getWidth() * SCALE);
+        menuHeight = (int) (menuTemplateImg.getHeight() * SCALE);
         menuX = GamePanel.getWindowWidth() / 2 - menuWidth / 2;
         menuY = (int) (45 * SCALE);
+
+        menuBackground = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_MENU_BACKGROUND);
     }
 
     private void resetMenuButtonStates() {

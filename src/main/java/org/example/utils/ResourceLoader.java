@@ -31,12 +31,12 @@ public class ResourceLoader {
      as a tile index for the outsideData array.
     */
     public static int[][] getLevelData() {
-        int[][] levelData = new int[Game.TILE_COUNT_HEIGHT][Game.TILE_COUNT_WIDTH];
 
         BufferedImage levelTemplate = getSpriteAtlas(AtlasType.ATLAS_LEVEL_ONE);
+        int[][] levelData = new int[levelTemplate.getHeight()][levelTemplate.getWidth()];
 
-        for (int row = 0; row < Game.TILE_COUNT_HEIGHT; row++) {
-            for (int colunm = 0; colunm < Game.TILE_COUNT_WIDTH; colunm++) {
+        for (int row = 0; row < levelTemplate.getHeight(); row++) {
+            for (int colunm = 0; colunm < levelTemplate.getWidth(); colunm++) {
                 Color pixelColor = new Color(levelTemplate.getRGB(colunm, row));
                 int lvlBlockIndex = pixelColor.getRed();
 

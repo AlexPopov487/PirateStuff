@@ -1,10 +1,12 @@
 package org.example.gameState;
 
 import org.example.Game;
+import org.example.GamePanel;
 import org.example.entities.Player;
 import org.example.levels.LevelManager;
 import org.example.ui.PauseOverlay;
 import org.example.utils.CollisionHelper;
+import org.example.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,17 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private final LevelManager levelManager;
     private final PauseOverlay pauseOverlay;
     private boolean isPaused;
+
+    // exceeding the threshold by x% of the windowWidth means that we need to move the level animation to the left
+    private final int leftThreshold = (int) (0.4 * GamePanel.getWindowWidth());
+    private final int rightThreshold = (int) (0.6 * GamePanel.getWindowWidth());
+    private int xLevelOffset;
+    private final int levelTilesCount = ResourceLoader.getLevelData()[0].length;
+    // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
+    private final int maxLevelTilesOffset = levelTilesCount - Game.TILE_VISIBLE_COUNT_WIDTH;
+    // shows for how many tiles it is possible to move the level to the left in pixels
+    private final int maxLevelOffsetX = maxLevelTilesOffset * GamePanel.getCurrentTileSize();
+
 
     public Playing(Game game) {
         super(game);
@@ -52,6 +65,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         if (!isPaused) {
             levelManager.update();
             player.update();
+            checkPlayerCloseToBorder();
         } else {
             pauseOverlay.update();
         }
@@ -59,11 +73,13 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     @Override
     public void render(Graphics g) {
-        levelManager.render(g);
-        player.render(g);
+        levelManager.render(g, xLevelOffset);
+        player.render(g, xLevelOffset);
 
         if (isPaused) {
-        pauseOverlay.render(g);
+            g.setColor(new Color(0,0,0,150));
+            g.fillRect(0,0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight());
+            pauseOverlay.render(g);
         }
     }
 
@@ -149,6 +165,23 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private void setInAirIfPlayerNotOnFloor(Player player, int[][] currentLevelData) {
         if (!CollisionHelper.isOnTheFloor(player.getHitBox(), currentLevelData)) {
             player.getDirection().setInAir(true);
+        }
+    }
+
+    private void checkPlayerCloseToBorder() {
+        int playerX = (int) player.getHitBox().x;
+        int diff = playerX - xLevelOffset;
+
+        if (diff > rightThreshold) {
+            xLevelOffset += diff - rightThreshold;
+        } else if (diff < leftThreshold) {
+            xLevelOffset += diff - leftThreshold;
+        }
+
+        if (xLevelOffset > maxLevelOffsetX) {
+            xLevelOffset = maxLevelOffsetX;
+        } else if (xLevelOffset < 0) {
+            xLevelOffset = 0;
         }
     }
 }

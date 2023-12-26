@@ -28,13 +28,13 @@ public class LevelManager {
 
     }
 
-    public void render(Graphics g) {
-        for (int row = 0; row < Game.TILE_COUNT_HEIGHT; row++) {
-            for (int column = 0; column < Game.TILE_COUNT_WIDTH; column++) {
+    public void render(Graphics g, int xLevelOffset) {
+        for (int row = 0; row < Game.TILE_VISIBLE_COUNT_HEIGHT; row++) {
+            for (int column = 0; column < levelOne.getLevelData()[0].length; column++) {
                 int index = levelOne.getLevelSpriteIndex(column, row);
 
                 g.drawImage(levelSprites[index],
-                        column * GamePanel.getCurrentTileSize(),
+                        (column * GamePanel.getCurrentTileSize()) - xLevelOffset,
                         row * GamePanel.getCurrentTileSize(),
                         GamePanel.getCurrentTileSize(),
                         GamePanel.getCurrentTileSize(),

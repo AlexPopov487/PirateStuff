@@ -1,11 +1,8 @@
 package org.example;
 
-import org.example.entities.Player;
 import org.example.gameState.GameState;
 import org.example.gameState.Menu;
 import org.example.gameState.Playing;
-import org.example.levels.LevelManager;
-import org.example.utils.CollisionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,8 +13,8 @@ public class Game implements Runnable {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     public final static int DEFAULT_TILE_SIZE = 32;
     public final static float SCALE = 2f;
-    public final static int TILE_COUNT_WIDTH = 26;
-    public final static int TILE_COUNT_HEIGHT = 14;
+    public final static int TILE_VISIBLE_COUNT_WIDTH = 26;
+    public final static int TILE_VISIBLE_COUNT_HEIGHT = 14;
     private final static int FPS = 120;
     private final static int UPS = 200;
 
