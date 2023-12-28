@@ -1,10 +1,12 @@
 package org.example.gameState;
 
+import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Player;
 import org.example.levels.LevelManager;
 import org.example.ui.PauseOverlay;
+import org.example.utils.AtlasType;
 import org.example.utils.CollisionHelper;
 import org.example.utils.ResourceLoader;
 import org.slf4j.Logger;
@@ -13,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import static org.example.Game.SCALE;
 
@@ -26,6 +30,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private final LevelManager levelManager;
     private final PauseOverlay pauseOverlay;
     private boolean isPaused;
+    private final BufferedImage background;
+    private final BufferedImage backgroundCloudBig;
+    private final BufferedImage backgroundCloudSmall;
+    private int[] smallCloudYPositions;
+
 
     // exceeding the threshold by x% of the windowWidth means that we need to move the level animation to the left
     private final int leftThreshold = (int) (0.4 * GamePanel.getWindowWidth());
@@ -40,6 +49,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public Playing(Game game) {
         super(game);
+        background = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND);
+        backgroundCloudBig = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND_CLOUD_BIG);
+        backgroundCloudSmall = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND_CLOUD_SMALL);
+        generateSmallCloudPositions();
+
         pauseOverlay = new PauseOverlay(this);
         levelManager = new LevelManager(game);
         player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE));
@@ -73,12 +87,15 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     @Override
     public void render(Graphics g) {
+        g.drawImage(background, 0, 0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight(), null);
+        renderClouds(g);
+
         levelManager.render(g, xLevelOffset);
         player.render(g, xLevelOffset);
 
         if (isPaused) {
-            g.setColor(new Color(0,0,0,150));
-            g.fillRect(0,0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight());
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(0, 0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight());
             pauseOverlay.render(g);
         }
     }
@@ -182,6 +199,29 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             xLevelOffset = maxLevelOffsetX;
         } else if (xLevelOffset < 0) {
             xLevelOffset = 0;
+        }
+    }
+
+    private void renderClouds(Graphics g) {
+
+        // subtracting xOffset add a moving animation to the clouds
+        for (int i = 0; i < levelManager.getCurrentLevel().getLevelData().length; i++) {
+            // 204 is a y  representing the end of the horizon in the background image
+            g.drawImage(backgroundCloudBig, (int) (i * Config.LevelEnv.BIG_CLOUD_WIDTH - xLevelOffset * 0.3), (int) (204 * SCALE), Config.LevelEnv.BIG_CLOUD_WIDTH, Config.LevelEnv.BIG_CLOUD_HEIGHT, null);
+        }
+
+        for (int i = 0; i < smallCloudYPositions.length; i++) {
+            g.drawImage(backgroundCloudSmall, (int) (i * 4 * Config.LevelEnv.SMALL_CLOUD_WIDTH - xLevelOffset * 0.9), smallCloudYPositions[i], Config.LevelEnv.SMALL_CLOUD_WIDTH, Config.LevelEnv.SMALL_CLOUD_HEIGHT, null);
+        }
+
+    }
+
+    private void generateSmallCloudPositions() {
+        smallCloudYPositions = new int[8];
+
+        Random random = new Random();
+        for (int i = 0; i < smallCloudYPositions.length; i++) {
+            smallCloudYPositions[i] = (int) (random.nextInt(100, 190) * SCALE);
         }
     }
 }
