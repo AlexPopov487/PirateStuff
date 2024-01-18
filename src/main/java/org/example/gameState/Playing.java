@@ -3,6 +3,7 @@ package org.example.gameState;
 import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
+import org.example.entities.EnemyManager;
 import org.example.entities.Player;
 import org.example.levels.LevelManager;
 import org.example.ui.PauseOverlay;
@@ -15,10 +16,12 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import static org.example.Game.SCALE;
+import static org.example.gameState.GameState.GAME_OVER;
 
 public class Playing extends StateBase implements GameStateActions, Drawable {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -28,6 +31,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     private final Player player;
     private final LevelManager levelManager;
+    private final EnemyManager enemyManager;
     private final PauseOverlay pauseOverlay;
     private boolean isPaused;
     private final BufferedImage background;
@@ -56,10 +60,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
         pauseOverlay = new PauseOverlay(this);
         levelManager = new LevelManager(game);
-        player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE));
+        player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE), this);
         int[][] currentLevelData = levelManager.getCurrentLevel().getLevelData();
         player.setCurrentLevelData(currentLevelData);
-        setInAirIfPlayerNotOnFloor(player, currentLevelData);
+        player.setInAirIfPlayerNotOnFloor(player, currentLevelData);
+        enemyManager = new EnemyManager(this);
     }
 
     public Player getPlayer() {
@@ -79,6 +84,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         if (!isPaused) {
             levelManager.update();
             player.update();
+            checkPlayerAlive();
+            enemyManager.update(levelManager.getCurrentLevel().getLevelData());
             checkPlayerCloseToBorder();
         } else {
             pauseOverlay.update();
@@ -92,6 +99,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
         levelManager.render(g, xLevelOffset);
         player.render(g, xLevelOffset);
+        enemyManager.render(g, xLevelOffset);
 
         if (isPaused) {
             g.setColor(new Color(0, 0, 0, 150));
@@ -103,7 +111,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
-            player.getActions().setAttacking(true);
+            setPlayerAttack();
         }
     }
 
@@ -138,11 +146,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_D -> {
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT-> {
                 log.trace("keyPressed : D");
                 player.getDirection().setMovingRight(true);
             }
-            case KeyEvent.VK_A -> {
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT-> {
                 log.trace("keyPressed : A");
                 player.getDirection().setMovingLeft(true);
             }
@@ -154,17 +162,21 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
                 log.trace("keyPressed : ESCAPE");
                 switchPaused();
             }
+            case KeyEvent.VK_SHIFT -> {
+                log.trace("keyPressed : SHIFT");
+                setPlayerAttack();
+            }
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_D -> {
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT-> {
                 log.trace("keyReleased : D");
                 player.getDirection().setMovingRight(false);
             }
-            case KeyEvent.VK_A -> {
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT-> {
                 log.trace("keyReleased : A");
                 player.getDirection().setMovingLeft(false);
             }
@@ -175,14 +187,28 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         }
     }
 
-    private void switchPaused() {
-        isPaused = !isPaused;
+    public void resetPlaying() {
+        isPaused = false;
+        player.reset();
+        enemyManager.resetAll();
+    }
+    public void checkEnemyHit(Rectangle2D.Float playerAttackRange) {
+        enemyManager.checkEnemyGotHit(playerAttackRange);
+    }
+    private void setPlayerAttack() {
+        player.getActions().setAttacking(true);
     }
 
-    private void setInAirIfPlayerNotOnFloor(Player player, int[][] currentLevelData) {
-        if (!CollisionHelper.isOnTheFloor(player.getHitBox(), currentLevelData)) {
-            player.getDirection().setInAir(true);
-        }
+    private void checkPlayerAlive() {
+        if (player.getHeath().isDead()) setGameOver();
+    }
+
+    private void setGameOver(){
+        GameState.state = GAME_OVER;
+    }
+
+    private void switchPaused() {
+        isPaused = !isPaused;
     }
 
     private void checkPlayerCloseToBorder() {

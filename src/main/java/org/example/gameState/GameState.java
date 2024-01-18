@@ -4,7 +4,8 @@ public enum GameState {
     PLAYING,
     MENU,
     OPTIONS,
-    QUIT;
+    QUIT,
+    GAME_OVER;
 
     public static GameState state = MENU;
 

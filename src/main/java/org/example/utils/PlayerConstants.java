@@ -5,22 +5,20 @@ public enum PlayerConstants {
     SPRITE_RUNNING(1, 6),
     SPRITE_JUMPING(2, 3),
     SPRITE_FALLING(3, 1),
-    SPRITE_GROUND(4, 2),
+    SPRITE_ATTACK (4, 3),
     SPRITE_HIT(5, 4),
-    SPRITE_ATTACK_1(6, 3),
-    SPRITE_ATTACK_JUMP_1(7, 3),
-    SPRITE_ATTACK_JUMP_2(8, 3);
+    SPRITE_DEAD(6, 8);
 
     private final int spriteIndex;
-    private final int spriteAmount;
+    private final int frameCount;
 
-    PlayerConstants(int spriteIndex, int spriteAmount) {
+    PlayerConstants(int spriteIndex, int frameCount) {
         this.spriteIndex = spriteIndex;
-        this.spriteAmount = spriteAmount;
+        this.frameCount = frameCount;
     }
 
-    public int getSpriteAmount() {
-        return spriteAmount;
+    public int getFrameCount() {
+        return frameCount;
     }
 
     public int getSpriteIndex() {

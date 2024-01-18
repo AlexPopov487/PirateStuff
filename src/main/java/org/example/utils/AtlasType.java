@@ -14,6 +14,8 @@ public enum AtlasType {
     ATLAS_PLAYING_BACKGROUND("playing_bg_img.png"),
     ATLAS_PLAYING_BACKGROUND_CLOUD_BIG("big_clouds.png"),
     ATLAS_PLAYING_BACKGROUND_CLOUD_SMALL("small_clouds.png"),
+    ATLAS_ENEMY_CRAB("crabby_sprite.png"),
+    ATLAS_STATUS_BAR("health_power_bar.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

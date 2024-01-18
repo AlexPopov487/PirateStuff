@@ -10,8 +10,10 @@ public abstract class Entity {
     protected int height;
 
 
-
     protected Rectangle2D.Float hitBox;
+
+    // box that dynamically changes its position depending on player's pos; enemies will take damage, when inside the area
+    protected Rectangle2D.Float attackRange;
 
 
     public Entity(float x, float y, int width, int height) {
@@ -27,14 +29,28 @@ public abstract class Entity {
     }
 
     // todo for debugging purposes
-    protected void drawHitBox(Graphics g) {
+    protected void drawHitBox(Graphics g, int xLevelOffset) {
         g.setColor(Color.PINK);
-        g.drawRect((int) hitBox.x, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
+        g.drawRect((int) hitBox.x - xLevelOffset, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
+    }
+
+    protected void drawAttackRangeBox(Graphics g, int xLevelOffset) {
+        g.setColor(Color.RED);
+        g.drawRect((int) attackRange.x - xLevelOffset, (int) attackRange.y, (int) attackRange.width, (int) attackRange.height);
     }
 
     protected void initHitBox(float x, float y, int width, int height) {
         hitBox = new Rectangle2D.Float(x, y, width, height);
     }
+
+    public abstract void initAttackRange();
+
+    /*
+   attack range should follow the direction of the player
+   attack range box position is intentionally not reset, i.e. even in neither of player's directions are set
+   (e.g. the player is standing on the spot), the last active direction is set by default
+   */
+    public abstract void updateAttackRange();
 
     public Rectangle2D.Float getHitBox() {
         return hitBox;
@@ -54,14 +70,5 @@ public abstract class Entity {
 
     public void setY(float y) {
         this.y = y;
-    }
-
-
-    public void update() {
-
-    }
-
-    public void render() {
-
     }
 }

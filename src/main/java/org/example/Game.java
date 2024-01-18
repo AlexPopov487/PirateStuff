@@ -3,6 +3,7 @@ package org.example;
 import org.example.gameState.GameState;
 import org.example.gameState.Menu;
 import org.example.gameState.Playing;
+import org.example.gameState.GameOverOverlay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +22,17 @@ public class Game implements Runnable {
     private final GamePanel gamePanel;
     private final Playing playing;
     private final Menu menu;
+    private final GameOverOverlay gameOverOverlay;
 
     public Game() {
         gamePanel = new GamePanel(this);
         menu = new Menu(this);
         playing = new Playing(this);
+        gameOverOverlay = new GameOverOverlay(playing);
         GameWindow gameWindow = new GameWindow(gamePanel);
         gamePanel.requestFocus();
 
         startGameLoop(); // should be called last!
-
     }
 
     private void startGameLoop() {
@@ -96,6 +98,10 @@ public class Game implements Runnable {
         return menu;
     }
 
+    public GameOverOverlay getGameOverOverlay() {
+        return gameOverOverlay;
+    }
+
     public void pauseGame() {
         if (GameState.PLAYING.equals(GameState.state)) {
             playing.getPlayer().getDirection().reset();
@@ -106,6 +112,7 @@ public class Game implements Runnable {
         switch (GameState.state) {
             case PLAYING -> playing.render(g);
             case MENU -> menu.render(g);
+            case GAME_OVER -> gameOverOverlay.render(g);
         }
     }
 
@@ -116,6 +123,7 @@ public class Game implements Runnable {
             case OPTIONS -> {
             }
             case QUIT -> System.exit(0);
+            case GAME_OVER -> gameOverOverlay.update();
         }
     }
 }

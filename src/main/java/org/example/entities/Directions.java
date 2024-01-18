@@ -52,6 +52,7 @@ public class Directions {
         isMovingLeft = false;
         isMovingRight = false;
         isJumping = false;
+        isInAir = false;
     }
 
     public boolean isNoDirectionSet() {

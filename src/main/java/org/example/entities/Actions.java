@@ -10,4 +10,8 @@ public class Actions {
     public void setAttacking(boolean attacking) {
         isAttacking = attacking;
     }
+
+    public void resetAll() {
+        isAttacking = false;
+    }
 }

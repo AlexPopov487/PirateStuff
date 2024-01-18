@@ -2,6 +2,10 @@ package org.example.entities;
 
 import org.example.Game;
 
+import javax.print.attribute.standard.PresentationDirection;
+
+import static org.example.Game.SCALE;
+
 public class GravitySettings {
     private float airSpeed;
     private float gravityForce; // todo should be a constant

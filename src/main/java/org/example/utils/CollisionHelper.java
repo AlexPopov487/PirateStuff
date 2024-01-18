@@ -1,6 +1,5 @@
 package org.example.utils;
 
-import org.example.Game;
 import org.example.GamePanel;
 
 import java.awt.geom.Rectangle2D;
@@ -8,13 +7,10 @@ import java.awt.geom.Rectangle2D;
 public class CollisionHelper {
     // check, whether border points of a tepm rectangle collide with any on the level objects
     public static boolean canMoveHere(float x, float y, float width, float height, int[][] currentLevelData) {
-        if (!isSolid(x, y, currentLevelData))
-            if (!isSolid(x + width, y + height, currentLevelData))
-                if (!isSolid(x, y + height, currentLevelData))
-                    if (!isSolid(x + width, y, currentLevelData))
-                        return true;
-
-        return false;
+        return !isSolid(x, y, currentLevelData)
+                && !isSolid(x + width, y + height, currentLevelData)
+                && !isSolid(x, y + height, currentLevelData)
+                && !isSolid(x + width, y, currentLevelData);
     }
 
 
@@ -28,7 +24,11 @@ public class CollisionHelper {
         int xIndex = (int) x / GamePanel.getCurrentTileSize();
         int yIndex = (int) y / GamePanel.getCurrentTileSize();
 
-        int spriteIndex = currentLevelData[yIndex][xIndex];
+        return isTileSolid(xIndex, yIndex, currentLevelData);
+    }
+
+    public static boolean isTileSolid(int tileX, int tileY, int[][] lvlData) {
+        int spriteIndex = lvlData[tileY][tileX];
 
         // a tile with index 11 is transparent i.e. not solid
         return spriteIndex != 11;
@@ -68,5 +68,38 @@ public class CollisionHelper {
         // check that pixels below bottom left and bottom right are solid
         return isSolid(hitbox.x, hitbox.y + hitbox.height + 1, currentLevelData)
                 || isSolid(hitbox.x + hitbox.width, hitbox.y + hitbox.height + 1, currentLevelData);
+    }
+
+    // todo redundant, but is kept to stay in sync with tutorial
+    public static boolean isFloor(Rectangle2D.Float hitbox, float xDestination, int[][] currentLevelData, boolean shouldFlipWidth) {
+        float widthOffset = shouldFlipWidth ? 0 : hitbox.width;
+        return isSolid(hitbox.x + xDestination + widthOffset, hitbox.y + hitbox.height + 1, currentLevelData);
+    }
+
+    // check is there is any visible obstacle (or pit) between two points
+    public static boolean isDistanceClearFromObstacle(int[][] levelData, Rectangle2D.Float firstHitBox, Rectangle2D.Float secondHitBox, int currentTileY) {
+        int firstTileX = (int) (firstHitBox.x / GamePanel.getCurrentTileSize());
+        int secondTileX = (int) (secondHitBox.x / GamePanel.getCurrentTileSize());
+
+        if (firstTileX > secondTileX) {
+            return isDistanceClear(secondTileX, firstTileX, currentTileY, levelData);
+        } else {
+            return isDistanceClear(firstTileX, secondTileX, currentTileY, levelData);
+        }
+    }
+
+    private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData) {
+        // loop from the xTile of the first object to the xTile of the second object and check for obstacles
+        for (int i = 0; i < endX - startX; i++) {
+            if (isTileSolid(startX + i, y, levelData)) {
+                return false;
+            }
+
+            // check tiles below to determine whether there is a pit between 2 objects
+            if (!isTileSolid(startX + i, y + 1, levelData)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
