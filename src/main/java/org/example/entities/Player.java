@@ -56,6 +56,13 @@ public class Player extends Entity {
         gravitySettings = new GravitySettings(0f, 0.02f * SCALE, -1.25f * SCALE, 0.25f * SCALE);
     }
 
+    public void setSpawnPosition(Point spawnPoint) {
+        this.y = spawnPoint.y;
+        this.x = spawnPoint.x;
+        hitBox.x = x;
+        hitBox.y = y;
+    }
+
     public void setCurrentLevelData(int[][] currentLevelData) {
         this.currentLevelData = currentLevelData;
     }

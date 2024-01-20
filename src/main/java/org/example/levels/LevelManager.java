@@ -2,36 +2,50 @@ package org.example.levels;
 
 import org.example.Game;
 import org.example.GamePanel;
+import org.example.gameState.GameState;
 import org.example.utils.AtlasType;
 import org.example.utils.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import static org.example.Game.DEFAULT_TILE_SIZE;
 import static org.example.utils.ResourceLoader.getSpriteAtlas;
 
 public class LevelManager {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     public static final int LVL_TEMPLATE_SPRITES_IN_HEIGHT = 4;
     public static final int LVL_TEMPLATE_SPRITES_IN_WIDTH = 12;
 
     private final Game game;
 
-    private final Level levelOne;
+    private List<Level> levels;
+    private int currentLevelIndex = 0;
+
 
     private BufferedImage[] levelSprites;
+
     public LevelManager(Game game) {
         this.game = game;
         importOutsideSprite();
-//        this.levelSprite = getSpriteAtlas(AtlasType.ATLAS_LEVEL);
-        levelOne = new Level(ResourceLoader.getLevelData());
+        importLevels();
 
     }
 
+    public Level getCurrentLevel() {
+        return levels.get(currentLevelIndex);
+    }
+
     public void render(Graphics g, int xLevelOffset) {
+        Level currLevel = getCurrentLevel();
+
         for (int row = 0; row < Game.TILE_VISIBLE_COUNT_HEIGHT; row++) {
-            for (int column = 0; column < levelOne.getLevelData()[0].length; column++) {
-                int index = levelOne.getLevelSpriteIndex(column, row);
+            for (int column = 0; column < currLevel.getLevelData()[0].length; column++) {
+                int index = currLevel.getLevelSpriteIndex(column, row);
 
                 g.drawImage(levelSprites[index],
                         (column * GamePanel.getCurrentTileSize()) - xLevelOffset,
@@ -43,8 +57,20 @@ public class LevelManager {
         }
     }
 
-    public void update(){
+    public void update() {
 
+    }
+
+    public Level loadNextLevel() {
+        currentLevelIndex++;
+
+        if (currentLevelIndex >= levels.size()) {
+            currentLevelIndex = 0; // todo add allLevelsCompleted overlay
+            log.info("No more levels left! The game is completed!");
+            GameState.state = GameState.MENU;
+        }
+
+        return levels.get(currentLevelIndex);
     }
 
     private void importOutsideSprite() {
@@ -65,7 +91,9 @@ public class LevelManager {
         }
     }
 
-    public Level getCurrentLevel() {
-        return levelOne;
+    private void importLevels() {
+        levels = ResourceLoader.getAllLevels().stream()
+                .map(Level::new)
+                .toList();
     }
 }

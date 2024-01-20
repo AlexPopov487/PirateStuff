@@ -2,6 +2,7 @@ package org.example.entities;
 
 import org.example.Config;
 import org.example.gameState.Playing;
+import org.example.levels.Level;
 import org.example.utils.AtlasType;
 import org.example.utils.ResourceLoader;
 
@@ -16,7 +17,7 @@ import static org.example.Config.Enemy.CRAB_DRAW_OFFSET_Y;
 public class EnemyManager {
     private final Playing playing;
     private BufferedImage[][] enemyCrabAnimations;
-    private final List<Crabby> crabbyList = ResourceLoader.getCrabs();
+    private List<Crabby> crabbyList;
 
 
     public EnemyManager(Playing playing) {
@@ -29,10 +30,17 @@ public class EnemyManager {
     }
 
     public void update(int[][] levelData) {
+        boolean isAnyActiveLeft = false;
+
         for (Crabby c : crabbyList) {
             if (!c.isActive()) continue;
 
             c.update(levelData, playing.getPlayer());
+            isAnyActiveLeft = true;
+        }
+
+        if (!isAnyActiveLeft) {
+            playing.setCurrLevelCompleted(true);
         }
     }
 
@@ -46,6 +54,12 @@ public class EnemyManager {
             }
         }
     }
+
+    // called from Playing class, since enemies should be reloaded every time the next level is started
+    public void loadEnemies(Level currentLevel) {
+        crabbyList = currentLevel.getCrabs();
+    }
+
 
     public void resetAll() {
         crabbyList.forEach(Crabby::reset);

@@ -5,10 +5,11 @@ import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.EnemyManager;
 import org.example.entities.Player;
+import org.example.levels.Level;
 import org.example.levels.LevelManager;
+import org.example.ui.LevelCompletedOverlay;
 import org.example.ui.PauseOverlay;
 import org.example.utils.AtlasType;
-import org.example.utils.CollisionHelper;
 import org.example.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private final EnemyManager enemyManager;
     private final PauseOverlay pauseOverlay;
     private boolean isPaused;
+    private final LevelCompletedOverlay levelCompletedOverlay;
+    private boolean isCurrLevelCompleted = false;
     private final BufferedImage background;
     private final BufferedImage backgroundCloudBig;
     private final BufferedImage backgroundCloudSmall;
@@ -44,11 +47,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private final int leftThreshold = (int) (0.4 * GamePanel.getWindowWidth());
     private final int rightThreshold = (int) (0.6 * GamePanel.getWindowWidth());
     private int xLevelOffset;
-    private final int levelTilesCount = ResourceLoader.getLevelData()[0].length;
-    // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
-    private final int maxLevelTilesOffset = levelTilesCount - Game.TILE_VISIBLE_COUNT_WIDTH;
+
     // shows for how many tiles it is possible to move the level to the left in pixels
-    private final int maxLevelOffsetX = maxLevelTilesOffset * GamePanel.getCurrentTileSize();
+    private int maxLevelOffsetX;
 
 
     public Playing(Game game) {
@@ -60,11 +61,18 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
         pauseOverlay = new PauseOverlay(this);
         levelManager = new LevelManager(game);
+        calculateLevelOffset();
+
         player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE), this);
         int[][] currentLevelData = levelManager.getCurrentLevel().getLevelData();
         player.setCurrentLevelData(currentLevelData);
         player.setInAirIfPlayerNotOnFloor(player, currentLevelData);
+        player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
+
         enemyManager = new EnemyManager(this);
+        levelCompletedOverlay = new LevelCompletedOverlay(this);
+
+        loadStartLevelResources();
     }
 
     public Player getPlayer() {
@@ -81,14 +89,16 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     @Override
     public void update() {
-        if (!isPaused) {
+        if (isPaused) {
+            pauseOverlay.update();
+        } else if (isCurrLevelCompleted) {
+            levelCompletedOverlay.update();
+        } else {
             levelManager.update();
             player.update();
             checkPlayerAlive();
             enemyManager.update(levelManager.getCurrentLevel().getLevelData());
             checkPlayerCloseToBorder();
-        } else {
-            pauseOverlay.update();
         }
     }
 
@@ -105,8 +115,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(0, 0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight());
             pauseOverlay.render(g);
+        } else if (isCurrLevelCompleted) {
+            levelCompletedOverlay.render(g);
         }
     }
+
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -119,13 +132,18 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void mousePressed(MouseEvent e) {
         if (isPaused) {
             pauseOverlay.mousePressed(e);
+        } else if (isCurrLevelCompleted) {
+            levelCompletedOverlay.mousePressed(e);
         }
+
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         if (isPaused) {
             pauseOverlay.mouseReleased(e);
+        } else if (isCurrLevelCompleted) {
+            levelCompletedOverlay.mouseReleased(e);
         }
     }
 
@@ -133,6 +151,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void mouseMoved(MouseEvent e) {
         if (isPaused) {
             pauseOverlay.mouseMoved(e);
+        }else if (isCurrLevelCompleted) {
+            levelCompletedOverlay.mouseMoved(e);
         }
     }
 
@@ -146,11 +166,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_D, KeyEvent.VK_RIGHT-> {
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
                 log.trace("keyPressed : D");
                 player.getDirection().setMovingRight(true);
             }
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT-> {
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
                 log.trace("keyPressed : A");
                 player.getDirection().setMovingLeft(true);
             }
@@ -172,11 +192,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_D, KeyEvent.VK_RIGHT-> {
+            case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
                 log.trace("keyReleased : D");
                 player.getDirection().setMovingRight(false);
             }
-            case KeyEvent.VK_A, KeyEvent.VK_LEFT-> {
+            case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
                 log.trace("keyReleased : A");
                 player.getDirection().setMovingLeft(false);
             }
@@ -188,13 +208,34 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     }
 
     public void resetPlaying() {
-        isPaused = false;
+        resumeGame();
         player.reset();
         enemyManager.resetAll();
+        isCurrLevelCompleted = false;
     }
+
+    public void loadNextLevel(){
+        resetPlaying();
+
+        Level level = levelManager.loadNextLevel();
+        enemyManager.loadEnemies(level);
+        player.setCurrentLevelData(level.getLevelData());
+        player.setSpawnPosition(level.getPlayerSpawnPosition());
+        maxLevelOffsetX = level.getMaxLevelOffsetX();
+    }
+
+    private void loadStartLevelResources() {
+        enemyManager.loadEnemies(levelManager.getCurrentLevel());
+    }
+
     public void checkEnemyHit(Rectangle2D.Float playerAttackRange) {
         enemyManager.checkEnemyGotHit(playerAttackRange);
     }
+
+    private void calculateLevelOffset() {
+        maxLevelOffsetX = levelManager.getCurrentLevel().getMaxLevelOffsetX();
+    }
+
     private void setPlayerAttack() {
         player.getActions().setAttacking(true);
     }
@@ -203,7 +244,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         if (player.getHeath().isDead()) setGameOver();
     }
 
-    private void setGameOver(){
+    private void setGameOver() {
         GameState.state = GAME_OVER;
     }
 
@@ -249,5 +290,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         for (int i = 0; i < smallCloudYPositions.length; i++) {
             smallCloudYPositions[i] = (int) (random.nextInt(100, 190) * SCALE);
         }
+    }
+
+    public void setCurrLevelCompleted(boolean isCurrLevelCompleted) {
+        this.isCurrLevelCompleted = isCurrLevelCompleted;
     }
 }

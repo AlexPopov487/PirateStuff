@@ -30,6 +30,7 @@ public class Game implements Runnable {
         playing = new Playing(this);
         gameOverOverlay = new GameOverOverlay(playing);
         GameWindow gameWindow = new GameWindow(gamePanel);
+        gamePanel.setFocusable(true);
         gamePanel.requestFocus();
 
         startGameLoop(); // should be called last!

@@ -83,24 +83,24 @@ public class Crabby extends Enemy {
 
         if (canSeePlayer(levelData, player)) {
             moveTowardsPlayer(player);
+
+            if (isPlayerInAttackingRange(player)) {
+                changeEnemyStateTo(EnemyState.ATTACKING);
+            }
         }
 
-        if (isPlayerInAttackingRange(player)) {
-            changeEnemyStateTo(EnemyState.ATTACKING);
-        }
-
-        float xDestination = 0;
+        float xStep = 0;
 
         if (directions.isMovingLeft()) {
-            xDestination = -ENEMY_SPEED;
+            xStep = -ENEMY_SPEED;
         }
         if (directions.isMovingRight()) {
-            xDestination = ENEMY_SPEED;
+            xStep = ENEMY_SPEED;
         }
 
-        if (canMoveHere(hitBox.x + xDestination, hitBox.y, hitBox.width, hitBox.height, levelData)
-                && isFloor(hitBox, xDestination, levelData, directions.isMovingLeft())) {
-            hitBox.x += xDestination;
+        if (canMoveHere(hitBox.x + xStep, hitBox.y, hitBox.width, hitBox.height, levelData)
+                && isFloor(hitBox, xStep, levelData)) {
+            hitBox.x += xStep;
         } else {
             // if enemy has reached either wall or edge, change patrol direction
             changeWalkingDir();

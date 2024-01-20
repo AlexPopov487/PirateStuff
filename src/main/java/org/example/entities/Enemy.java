@@ -2,9 +2,9 @@ package org.example.entities;
 
 import org.example.Config;
 import org.example.GamePanel;
+import org.example.utils.CollisionHelper;
 
 import static org.example.Game.SCALE;
-import static org.example.utils.CollisionHelper.isDistanceClearFromObstacle;
 
 public abstract class Enemy extends Entity {
     protected final static float ENEMY_SPEED = 0.35f * SCALE;
@@ -145,9 +145,8 @@ public abstract class Enemy extends Entity {
         if (enemyTileY != playerTileY) return false;
 
         if (!isPlayerInVisualRange(player)) return false;
-        ;
 
-        return isDistanceClearFromObstacle(levelData, hitBox, player.getHitBox(), enemyTileY);
+        return CollisionHelper.isDistanceClearFromObstacle(levelData, hitBox, player.getHitBox(), enemyTileY);
     }
 
     protected void moveTowardsPlayer(Player player) {

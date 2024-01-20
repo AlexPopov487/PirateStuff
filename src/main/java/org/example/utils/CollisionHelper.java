@@ -71,9 +71,13 @@ public class CollisionHelper {
     }
 
     // todo redundant, but is kept to stay in sync with tutorial
-    public static boolean isFloor(Rectangle2D.Float hitbox, float xDestination, int[][] currentLevelData, boolean shouldFlipWidth) {
-        float widthOffset = shouldFlipWidth ? 0 : hitbox.width;
-        return isSolid(hitbox.x + xDestination + widthOffset, hitbox.y + hitbox.height + 1, currentLevelData);
+    public static boolean isFloor(Rectangle2D.Float hitbox, float xStep, int[][] currentLevelData) {
+
+        if (xStep > 0) { // moving right
+            return isSolid(hitbox.x + xStep + hitbox.width, hitbox.y + hitbox.height + 1, currentLevelData);
+        } else {
+            return isSolid(hitbox.x + xStep, hitbox.y + hitbox.height + 1, currentLevelData);
+        }
     }
 
     // check is there is any visible obstacle (or pit) between two points

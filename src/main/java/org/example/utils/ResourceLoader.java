@@ -5,17 +5,26 @@ import org.example.GamePanel;
 import org.example.entities.Crabby;
 import org.example.entities.EnemyType;
 import org.example.levels.LevelManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ResourceLoader {
 
+    private final static Logger log = LoggerFactory.getLogger(ResourceLoader.class);
     private final static String RESOURCE_DIR_PATH = "/";
     public static BufferedImage getSpriteAtlas(AtlasType atlasType) {
         BufferedImage characterAtlas;
@@ -30,49 +39,31 @@ public class ResourceLoader {
         return characterAtlas;
     }
 
-    /*
-     collect an array of indexes that are compatible with outsideSpriteArray from LevelManager.importOutsideSprite()
-     The indexes in the levelDataArray are taken using level_*_data image, where each pixel's red color value serves
-     as a tile index for the outsideData array.
-    */
-    public static int[][] getLevelData() {
 
-        BufferedImage levelTemplate = getSpriteAtlas(AtlasType.ATLAS_LEVEL_ONE);
-        int[][] levelData = new int[levelTemplate.getHeight()][levelTemplate.getWidth()];
+    public static List<BufferedImage> getAllLevels() {
 
-        for (int row = 0; row < levelTemplate.getHeight(); row++) {
-            for (int colunm = 0; colunm < levelTemplate.getWidth(); colunm++) {
-                Color pixelColor = new Color(levelTemplate.getRGB(colunm, row));
-                int lvlBlockIndex = pixelColor.getRed();
-
-                // to avoid ArrayOutOfBounds when RED value is bigger than max index of outsideSpriteArray
-                if (lvlBlockIndex >= (LevelManager.LVL_TEMPLATE_SPRITES_IN_WIDTH * LevelManager.LVL_TEMPLATE_SPRITES_IN_HEIGHT)) {
-                    lvlBlockIndex = 0;
-                }
-
-                levelData[row][colunm] = lvlBlockIndex;
-            }
-        }
-        return levelData;
-    }
-
-    // Crabs are defined by pixels of green color on the level template image
-    public static List<Crabby> getCrabs() {
-        BufferedImage levelTemplate = getSpriteAtlas(AtlasType.ATLAS_LEVEL_ONE);
-
-        var crabs = new ArrayList<Crabby>();
-        for (int row = 0; row < levelTemplate.getHeight(); row++) {
-            for (int colunm = 0; colunm < levelTemplate.getWidth(); colunm++) {
-                Color pixelColor = new Color(levelTemplate.getRGB(colunm, row));
-                // if we find a pixel where its green value = 0, we draw a crab on that specific position
-                int crabBlockIndex = pixelColor.getGreen();
-                if (crabBlockIndex == EnemyType.CRAB.ordinal()) { // todo make it a CRAB property, not ordinal() to ensure independence of the enum order
-
-                    crabs.add(new Crabby(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize()));
-                }
-            }
+        File lvlDir;
+        try {
+            URL lvlDirUrl = ResourceLoader.class.getResource("/levels");
+            assert lvlDirUrl != null;
+            lvlDir = new File(lvlDirUrl.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("getAllLevels(), failed to find levels directory", e);
         }
 
-        return crabs;
+        List<File> levels = Arrays.stream(Objects.requireNonNull(lvlDir.listFiles())).sorted().toList();
+
+        List<String> levelFileNames = levels.stream().map(File::getName).toList();
+        log.debug("ResourceLoader.getAllLevels(); found the following level files in /levels/ : [{}]", levelFileNames);
+        return levels.stream().map(ResourceLoader::readImageFromFile).toList();
     }
+
+    private static BufferedImage readImageFromFile(File lvlFile) {
+        try {
+            return ImageIO.read(lvlFile);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("ResourceLoader.readImageFromFile(), failed to convert file to image, filename: [%s]", lvlFile.getName()));
+        }
+    }
+
 }
