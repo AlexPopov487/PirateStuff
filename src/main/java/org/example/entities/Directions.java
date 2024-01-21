@@ -4,7 +4,7 @@ public class Directions {
     private boolean isMoving = false;
     private boolean isMovingLeft;
     private boolean isMovingRight;
-    private boolean isInAir; // todo probably move to gravitySettings
+    private boolean isInAir;
     private boolean isJumping;
 
 
@@ -42,7 +42,6 @@ public class Directions {
     public boolean isMoving() {
         return isMoving;
     }
-
     public void setMoving(boolean moving) {
         isMoving = moving;
     }

@@ -10,19 +10,14 @@ import java.awt.geom.Rectangle2D;
 import static org.example.utils.CollisionHelper.*;
 
 public class Crabby extends Enemy {
-    private static final int HIT_BOT_WIDTH = 22;
-    private static final int HIT_BOT_HEIGHT = 19;
-    private static final int ATTACK_RANGE_OFFSET_X = (int) (30 * Game.SCALE);
-
-
     public Crabby(float x, float y) {
         super(x, y, Config.Enemy.CRAB_SPRITE_WIDTH, Config.Enemy.CRAB_SPRITE_HEIGHT, EnemyType.CRAB);
-        initHitBox(x, y, (int) (HIT_BOT_WIDTH * Game.SCALE), (int) (HIT_BOT_HEIGHT * Game.SCALE));
+        initHitBox(Config.Enemy.CRAB_HIT_BOT_WIDTH, Config.Enemy.CRAB_HIT_BOT_HEIGHT);
         initAttackRange();
     }
 
     public int getXFlip() {
-        if (directions.isMovingLeft()) {
+        if (getDirections().isMovingLeft()) {
             return 0;
         } else {
             return width;
@@ -30,7 +25,7 @@ public class Crabby extends Enemy {
     }
 
     public int getWidthFlip() {
-        if (directions.isMovingLeft()) {
+        if (getDirections().isMovingLeft()) {
             return 1;
         } else {
             return -1;
@@ -39,13 +34,13 @@ public class Crabby extends Enemy {
 
     @Override
     public void updateAttackRange() {
-        attackRange.x = hitBox.x - ATTACK_RANGE_OFFSET_X;
+        attackRange.x = hitBox.x - Config.Enemy.CRAB_ATTACK_RANGE_OFFSET_X;
         attackRange.y = hitBox.y;
     }
 
     @Override
     public void initAttackRange() {
-        attackRange = new Rectangle2D.Float(x, y, 82 * Game.SCALE, HIT_BOT_HEIGHT * Game.SCALE);
+        attackRange = new Rectangle2D.Float(x, y, 82 * Game.SCALE, Config.Enemy.CRAB_HIT_BOT_HEIGHT);
     }
 
     @Override
@@ -54,7 +49,7 @@ public class Crabby extends Enemy {
             handleFirstUpdate(levelData);
         }
 
-        if (directions.isInAir()) {
+        if (getDirections().isInAir()) {
             placeEnemyAtTheFloor(levelData);
             return;
         }
@@ -91,11 +86,11 @@ public class Crabby extends Enemy {
 
         float xStep = 0;
 
-        if (directions.isMovingLeft()) {
-            xStep = -ENEMY_SPEED;
+        if (getDirections().isMovingLeft()) {
+            xStep = -getWalkSpeed();
         }
-        if (directions.isMovingRight()) {
-            xStep = ENEMY_SPEED;
+        if (getDirections().isMovingRight()) {
+            xStep = getWalkSpeed();
         }
 
         if (canMoveHere(hitBox.x + xStep, hitBox.y, hitBox.width, hitBox.height, levelData)
@@ -109,35 +104,35 @@ public class Crabby extends Enemy {
 
     private void handleFirstUpdate(int[][] levelData) {
         if (!CollisionHelper.isOnTheFloor(hitBox, levelData)) {
-            directions.setInAir(true);
+            getDirections().setInAir(true);
         }
         isFirstPositionUpdate = false;
     }
 
 
     private void changeWalkingDir() {
-        if (directions.isMovingLeft()) {
-            directions.setMovingLeft(false);
-            directions.setMovingRight(true);
+        if (getDirections().isMovingLeft()) {
+            getDirections().setMovingLeft(false);
+            getDirections().setMovingRight(true);
         } else {
-            directions.setMovingLeft(true);
-            directions.setMovingRight(false);
+            getDirections().setMovingLeft(true);
+            getDirections().setMovingRight(false);
         }
     }
 
     private void placeEnemyAtTheFloor(int[][] levelData) {
-        float yDestination = hitBox.y + gravitySettings.getAirSpeed();
+        float yDestination = hitBox.y + getGravitySettings().getAirSpeed();
 
         if (CollisionHelper.canMoveHere(hitBox.x, yDestination, hitBox.width, hitBox.height, levelData)) {
             hitBox.y = yDestination;
-            gravitySettings.setAirSpeed(gravitySettings.getAirSpeed() + gravitySettings.getGravityForce());
+            getGravitySettings().setAirSpeed(getGravitySettings().getAirSpeed() + getGravitySettings().getGravityForce());
         } else {
         /*
          if we assume that updating position will lead to collision, the pos update will not be made,
          meaning that there still will be some space between the player and the obstacle. Thus, we need to
          move the player as close to the obstacle as possible
         */
-            directions.setInAir(false);
+            getDirections().setInAir(false);
             hitBox.y = getClosestToObstacleYPos(hitBox, yDestination);
         }
 

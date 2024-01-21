@@ -3,35 +3,29 @@ package org.example.entities;
 import org.example.Config;
 import org.example.GamePanel;
 import org.example.utils.CollisionHelper;
+import org.example.utils.Helper;
 
+import static org.example.Config.ENTITY_ANIMATION_SPEED;
+import static org.example.Config.GRAVITY_FORCE;
 import static org.example.Game.SCALE;
 
 public abstract class Enemy extends Entity {
-    protected final static float ENEMY_SPEED = 0.35f * SCALE;
     protected static final float ATTACK_RANGE = GamePanel.getCurrentTileSize();
     protected static final float VISUAL_RANGE = GamePanel.getCurrentTileSize() * 5;
+    private final Heath heath;
     private boolean isActive = true;
     private boolean isAttackPerformed = false;
-    private int animationIndex;
     protected EnemyState enemyState;
     protected EnemyType enemyType;
-    private final Heath heath;
-    private int animationTick;
-    private int animationSpeed = 15; // todo convert to global variable for all entities
     protected boolean isFirstPositionUpdate = true;
-    protected final Directions directions;
-    protected final GravitySettings gravitySettings;
     protected int enemyTileY; // is necessary to determine, whether enemy and the player are at the same y position
 
     public Enemy(float x, float y, int width, int height, EnemyType enemyType) {
-        super(x, y, width, height);
-        directions = new Directions();
-        gravitySettings = new GravitySettings(0f, 0.04f * SCALE, -2.25f * SCALE, 0.5f * SCALE);
-//        initHitBox(x, y, width, height);
+        super(x, y, width, height, Helper.generateGravitySettingForEntity(EntityType.ENEMY), Config.Enemy.WALK_SPEED);
         this.enemyType = enemyType;
         this.enemyState = EnemyState.IDLE;
 
-        directions.setMovingLeft(true); // todo for testing
+        getDirections().setMovingLeft(true); // todo for testing
         heath = new Heath(Config.Enemy.getMaxHealth(enemyType));
     }
 
@@ -97,23 +91,16 @@ public abstract class Enemy extends Entity {
         heath.reset();
         changeEnemyStateTo(EnemyState.IDLE);
         isActive = true;
-        directions.reset();
-        directions.setMoving(true);
-        directions.setMovingLeft(true);
+        getDirections().reset();
+        getDirections().setMoving(true);
+        getDirections().setMovingLeft(true);
         resetGravitySettings();
         initAttackRange();
     }
 
-    private void resetGravitySettings(){// todo move values to constants
-        gravitySettings.setAirSpeed(0f);
-        gravitySettings.setGravityForce(0.04f * SCALE);
-        gravitySettings.setJumpSpeed(-2.25f * SCALE);
-        gravitySettings.setPostCollisionFallSpeed(0.5f * SCALE);
-    }
-
     private void updateAnimationTick() {
         animationTick++;
-        if (animationTick >= animationSpeed) {
+        if (animationTick >= ENTITY_ANIMATION_SPEED) {
             animationTick = 0;
             animationIndex++;
             if (animationIndex >= Config.Enemy.getSpriteAmount(enemyType, enemyState)) {
@@ -151,11 +138,11 @@ public abstract class Enemy extends Entity {
 
     protected void moveTowardsPlayer(Player player) {
         if (player.getHitBox().x > hitBox.x) {
-            directions.setMovingLeft(false);
-            directions.setMovingRight(true);
+            getDirections().setMovingLeft(false);
+            getDirections().setMovingRight(true);
         } else {
-            directions.setMovingLeft(true);
-            directions.setMovingRight(false);
+            getDirections().setMovingLeft(true);
+            getDirections().setMovingRight(false);
         }
     }
 

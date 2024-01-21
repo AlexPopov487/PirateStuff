@@ -1,15 +1,20 @@
 package org.example.utils;
 
+import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
 import org.example.entities.EnemyType;
+import org.example.entities.EntityType;
+import org.example.entities.GravitySettings;
 import org.example.levels.LevelManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.example.Config.GRAVITY_FORCE;
 
 public class Helper {
     /*
@@ -71,5 +76,12 @@ public class Helper {
         }
         // top left corner
         return new Point(GamePanel.getCurrentTileSize(), GamePanel.getCurrentTileSize());
+    }
+
+    public static GravitySettings generateGravitySettingForEntity(EntityType entityType) {
+         return switch (entityType) {
+            case PLAYER -> new GravitySettings(Config.Player.AIR_SPEED, GRAVITY_FORCE, Config.Player.JUMP_SPEED, Config.Player.POST_COLLISION_FALL_SPEED);
+            case ENEMY -> new GravitySettings(Config.Enemy.AIR_SPEED, GRAVITY_FORCE, Config.Enemy.JUMP_SPEED, Config.Enemy.POST_COLLISION_FALL_SPEED);
+        };
     }
 }

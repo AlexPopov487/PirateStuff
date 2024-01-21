@@ -168,15 +168,15 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
                 log.trace("keyPressed : D");
-                player.getDirection().setMovingRight(true);
+                player.getDirections().setMovingRight(true);
             }
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
                 log.trace("keyPressed : A");
-                player.getDirection().setMovingLeft(true);
+                player.getDirections().setMovingLeft(true);
             }
             case KeyEvent.VK_SPACE -> {
                 log.trace("keyPressed : SPACE");
-                player.getDirection().setJumping(true);
+                player.getDirections().setJumping(true);
             }
             case KeyEvent.VK_ESCAPE -> {
                 log.trace("keyPressed : ESCAPE");
@@ -194,15 +194,15 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
                 log.trace("keyReleased : D");
-                player.getDirection().setMovingRight(false);
+                player.getDirections().setMovingRight(false);
             }
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> {
                 log.trace("keyReleased : A");
-                player.getDirection().setMovingLeft(false);
+                player.getDirections().setMovingLeft(false);
             }
             case KeyEvent.VK_SPACE -> {
                 log.trace("keyReleased : SPACE");
-                player.getDirection().setJumping(false);
+                player.getDirections().setJumping(false);
             }
         }
     }

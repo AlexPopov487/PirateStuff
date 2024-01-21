@@ -14,7 +14,6 @@ public class CollisionHelper {
     }
 
 
-    // todo do not understand how this works
     // check, whether a certain position (x, y) is either a solid lvl object or is out of bounds of the game window
     private static boolean isSolid(float x, float y, int[][] currentLevelData) {
         int maxLevelWidth = currentLevelData[0].length * GamePanel.getCurrentTileSize();

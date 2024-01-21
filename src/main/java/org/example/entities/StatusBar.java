@@ -10,9 +10,9 @@ import java.awt.image.BufferedImage;
 import static org.example.Config.StatusBar.*;
 import static org.example.utils.AtlasType.ATLAS_STATUS_BAR;
 
-public class StatusBar extends Entity implements Drawable {
+public class StatusBar extends BaseEntity implements Drawable {
+    private final Heath playerHeath;
     private BufferedImage statusBarAsset;
-    private Heath playerHeath;
     private int heathBarFill = HEALTH_BAR_WIDTH;
 
 
@@ -31,16 +31,6 @@ public class StatusBar extends Entity implements Drawable {
     @Override
     public void update() {
         updateHeathBar();
-    }
-
-    @Override
-    public void updateAttackRange() {
-
-    }
-
-    @Override
-    public void initAttackRange() {
-
     }
 
     private void renderHealthBar(Graphics graphics) {

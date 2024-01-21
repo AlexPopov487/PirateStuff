@@ -8,15 +8,15 @@ import static org.example.Game.SCALE;
 
 public class GravitySettings {
     private float airSpeed;
-    private float gravityForce; // todo should be a constant
-    private float jumpSpeed; // todo should be a constant
-    private float postCollisionFallSpeed; // todo should be a constant
+    private float gravityForce;
+    private float jumpSpeed;
+    private float postCollisionFallSpeed;
 
     public GravitySettings(float airSpeed, float gravityForce, float jumpSpeed, float postCollisionFallSpeed) {
-        this.airSpeed = airSpeed * Game.SCALE;
-        this.gravityForce = gravityForce * Game.SCALE;
-        this.jumpSpeed = jumpSpeed * Game.SCALE;
-        this.postCollisionFallSpeed = postCollisionFallSpeed * Game.SCALE;
+        this.airSpeed = airSpeed;
+        this.gravityForce = gravityForce;
+        this.jumpSpeed = jumpSpeed;
+        this.postCollisionFallSpeed = postCollisionFallSpeed;
     }
 
     public float getAirSpeed() {

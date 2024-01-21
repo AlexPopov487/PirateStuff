@@ -49,7 +49,7 @@ public class EnemyManager {
             if (!crabby.isActive()) continue;
 
             if (playerAttackRange.intersects(crabby.getHitBox())) {
-                crabby.takeDamage(10); // todo remove raw value
+                crabby.takeDamage(Config.Enemy.CRAB_DAMAGE);
                 break;
             }
         }

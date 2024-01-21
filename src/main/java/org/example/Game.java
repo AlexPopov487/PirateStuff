@@ -105,7 +105,7 @@ public class Game implements Runnable {
 
     public void pauseGame() {
         if (GameState.PLAYING.equals(GameState.state)) {
-            playing.getPlayer().getDirection().reset();
+            playing.getPlayer().getDirections().reset();
         }
     }
 

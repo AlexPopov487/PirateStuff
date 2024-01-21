@@ -1,40 +1,29 @@
 package org.example.entities;
 
+import org.example.Config;
 import org.example.gameState.Playing;
-import org.example.utils.AtlasType;
-import org.example.utils.CollisionHelper;
-import org.example.utils.PlayerConstants;
-import org.example.utils.ResourceLoader;
+import org.example.utils.*;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
+import static org.example.Config.ENTITY_ANIMATION_SPEED;
+import static org.example.Config.GRAVITY_FORCE;
 import static org.example.Game.SCALE;
+import static org.example.entities.EntityType.*;
 import static org.example.gameState.Playing.CHARACTER_SPRITE_HEIGHT;
 import static org.example.gameState.Playing.CHARACTER_SPRITE_WIDTH;
 import static org.example.utils.CollisionHelper.*;
 import static org.example.utils.PlayerConstants.*;
 
 public class Player extends Entity {
-    private final static int ANIMATION_SPEED = 15;
-    private final static float PLAYER_SPEED = 1f * SCALE;
-    private final static int CHARACTER_HITBOX_WIDTH = 20;
-    private final static int CHARACTER_HITBOX_HEIGHT = 27;
     private final Playing playing;
-    private final Directions directions;
-    private final GravitySettings gravitySettings;
     private final Actions actions;
-    private boolean isAttackPerformed = false;
     private final StatusBar statusBar;
-    private final Heath heath;
+    private boolean isAttackPerformed = false;
     private BufferedImage[][] animations;
-    private int animationTick;
-    private int animationIndex;
     private int[][] currentLevelData;
-    // 21, 4 is the offset from 0,0 where the actual character sprite is drawn on a png image
-    private float xDrawOffset = 21 * SCALE; // todo move to constants as I did to the enemy class
-    private float yDrawOffset = 4 * SCALE;
 
     // for handling rendering player sprite when going left
     private int xFlip = 0;
@@ -43,17 +32,13 @@ public class Player extends Entity {
     PlayerConstants currentAnimation = SPRITE_JUMPING;
 
     public Player(float x, float y, int width, int height, Playing playing) {
-        super(x, y, width, height);
+        super(x, y, width, height, Helper.generateGravitySettingForEntity(PLAYER), Config.Player.WALK_SPEED);
         this.playing = playing;
-        directions = new Directions();
         actions = new Actions();
-        heath = new Heath(100);
-        statusBar = new StatusBar(heath);
+        statusBar = new StatusBar(getHeath());
         loadAnimations();
-        initHitBox(x, y, (int) (CHARACTER_HITBOX_WIDTH * SCALE), (int) (CHARACTER_HITBOX_HEIGHT * SCALE));
+        initHitBox(Config.Player.HIT_BOX_WIDTH, Config.Player.HIT_BOX_HEIGHT);
         initAttackRange();
-        // todo move values to constants
-        gravitySettings = new GravitySettings(0f, 0.02f * SCALE, -1.25f * SCALE, 0.25f * SCALE);
     }
 
     public void setSpawnPosition(Point spawnPoint) {
@@ -69,12 +54,8 @@ public class Player extends Entity {
 
     public void setInAirIfPlayerNotOnFloor(Player player, int[][] currentLevelData) {
         if (!CollisionHelper.isOnTheFloor(player.getHitBox(), currentLevelData)) {
-            player.getDirection().setInAir(true);
+            getDirections().setInAir(true);
         }
-    }
-
-    public Directions getDirection() {
-        return directions;
     }
 
     public Actions getActions() {
@@ -90,15 +71,12 @@ public class Player extends Entity {
         updateAttackRange();
     }
 
-    public void setPlayerDirection(Directions directions) {
-    }
-
     public void render(Graphics g, int xLevelOffset) {
         statusBar.render(g);
 
         g.drawImage(animations[currentAnimation.getSpriteIndex()][animationIndex],
-                (int) (hitBox.x - xDrawOffset) - xLevelOffset + xFlip,
-                (int) (hitBox.y - yDrawOffset),
+                (int) (hitBox.x - Config.Player.DRAW_OFFSET_X) - xLevelOffset + xFlip,
+                (int) (hitBox.y - Config.Player.DRAW_OFFSET_Y),
                 width * widthFlip,
                 height,
                 null);
@@ -106,14 +84,10 @@ public class Player extends Entity {
 //        drawAttackRangeBox(g, xLevelOffset);
     }
 
-    public Heath getHeath() {
-        return heath;
-    }
-
     public void updateAttackRange() {
-        if (directions.isMovingRight()) {
+        if (getDirections().isMovingRight()) {
             attackRange.x = hitBox.x + hitBox.width + 10 * SCALE;
-        } else if (directions.isMovingLeft()) {
+        } else if (getDirections().isMovingLeft()) {
             attackRange.x = hitBox.x - hitBox.width - 10 * SCALE;
         }
 
@@ -125,10 +99,11 @@ public class Player extends Entity {
     }
 
     public void reset() {
-        directions.reset();
+        resetGravitySettings();
+        getDirections().reset();
         resetInAir();
         actions.resetAll();
-        heath.reset();
+        getHeath().reset();
         resetAnimations();
         currentAnimation = SPRITE_IDLE;
 
@@ -140,46 +115,39 @@ public class Player extends Entity {
         initAttackRange();
     }
 
-    private void resetGravitySettings(){// todo move values to constants
-        gravitySettings.setAirSpeed(0f);
-        gravitySettings.setGravityForce(0.02f * SCALE);
-        gravitySettings.setJumpSpeed(-1.25f * SCALE);
-        gravitySettings.setPostCollisionFallSpeed(0.25f * SCALE);
-    }
-
     private void updateCharacterPosition() {
-        directions.setMoving(false);
+        getDirections().setMoving(false);
 
-        if (directions.isJumping()) {
+        if (getDirections().isJumping()) {
             handleJump();
         }
 
-        if (directions.isNoDirectionSet()) return;
+        if (getDirections().isNoDirectionSet()) return;
 
         float xDestination = hitBox.x;
 
-        if (directions.isMovingLeft()) {
-            xDestination -= PLAYER_SPEED;
+        if (getDirections().isMovingLeft()) {
+            xDestination -= getWalkSpeed();
             xFlip = width;
             widthFlip = -1;
         }
 
-        if (directions.isMovingRight()) {
-            xDestination += PLAYER_SPEED;
+        if (getDirections().isMovingRight()) {
+            xDestination += getWalkSpeed();
             xFlip = 0;
             widthFlip = 1;
         }
 
-        if (!directions.isInAir() && !isOnTheFloor(hitBox, currentLevelData)) {
-            directions.setInAir(true);
+        if (!getDirections().isInAir() && !isOnTheFloor(hitBox, currentLevelData)) {
+            getDirections().setInAir(true);
         }
 
-        if (directions.isInAir()) {
-            float yDestination = hitBox.y + gravitySettings.getAirSpeed();
+        if (getDirections().isInAir()) {
+            float yDestination = hitBox.y + getGravitySettings().getAirSpeed();
 
             if (canMoveHere(hitBox.x, yDestination, hitBox.width, hitBox.height, currentLevelData)) {
                 hitBox.y = yDestination;
-                gravitySettings.setAirSpeed(gravitySettings.getAirSpeed() + gravitySettings.getGravityForce());
+                getGravitySettings().setAirSpeed(getGravitySettings().getAirSpeed() + getGravitySettings().getGravityForce());
                 updatePlayerXPos(xDestination);
             } else {
              /*
@@ -189,10 +157,10 @@ public class Player extends Entity {
             */
                 hitBox.y = getClosestToObstacleYPos(hitBox, yDestination);
 
-                if (gravitySettings.getAirSpeed() > 0) { // falling on the floor
+                if (getGravitySettings().getAirSpeed() > 0) { // falling on the floor
                     resetInAir();
                 } else { // colliding with the roof, need to bounce
-                    gravitySettings.setAirSpeed(gravitySettings.getPostCollisionFallSpeed());
+                    getGravitySettings().setAirSpeed(getGravitySettings().getPostCollisionFallSpeed());
                 }
                 updatePlayerXPos(xDestination);
             }
@@ -201,19 +169,19 @@ public class Player extends Entity {
             updatePlayerXPos(xDestination);
         }
 
-        directions.setMoving(true);
+        getDirections().setMoving(true);
     }
 
     private void handleJump() {
-        if (directions.isInAir()) return;
+        if (getDirections().isInAir()) return;
 
-        directions.setInAir(true);
-        gravitySettings.setAirSpeed(gravitySettings.getJumpSpeed());
+        getDirections().setInAir(true);
+        getGravitySettings().setAirSpeed(getGravitySettings().getJumpSpeed());
     }
 
     private void resetInAir() {
-        directions.setInAir(false);
-        gravitySettings.setAirSpeed(0);
+        getDirections().setInAir(false);
+        getGravitySettings().setAirSpeed(0);
     }
 
     private void updatePlayerXPos(float xDestination) {
@@ -233,14 +201,14 @@ public class Player extends Entity {
 
         var previousAnimation = currentAnimation;
 
-        if (directions.isMoving() && !directions.isMovingToRightAndLeft()) {
+        if (getDirections().isMoving() && !getDirections().isMovingToRightAndLeft()) {
             currentAnimation = SPRITE_RUNNING;
         } else {
             currentAnimation = SPRITE_IDLE;
         }
 
-        if (directions.isInAir()) {
-            if (directions.isJumping()) {
+        if (getDirections().isInAir()) {
+            if (getDirections().isJumping()) {
                 currentAnimation = SPRITE_JUMPING;
             } else {
                 currentAnimation = SPRITE_FALLING;
@@ -284,7 +252,7 @@ public class Player extends Entity {
 
     private void updateAnimationTick() {
         animationTick++;
-        if (animationTick >= ANIMATION_SPEED) {
+        if (animationTick >= ENTITY_ANIMATION_SPEED) {
             animationTick = 0;
             animationIndex++;
 

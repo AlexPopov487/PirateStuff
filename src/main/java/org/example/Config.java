@@ -32,6 +32,10 @@ public class Config {
     public static final int VOLUME_SLIDER_WIDTH = (int) (VOLUME_SLIDER_WIDTH_DEFAULT * SCALE);
     public static final int VOLUME_SLIDER_HEIGHT = (int) (VOLUME_SLIDER_HEIGHT_DEFAULT * SCALE);
 
+
+    public static final float GRAVITY_FORCE = (float) (0.04 * SCALE);
+    public static final int ENTITY_ANIMATION_SPEED = 15;
+
     public static class LevelEnv {
         public static final int BIG_CLOUD_WIDTH_DEFAULT = 448;
         public static final int BIG_CLOUD_HEIGHT_DEFAULT = 101;
@@ -44,7 +48,21 @@ public class Config {
         public static final int SMALL_CLOUD_HEIGHT = (int) (SMALL_CLOUD_HEIGHT_DEFAULT * SCALE);
     }
 
-    public static class Enemy { // todo do the same for Player
+    public static class Player {
+        public static final float AIR_SPEED = 0f;
+        public static final float JUMP_SPEED = (float) (-2.25f * SCALE); // todo think of a better naming
+        public static final float POST_COLLISION_FALL_SPEED = (float) (0.5f * SCALE);
+        public static final float WALK_SPEED = 1f * SCALE;
+        public static final int HIT_BOX_WIDTH = (int) (20 * SCALE);
+        public static final int HIT_BOX_HEIGHT = (int) (27 * SCALE);
+
+        // 21, 4 is the offset from 0,0 where the actual character sprite is drawn on a png image
+        public static final float DRAW_OFFSET_X = 21 * SCALE;
+        public static final float DRAW_OFFSET_Y = 4 * SCALE;
+
+    }
+
+    public static class Enemy {
         public static final int CRAB_SPRITE_WIDTH_DEFAULT = 72;
         public static final int CRAB_SPRITE_HEIGHT_DEFAULT = 32;
         public static final int CRAB_SPRITE_WIDTH = (int) (72 * SCALE);
@@ -54,6 +72,18 @@ public class Config {
         public static final int CRAB_DRAW_OFFSET_X = (int) (26 * SCALE);
         // 9 is the pixel difference between the sprite start and the hit box start
         public static final int CRAB_DRAW_OFFSET_Y = (int) (9 * SCALE);
+
+        public static final float AIR_SPEED = 0f;
+        public static final float JUMP_SPEED = (float) (-2.25f * SCALE);
+        public static final float POST_COLLISION_FALL_SPEED = (float) (0.5f * SCALE);
+        public static final float WALK_SPEED = 0.35f * SCALE;
+
+        public static final int CRAB_HIT_BOT_WIDTH = (int) (22 * Game.SCALE);
+        public static final int CRAB_HIT_BOT_HEIGHT = (int) (19 * Game.SCALE);
+        public static final int CRAB_ATTACK_RANGE_OFFSET_X = (int) (30 * Game.SCALE);
+
+        public static final int CRAB_DAMAGE = 10;
+
 
         public static int getSpriteAmount(EnemyType enemyType, EnemyState enemyState) {
             return switch (enemyType) {
