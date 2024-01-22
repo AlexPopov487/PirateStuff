@@ -1,23 +1,16 @@
 package org.example.utils;
 
-import org.example.Game;
-import org.example.GamePanel;
-import org.example.entities.Crabby;
-import org.example.entities.EnemyType;
-import org.example.levels.LevelManager;
+import org.example.types.AtlasType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;

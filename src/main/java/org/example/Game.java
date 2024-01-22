@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.gameState.GameState;
+import org.example.types.GameState;
 import org.example.gameState.Menu;
 import org.example.gameState.Playing;
 import org.example.gameState.GameOverOverlay;

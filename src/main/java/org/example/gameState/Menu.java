@@ -2,8 +2,9 @@ package org.example.gameState;
 
 import org.example.Game;
 import org.example.GamePanel;
+import org.example.types.GameState;
 import org.example.ui.MenuButton;
-import org.example.utils.AtlasType;
+import org.example.types.AtlasType;
 import org.example.utils.ResourceLoader;
 
 import java.awt.*;

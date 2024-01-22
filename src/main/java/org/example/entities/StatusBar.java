@@ -1,6 +1,5 @@
 package org.example.entities;
 
-import org.example.Game;
 import org.example.gameState.Drawable;
 import org.example.utils.ResourceLoader;
 
@@ -8,7 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static org.example.Config.StatusBar.*;
-import static org.example.utils.AtlasType.ATLAS_STATUS_BAR;
+import static org.example.types.AtlasType.ATLAS_STATUS_BAR;
 
 public class StatusBar extends BaseEntity implements Drawable {
     private final Heath playerHeath;

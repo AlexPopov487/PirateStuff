@@ -5,11 +5,13 @@ import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.EnemyManager;
 import org.example.entities.Player;
+import org.example.levelObjects.LevelObjectManager;
 import org.example.levels.Level;
 import org.example.levels.LevelManager;
+import org.example.types.GameState;
 import org.example.ui.LevelCompletedOverlay;
 import org.example.ui.PauseOverlay;
-import org.example.utils.AtlasType;
+import org.example.types.AtlasType;
 import org.example.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import static org.example.Game.SCALE;
-import static org.example.gameState.GameState.GAME_OVER;
+import static org.example.types.GameState.GAME_OVER;
 
 public class Playing extends StateBase implements GameStateActions, Drawable {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -33,6 +35,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private final Player player;
     private final LevelManager levelManager;
     private final EnemyManager enemyManager;
+    private final LevelObjectManager levelObjectManager;
     private final PauseOverlay pauseOverlay;
     private boolean isPaused;
     private final LevelCompletedOverlay levelCompletedOverlay;
@@ -70,6 +73,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
 
         enemyManager = new EnemyManager(this);
+        levelObjectManager = new LevelObjectManager(this);
         levelCompletedOverlay = new LevelCompletedOverlay(this);
 
         loadStartLevelResources();
@@ -99,6 +103,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             checkPlayerAlive();
             enemyManager.update(levelManager.getCurrentLevel().getLevelData());
             checkPlayerCloseToBorder();
+            levelObjectManager.update();
         }
     }
 
@@ -110,6 +115,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         levelManager.render(g, xLevelOffset);
         player.render(g, xLevelOffset);
         enemyManager.render(g, xLevelOffset);
+        levelObjectManager.render(g, xLevelOffset);
 
         if (isPaused) {
             g.setColor(new Color(0, 0, 0, 150));
@@ -211,6 +217,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         resumeGame();
         player.reset();
         enemyManager.resetAll();
+        levelObjectManager.resetAll();
         isCurrLevelCompleted = false;
     }
 
@@ -219,6 +226,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
         Level level = levelManager.loadNextLevel();
         enemyManager.loadEnemies(level);
+        levelObjectManager.loadLevelObjects(level);
         player.setCurrentLevelData(level.getLevelData());
         player.setSpawnPosition(level.getPlayerSpawnPosition());
         maxLevelOffsetX = level.getMaxLevelOffsetX();
@@ -226,10 +234,19 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     private void loadStartLevelResources() {
         enemyManager.loadEnemies(levelManager.getCurrentLevel());
+        levelObjectManager.loadLevelObjects(levelManager.getCurrentLevel());
     }
 
     public void checkEnemyHit(Rectangle2D.Float playerAttackRange) {
         enemyManager.checkEnemyGotHit(playerAttackRange);
+    }
+
+    public void checkPotionCollected(Rectangle2D.Float playerHitBox) {
+        levelObjectManager.checkObjectCollected(playerHitBox);
+    }
+
+    public void checkLevelObjectDestroyed(Rectangle2D.Float attackRange) {
+        levelObjectManager.checkObjectDestroyed(attackRange);
     }
 
     private void calculateLevelOffset() {

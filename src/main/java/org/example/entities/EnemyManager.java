@@ -3,7 +3,8 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.levels.Level;
-import org.example.utils.AtlasType;
+import org.example.types.EnemyType;
+import org.example.types.AtlasType;
 import org.example.utils.ResourceLoader;
 
 import java.awt.*;

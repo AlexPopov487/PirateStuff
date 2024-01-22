@@ -1,4 +1,4 @@
-package org.example.utils;
+package org.example.types;
 
 public enum AtlasType {
     ATLAS_PLAYER("player_sprites.png"),
@@ -17,6 +17,8 @@ public enum AtlasType {
     ATLAS_ENEMY_CRAB("crabby_sprite.png"),
     ATLAS_STATUS_BAR("health_power_bar.png"),
     ATLAS_LEVEL_COMPLETED("completed_sprite.png"),
+    ATLAS_POTION("potions_sprites.png"),
+    ATLAS_CONTAINER("objects_sprites.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

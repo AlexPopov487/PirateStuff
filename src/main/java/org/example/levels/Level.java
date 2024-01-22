@@ -3,6 +3,8 @@ package org.example.levels;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
+import org.example.levelObjects.Container;
+import org.example.levelObjects.Potion;
 import org.example.utils.Helper;
 
 import java.awt.*;
@@ -13,6 +15,8 @@ public class Level {
 
     private final BufferedImage levelAsset;
     private List<Crabby> crabs;
+    private List<Potion> potions;
+    private List<Container> containers;
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -26,6 +30,8 @@ public class Level {
         this.levelAsset = levelAsset;
         levelData = Helper.getLevelDataFromAsset(levelAsset);
         prepareEnemies();
+        preparePotions();
+        prepareContainers();
         calculateLevelOffsets();
         calculatePlayerSpawnPosition();
     }
@@ -50,6 +56,14 @@ public class Level {
         return playerSpawnPosition;
     }
 
+    public List<Potion> getPotions() {
+        return potions;
+    }
+
+    public List<Container> getContainers() {
+        return containers;
+    }
+
     private void calculatePlayerSpawnPosition() {
         playerSpawnPosition = Helper.getPlayerSpawnPoint(levelAsset);
     }
@@ -63,5 +77,13 @@ public class Level {
         levelTilesCount = levelAsset.getWidth();
         maxLevelTilesOffset = levelTilesCount - Game.TILE_VISIBLE_COUNT_WIDTH;
         maxLevelOffsetX = maxLevelTilesOffset * GamePanel.getCurrentTileSize();
+    }
+
+    private void prepareContainers() {
+        containers = Helper.getContainersFromLevelAsset(levelAsset);
+    }
+
+    private void preparePotions() {
+        potions = Helper.getPotionsFromLevelAsset(levelAsset);
     }
 }

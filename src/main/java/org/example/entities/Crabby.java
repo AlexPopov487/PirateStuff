@@ -3,6 +3,8 @@ package org.example.entities;
 import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
+import org.example.types.EnemyState;
+import org.example.types.EnemyType;
 import org.example.utils.CollisionHelper;
 
 import java.awt.geom.Rectangle2D;

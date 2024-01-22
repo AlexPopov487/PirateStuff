@@ -1,4 +1,4 @@
-package org.example.gameState;
+package org.example.types;
 
 public enum GameState {
     PLAYING,

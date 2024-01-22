@@ -2,12 +2,13 @@ package org.example.entities;
 
 import org.example.Config;
 import org.example.GamePanel;
+import org.example.types.EnemyState;
+import org.example.types.EnemyType;
+import org.example.types.EntityType;
 import org.example.utils.CollisionHelper;
 import org.example.utils.Helper;
 
 import static org.example.Config.ENTITY_ANIMATION_SPEED;
-import static org.example.Config.GRAVITY_FORCE;
-import static org.example.Game.SCALE;
 
 public abstract class Enemy extends Entity {
     protected static final float ATTACK_RANGE = GamePanel.getCurrentTileSize();

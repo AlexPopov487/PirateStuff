@@ -1,13 +1,15 @@
 package org.example.utils;
 
 import org.example.Config;
-import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
-import org.example.entities.EnemyType;
-import org.example.entities.EntityType;
+import org.example.levelObjects.Container;
+import org.example.levelObjects.Potion;
+import org.example.types.EnemyType;
+import org.example.types.EntityType;
 import org.example.entities.GravitySettings;
 import org.example.levels.LevelManager;
+import org.example.types.LevelObjectType;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -59,6 +61,47 @@ public class Helper {
         }
 
         return crabs;
+    }
+
+    // Potions are defined by pixels of blue color on the level template image
+    public static List<Potion> getPotionsFromLevelAsset(BufferedImage levelAsset) {
+
+        var potions = new ArrayList<Potion>();
+        for (int row = 0; row < levelAsset.getHeight(); row++) {
+            for (int colunm = 0; colunm < levelAsset.getWidth(); colunm++) {
+                Color pixelColor = new Color(levelAsset.getRGB(colunm, row));
+                // if we find a pixel where its green value = 0, we draw a crab on that specific position
+                int potionBlockIndex = pixelColor.getBlue();
+                if (potionBlockIndex == LevelObjectType.POTION_BLUE.ordinal()) { // todo make it a POTION property, not ordinal() to ensure independence of the enum order
+                    potions.add(new Potion(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_BLUE));
+                } else if (potionBlockIndex == LevelObjectType.POTION_RED.ordinal()){
+                    potions.add(new Potion(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_RED));
+                }
+            }
+        }
+
+        return potions;
+    }
+
+    // todo this is all copy-paste from the method above.
+    // Containers are defined by pixels of blue color on the level template image
+    public static List<Container> getContainersFromLevelAsset(BufferedImage levelAsset) {
+
+        var containers = new ArrayList<Container>();
+        for (int row = 0; row < levelAsset.getHeight(); row++) {
+            for (int colunm = 0; colunm < levelAsset.getWidth(); colunm++) {
+                Color pixelColor = new Color(levelAsset.getRGB(colunm, row));
+                // if we find a pixel where its green value = 0, we draw a crab on that specific position
+                int container = pixelColor.getBlue();
+                if (container == LevelObjectType.BOX.ordinal()) { // todo make it a POTION property, not ordinal() to ensure independence of the enum order
+                    containers.add(new Container(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.BOX));
+                } else if (container == LevelObjectType.BARREL.ordinal()){
+                    containers.add(new Container(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.BARREL));
+                }
+            }
+        }
+
+        return containers;
     }
 
     public static Point getPlayerSpawnPoint(BufferedImage levelAsset){

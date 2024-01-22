@@ -1,7 +1,7 @@
 package org.example.inputs;
 
 import org.example.GamePanel;
-import org.example.gameState.GameState;
+import org.example.types.GameState;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;

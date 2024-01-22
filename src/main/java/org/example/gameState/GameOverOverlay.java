@@ -1,10 +1,7 @@
 package org.example.gameState;
 
-import org.example.Game;
 import org.example.GamePanel;
-import org.example.gameState.Drawable;
-import org.example.gameState.GameState;
-import org.example.gameState.Playing;
+import org.example.types.GameState;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

@@ -1,7 +1,7 @@
 package org.example.inputs;
 
 import org.example.GamePanel;
-import org.example.gameState.GameState;
+import org.example.types.GameState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

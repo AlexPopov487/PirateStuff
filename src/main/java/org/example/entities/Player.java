@@ -2,6 +2,7 @@ package org.example.entities;
 
 import org.example.Config;
 import org.example.gameState.Playing;
+import org.example.types.AtlasType;
 import org.example.utils.*;
 
 import java.awt.*;
@@ -9,9 +10,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import static org.example.Config.ENTITY_ANIMATION_SPEED;
-import static org.example.Config.GRAVITY_FORCE;
 import static org.example.Game.SCALE;
-import static org.example.entities.EntityType.*;
+import static org.example.types.EntityType.*;
 import static org.example.gameState.Playing.CHARACTER_SPRITE_HEIGHT;
 import static org.example.gameState.Playing.CHARACTER_SPRITE_WIDTH;
 import static org.example.utils.CollisionHelper.*;
@@ -64,6 +64,10 @@ public class Player extends Entity {
 
     public void update() {
         updateCharacterPosition();
+
+//        if (getDirections().isMoving()) {
+            checkPotionCollected();
+//        }
         setCharacterAnimation();
 
         updateAnimationTick();
@@ -172,6 +176,10 @@ public class Player extends Entity {
         getDirections().setMoving(true);
     }
 
+    private void checkPotionCollected() {
+        playing.checkPotionCollected(hitBox);
+    }
+
     private void handleJump() {
         if (getDirections().isInAir()) return;
 
@@ -241,6 +249,7 @@ public class Player extends Entity {
         if (animationIndex != 1 || isAttackPerformed) return;
 
         playing.checkEnemyHit(attackRange);
+        playing.checkLevelObjectDestroyed(attackRange);
         isAttackPerformed = true;
 
     }
