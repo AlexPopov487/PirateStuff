@@ -22,6 +22,7 @@ public class Container extends LevelObject implements Drawable {
     @Override
     public void update() {
         if (shouldAnimate) {
+
             updateAnimationTick();
         }
     }
@@ -33,7 +34,7 @@ public class Container extends LevelObject implements Drawable {
             initHitBox(Config.LevelEnv.BARREL_HIT_BOX_WIDTH, Config.LevelEnv.BARREL_HIT_BOX_HEIGHT);
         }
 
-        // By default objects are drawn from the top left corner of a tile (pixel)
+        // By default, objects are drawn from the top left corner of a tile (pixel)
         // offset to draw the container at the bottom on the tile (so the containers are places on the floor)
         hitBox.y += getyDrawOffset() + ((int) Game.SCALE * 2);
         // place the container at the center of the tile (x-axis)

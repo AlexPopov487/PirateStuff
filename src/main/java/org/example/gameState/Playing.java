@@ -83,6 +83,10 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         return player;
     }
 
+    public LevelManager getLevelManager() {
+        return levelManager;
+    }
+
     public void pauseGame() {
         isPaused = true;
     }
@@ -247,6 +251,10 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public void checkLevelObjectDestroyed(Rectangle2D.Float attackRange) {
         levelObjectManager.checkObjectDestroyed(attackRange);
+    }
+
+    public void checkSpikeTrapTouched(Rectangle2D.Float playerHitBox) {
+        levelObjectManager.checkSpikeTrapTouched(playerHitBox);
     }
 
     private void calculateLevelOffset() {

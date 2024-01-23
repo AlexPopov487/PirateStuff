@@ -49,41 +49,42 @@ public class Config {
         public static final int SMALL_CLOUD_HEIGHT = (int) (SMALL_CLOUD_HEIGHT_DEFAULT * SCALE);
 
 
-//        public static final int POTION_RED = 0;
-//        public static final int POTION_BLUE = 1;
-//        public static final int BARREL = 2;
-//        public static final int BOX = 3;
-
-        public static final int POTION_RED_VALUE = 15;
-        public static final int POTION_BLUE_VALUE = 10;
 
         public static final int CONTAINER_WIDTH_DEFAULT = 40;
         public static final int CONTAINER_HEIGHT_DEFAULT = 30;
         public static final int CONTAINER_WIDTH = (int) (CONTAINER_WIDTH_DEFAULT * SCALE);
         public static final int CONTAINER_HEIGHT = (int) (CONTAINER_HEIGHT_DEFAULT * SCALE);
-
-        public static final int POTION_WIDTH_DEFAULT = 12;
-        public static final int POTION_HEIGHT_DEFAULT = 16;
-        public static final int POTION_WIDTH = (int) (POTION_WIDTH_DEFAULT * SCALE);
-        public static final int POTION_HEIGHT = (int) (POTION_HEIGHT_DEFAULT * SCALE);
-
-        public static final int POTION_HIT_BOX_WIDTH = (int) (7 * SCALE);
-        public static final int POTION_HIT_BOX_HEIGHT = (int) (14 * SCALE);
-        public static final int POTION_DRAW_OFFSET_X = (int) (3 * SCALE);
-        public static final int POTION_DRAW_OFFSET_Y = (int) (2 * SCALE);
-
         public static final int BOX_HIT_BOX_WIDTH = (int) (25 * SCALE);
         public static final int BOX_HIT_BOX_HEIGHT = (int) (18 * SCALE);
         public static final int BOX_DRAW_OFFSET_X = (int) (7 * SCALE);
         public static final int BOX_DRAW_OFFSET_Y = (int) (12 * SCALE);
-
         public static final int BARREL_HIT_BOX_WIDTH = (int) (23 * SCALE);
         public static final int BARREL_HIT_BOX_HEIGHT = (int) (25 * SCALE);
         public static final int BARREL_DRAW_OFFSET_X = (int) (8 * SCALE);
         public static final int BARREL_DRAW_OFFSET_Y = (int) (5 * SCALE);
 
 
+        public static final int POTION_WIDTH_DEFAULT = 12;
+        public static final int POTION_HEIGHT_DEFAULT = 16;
+        public static final int POTION_WIDTH = (int) (POTION_WIDTH_DEFAULT * SCALE);
+        public static final int POTION_HEIGHT = (int) (POTION_HEIGHT_DEFAULT * SCALE);
+        public static final int POTION_HIT_BOX_WIDTH = (int) (7 * SCALE);
+        public static final int POTION_HIT_BOX_HEIGHT = (int) (14 * SCALE);
+        public static final int POTION_DRAW_OFFSET_X = (int) (3 * SCALE);
+        public static final int POTION_DRAW_OFFSET_Y = (int) (2 * SCALE);
+        public static final int POTION_RED_VALUE = 15;
+        public static final int POTION_BLUE_VALUE = 10;
         public static final int POTION_HOVER_OFFSET_MAX = (int) (7 * SCALE);
+
+
+        public static final int SPIKE_WIDTH_DEFAULT = 32;
+        public static final int SPIKE_HEIGHT_DEFAULT = 32;
+        public static final int SPIKE_WIDTH = (int) (SPIKE_WIDTH_DEFAULT * SCALE);
+        public static final int SPIKE_HEIGHT = (int) (SPIKE_HEIGHT_DEFAULT * SCALE);
+        public static final int SPIKE_HIT_BOX_WIDTH = (int) (32 * SCALE);
+        public static final int SPIKE_HIT_BOX_HEIGHT = (int) (16 * SCALE);
+        public static final int SPIKE_DRAW_OFFSET_X = 0;
+        public static final int SPIKE_DRAW_OFFSET_Y = (int) (16 * SCALE);
 
     }
 

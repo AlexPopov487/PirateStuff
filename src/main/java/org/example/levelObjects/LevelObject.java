@@ -112,6 +112,10 @@ public class LevelObject extends BaseEntity {
                 xDrawOffset = Config.LevelEnv.BARREL_DRAW_OFFSET_X;
                 yDrawOffset = Config.LevelEnv.BARREL_DRAW_OFFSET_Y;
             }
+            case SPIKE -> {
+                xDrawOffset = Config.LevelEnv.SPIKE_DRAW_OFFSET_X;
+                yDrawOffset = Config.LevelEnv.SPIKE_DRAW_OFFSET_Y;
+            }
         }
     }
 }

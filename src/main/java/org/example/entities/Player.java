@@ -67,6 +67,7 @@ public class Player extends Entity {
 
 //        if (getDirections().isMoving()) {
             checkPotionCollected();
+            checkSpikeTrapTouched();
 //        }
         setCharacterAnimation();
 
@@ -178,6 +179,10 @@ public class Player extends Entity {
 
     private void checkPotionCollected() {
         playing.checkPotionCollected(hitBox);
+    }
+
+    private void checkSpikeTrapTouched() {
+        playing.checkSpikeTrapTouched(hitBox);
     }
 
     private void handleJump() {

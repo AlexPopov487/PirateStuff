@@ -5,6 +5,7 @@ import org.example.GamePanel;
 import org.example.entities.Crabby;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.Potion;
+import org.example.levelObjects.Spike;
 import org.example.utils.Helper;
 
 import java.awt.*;
@@ -17,6 +18,7 @@ public class Level {
     private List<Crabby> crabs;
     private List<Potion> potions;
     private List<Container> containers;
+    private List<Spike> spikes;
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -32,6 +34,7 @@ public class Level {
         prepareEnemies();
         preparePotions();
         prepareContainers();
+        prepareSpikes();
         calculateLevelOffsets();
         calculatePlayerSpawnPosition();
     }
@@ -64,6 +67,10 @@ public class Level {
         return containers;
     }
 
+    public List<Spike> getSpikes() {
+        return spikes;
+    }
+
     private void calculatePlayerSpawnPosition() {
         playerSpawnPosition = Helper.getPlayerSpawnPoint(levelAsset);
     }
@@ -85,5 +92,9 @@ public class Level {
 
     private void preparePotions() {
         potions = Helper.getPotionsFromLevelAsset(levelAsset);
+    }
+
+    private void prepareSpikes() {
+        spikes = Helper.getSpikesFromLevelAsset(levelAsset);
     }
 }

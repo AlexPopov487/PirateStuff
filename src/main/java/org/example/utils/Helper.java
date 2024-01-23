@@ -5,6 +5,7 @@ import org.example.GamePanel;
 import org.example.entities.Crabby;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.Potion;
+import org.example.levelObjects.Spike;
 import org.example.types.EnemyType;
 import org.example.types.EntityType;
 import org.example.entities.GravitySettings;
@@ -102,6 +103,23 @@ public class Helper {
         }
 
         return containers;
+    }
+
+    public static List<Spike> getSpikesFromLevelAsset(BufferedImage levelAsset) {
+        var spikes = new ArrayList<Spike>();
+
+        for (int row = 0; row < levelAsset.getHeight(); row++) {
+            for (int colunm = 0; colunm < levelAsset.getWidth(); colunm++) {
+                Color pixelColor = new Color(levelAsset.getRGB(colunm, row));
+                // if we find a pixel where its green value = 0, we draw a crab on that specific position
+                int spike = pixelColor.getBlue();
+                if (spike == LevelObjectType.SPIKE.ordinal()) { // todo make it a POTION property, not ordinal() to ensure independence of the enum order
+                    spikes.add(new Spike(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.SPIKE));
+                }
+            }
+        }
+
+        return spikes;
     }
 
     public static Point getPlayerSpawnPoint(BufferedImage levelAsset){

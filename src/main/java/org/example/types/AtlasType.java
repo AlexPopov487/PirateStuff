@@ -19,6 +19,7 @@ public enum AtlasType {
     ATLAS_LEVEL_COMPLETED("completed_sprite.png"),
     ATLAS_POTION("potions_sprites.png"),
     ATLAS_CONTAINER("objects_sprites.png"),
+    ATLAS_SPIKE_TRAP("trap_atlas.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

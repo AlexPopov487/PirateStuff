@@ -11,14 +11,18 @@ import org.example.utils.ResourceLoader;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LevelObjectManager {
     private final Playing playing;
     private BufferedImage[][] potionAssets;
     private BufferedImage[][] containerAssets;
+    private BufferedImage spikeAsset;
+    // todo this is not ok that potions, containers and enemies arrays are stored twice (in Level and ObjectManager/EnemyManager)
     private List<Potion> potions;
     private List<Container> containers;
+    private List<Spike> spikes;
 
     public LevelObjectManager(Playing playing) {
         this.playing = playing;
@@ -26,8 +30,9 @@ public class LevelObjectManager {
     }
 
     public void loadLevelObjects(Level level) {
-        potions = level.getPotions();
-        containers = level.getContainers();
+        potions = new ArrayList<>(level.getPotions());
+        containers = new ArrayList<>(level.getContainers());
+        spikes = new ArrayList<>(level.getSpikes());
     }
 
     public void update() {
@@ -47,6 +52,7 @@ public class LevelObjectManager {
     public void render(Graphics g, int xLevelOffset) {
         renderPotions(g, xLevelOffset);
         renderContainers(g, xLevelOffset);
+        renderSpikeTraps(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
@@ -63,12 +69,23 @@ public class LevelObjectManager {
 
     public void checkObjectDestroyed(Rectangle2D.Float playerAttackRange) {
         for (Container container : containers) {
-            if (!container.isActive) continue;
+            // the container.shouldAnimate check ensures that the object can be hit only once
+            if (!container.isActive || container.shouldAnimate) continue;
 
             if (playerAttackRange.intersects(container.getHitBox())) {
                 container.setShouldAnimate(true);
                 dropPotionFromContainer(container);
                 return;
+            }
+        }
+    }
+
+    public void checkSpikeTrapTouched(Rectangle2D.Float playerHitBox) {
+        for (Spike spike : spikes) {
+            if (!spike.isActive) continue;
+
+            if (playerHitBox.intersects(spike.hitBox)) {
+                playing.getPlayer().getHeath().setCurrentHeath(0);
             }
         }
     }
@@ -83,8 +100,11 @@ public class LevelObjectManager {
     }
 
     public void resetAll() {
+        loadLevelObjects(playing.getLevelManager().getCurrentLevel());
+
         containers.forEach(Container::reset);
         potions.forEach(Potion::reset);
+        spikes.forEach(Spike::reset);
     }
 
     private void renderPotions(Graphics g, int xLevelOffset) {
@@ -109,6 +129,19 @@ public class LevelObjectManager {
                     ((int) container.getHitBox().y - container.getyDrawOffset()),
                     Config.LevelEnv.CONTAINER_WIDTH,
                     Config.LevelEnv.CONTAINER_HEIGHT,
+                    null);
+        }
+    }
+
+    private void renderSpikeTraps(Graphics g, int xLevelOffset) {
+        for (Spike spike : spikes) {
+            if (!spike.isActive) continue;
+
+            g.drawImage(spikeAsset,
+                    ((int) spike.getHitBox().x - spike.getxDrawOffset() - xLevelOffset),
+                    ((int) spike.getHitBox().y - spike.getyDrawOffset()),
+                    Config.LevelEnv.SPIKE_WIDTH,
+                    Config.LevelEnv.SPIKE_HEIGHT,
                     null);
         }
     }
@@ -149,5 +182,7 @@ public class LevelObjectManager {
                         Config.LevelEnv.CONTAINER_HEIGHT_DEFAULT);
             }
         }
+
+        spikeAsset = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_SPIKE_TRAP);
     }
 }
