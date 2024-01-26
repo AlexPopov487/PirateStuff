@@ -14,18 +14,6 @@ public class CollisionHelper {
     }
 
 
-    // check, whether a certain position (x, y) is either a solid lvl object or is out of bounds of the game window
-    private static boolean isSolid(float x, float y, int[][] currentLevelData) {
-        int maxLevelWidth = currentLevelData[0].length * GamePanel.getCurrentTileSize();
-        if (x < 0 || x >= maxLevelWidth) return true;
-        if (y < 0 || y >= GamePanel.getWindowHeight()) return true;
-
-        int xIndex = (int) x / GamePanel.getCurrentTileSize();
-        int yIndex = (int) y / GamePanel.getCurrentTileSize();
-
-        return isTileSolid(xIndex, yIndex, currentLevelData);
-    }
-
     public static boolean isTileSolid(int tileX, int tileY, int[][] lvlData) {
         int spriteIndex = lvlData[tileY][tileX];
 
@@ -80,29 +68,51 @@ public class CollisionHelper {
     }
 
     // check is there is any visible obstacle (or pit) between two points
-    public static boolean isDistanceClearFromObstacle(int[][] levelData, Rectangle2D.Float firstHitBox, Rectangle2D.Float secondHitBox, int currentTileY) {
+    public static boolean isDistanceClearFromObstacle(int[][] levelData, Rectangle2D.Float firstHitBox, Rectangle2D.Float secondHitBox, int currentTileY, boolean checkPits) {
         int firstTileX = (int) (firstHitBox.x / GamePanel.getCurrentTileSize());
         int secondTileX = (int) (secondHitBox.x / GamePanel.getCurrentTileSize());
 
         if (firstTileX > secondTileX) {
-            return isDistanceClear(secondTileX, firstTileX, currentTileY, levelData);
+            return isDistanceClear(secondTileX, firstTileX, currentTileY, levelData, checkPits);
         } else {
-            return isDistanceClear(firstTileX, secondTileX, currentTileY, levelData);
+            return isDistanceClear(firstTileX, secondTileX, currentTileY, levelData, checkPits);
         }
     }
 
-    private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData) {
+    public static boolean hasProjectileHitObstacle(Rectangle2D.Float projectileHitBox, int[][] levelData) {
+        float projectileCenterX = projectileHitBox.x + projectileHitBox.width / 2;
+        float projectileCenterY = projectileHitBox.y + projectileHitBox.height / 2;
+
+        return isSolid(projectileCenterX, projectileCenterY, levelData);
+    }
+
+    private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData, boolean checkPits) {
         // loop from the xTile of the first object to the xTile of the second object and check for obstacles
         for (int i = 0; i < endX - startX; i++) {
             if (isTileSolid(startX + i, y, levelData)) {
                 return false;
             }
 
-            // check tiles below to determine whether there is a pit between 2 objects
-            if (!isTileSolid(startX + i, y + 1, levelData)) {
-                return false;
+            if (checkPits) {
+                // check tiles below to determine whether there is a pit between 2 objects
+                if (!isTileSolid(startX + i, y + 1, levelData)) {
+                    return false;
+                }
             }
+
         }
         return true;
+    }
+
+    // check, whether a certain position (x, y) is either a solid lvl object or is out of bounds of the game window
+    private static boolean isSolid(float x, float y, int[][] currentLevelData) {
+        int maxLevelWidth = currentLevelData[0].length * GamePanel.getCurrentTileSize();
+        if (x < 0 || x >= maxLevelWidth) return true;
+        if (y < 0 || y >= GamePanel.getWindowHeight()) return true;
+
+        int xIndex = (int) x / GamePanel.getCurrentTileSize();
+        int yIndex = (int) y / GamePanel.getCurrentTileSize();
+
+        return isTileSolid(xIndex, yIndex, currentLevelData);
     }
 }

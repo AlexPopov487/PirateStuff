@@ -105,9 +105,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             levelManager.update();
             player.update();
             checkPlayerAlive();
-            enemyManager.update(levelManager.getCurrentLevel().getLevelData());
+            enemyManager.update(levelManager.getCurrentLevel().getLevelData(), player);
             checkPlayerCloseToBorder();
-            levelObjectManager.update();
+            levelObjectManager.update(levelManager.getCurrentLevel().getLevelData(), player);
         }
     }
 

@@ -134,7 +134,7 @@ public abstract class Enemy extends Entity {
 
         if (!isPlayerInVisualRange(player)) return false;
 
-        return CollisionHelper.isDistanceClearFromObstacle(levelData, hitBox, player.getHitBox(), enemyTileY);
+        return CollisionHelper.isDistanceClearFromObstacle(levelData, hitBox, player.getHitBox(), enemyTileY, true);
     }
 
     protected void moveTowardsPlayer(Player player) {

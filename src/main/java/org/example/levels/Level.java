@@ -3,6 +3,7 @@ package org.example.levels;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
+import org.example.levelObjects.Cannon;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.Potion;
 import org.example.levelObjects.Spike;
@@ -19,6 +20,7 @@ public class Level {
     private List<Potion> potions;
     private List<Container> containers;
     private List<Spike> spikes;
+    private List<Cannon> cannons;
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -35,6 +37,7 @@ public class Level {
         preparePotions();
         prepareContainers();
         prepareSpikes();
+        prepareCannons();
         calculateLevelOffsets();
         calculatePlayerSpawnPosition();
     }
@@ -71,6 +74,10 @@ public class Level {
         return spikes;
     }
 
+    public List<Cannon> getCannons() {
+        return cannons;
+    }
+
     private void calculatePlayerSpawnPosition() {
         playerSpawnPosition = Helper.getPlayerSpawnPoint(levelAsset);
     }
@@ -96,5 +103,9 @@ public class Level {
 
     private void prepareSpikes() {
         spikes = Helper.getSpikesFromLevelAsset(levelAsset);
+    }
+
+    private void prepareCannons() {
+        cannons = Helper.getCannonsFromLevelAsset(levelAsset);
     }
 }

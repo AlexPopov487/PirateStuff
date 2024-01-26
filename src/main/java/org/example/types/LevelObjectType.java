@@ -5,7 +5,10 @@ public enum LevelObjectType {
     POTION_RED(1,7),
     BOX(0,8),
     BARREL(1, 8),
-    SPIKE(0, 0);
+    SPIKE(0, 0),
+    CANNON_LEFT(0, 7),
+    CANNON_RIGHT(0, 7),
+    PROJECTILE(0,0);
 
     private final int spriteIndex;
     private final int frameCount;

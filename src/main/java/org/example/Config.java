@@ -5,6 +5,8 @@ import org.example.types.EnemyState;
 import org.example.types.EnemyType;
 import org.example.types.LevelObjectType;
 
+import java.nio.channels.FileLock;
+
 import static org.example.Game.SCALE;
 
 public class Config {
@@ -86,6 +88,26 @@ public class Config {
         public static final int SPIKE_DRAW_OFFSET_X = 0;
         public static final int SPIKE_DRAW_OFFSET_Y = (int) (16 * SCALE);
 
+        public static final int CANNON_WIDTH_DEFAULT = 40;
+        public static final int CANNON_HEIGHT_DEFAULT = 26;
+        public static final int CANNON_WIDTH = (int) (CANNON_WIDTH_DEFAULT * SCALE);
+        public static final int CANNON_HEIGHT = (int) (CANNON_HEIGHT_DEFAULT * SCALE);
+        public static final int CANNON_HIT_BOX_WIDTH = (int) (40 * SCALE);
+        public static final int CANNON_HIT_BOX_HEIGHT = (int) (26 * SCALE);
+
+
+        public static final int CANNON_BALL_WIDTH_DEFAULT = 15;
+        public static final int CANNON_BALL_HEIGHT_DEFAULT = 15;
+        public static final int CANNON_BALL_WIDTH = (int) (CANNON_BALL_WIDTH_DEFAULT * SCALE);
+        public static final int CANNON_BALL_HEIGHT = (int) (CANNON_BALL_HEIGHT_DEFAULT * SCALE);
+        public static final int CANNON_BALL_HIT_BOX_WIDTH = (int) (40 * SCALE);
+        public static final int CANNON_BALL_HIT_BOX_HEIGHT = (int) (26 * SCALE);
+
+        // offsets are needed to tune up the cannon ball spawn point exactly to the end of the cannon barrel
+        public static final int CANNON_BALL_OFFSET_X_LEFT = (int) (-3 * SCALE);
+        public static final int CANNON_BALL_OFFSET_X_RIGHT = (int) (29 * SCALE);
+        public static final int CANNON_BALL_OFFSET_Y = (int) (5 * SCALE);
+        public static final float CANNON_BALL_SPEED =  (0.75f * SCALE);
     }
 
     public static class Player {

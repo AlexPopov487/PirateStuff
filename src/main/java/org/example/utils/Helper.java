@@ -3,13 +3,14 @@ package org.example.utils;
 import org.example.Config;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
+import org.example.entities.GravitySettings;
+import org.example.levelObjects.Cannon;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.Potion;
 import org.example.levelObjects.Spike;
+import org.example.levels.LevelManager;
 import org.example.types.EnemyType;
 import org.example.types.EntityType;
-import org.example.entities.GravitySettings;
-import org.example.levels.LevelManager;
 import org.example.types.LevelObjectType;
 
 import java.awt.*;
@@ -75,7 +76,7 @@ public class Helper {
                 int potionBlockIndex = pixelColor.getBlue();
                 if (potionBlockIndex == LevelObjectType.POTION_BLUE.ordinal()) { // todo make it a POTION property, not ordinal() to ensure independence of the enum order
                     potions.add(new Potion(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_BLUE));
-                } else if (potionBlockIndex == LevelObjectType.POTION_RED.ordinal()){
+                } else if (potionBlockIndex == LevelObjectType.POTION_RED.ordinal()) {
                     potions.add(new Potion(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_RED));
                 }
             }
@@ -96,7 +97,7 @@ public class Helper {
                 int container = pixelColor.getBlue();
                 if (container == LevelObjectType.BOX.ordinal()) { // todo make it a POTION property, not ordinal() to ensure independence of the enum order
                     containers.add(new Container(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.BOX));
-                } else if (container == LevelObjectType.BARREL.ordinal()){
+                } else if (container == LevelObjectType.BARREL.ordinal()) {
                     containers.add(new Container(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.BARREL));
                 }
             }
@@ -122,7 +123,26 @@ public class Helper {
         return spikes;
     }
 
-    public static Point getPlayerSpawnPoint(BufferedImage levelAsset){
+    public static List<Cannon> getCannonsFromLevelAsset(BufferedImage levelAsset) {
+        var cannons = new ArrayList<Cannon>();
+
+        for (int row = 0; row < levelAsset.getHeight(); row++) {
+            for (int colunm = 0; colunm < levelAsset.getWidth(); colunm++) {
+                Color pixelColor = new Color(levelAsset.getRGB(colunm, row));
+                // if we find a pixel where its green value = 0, we draw a crab on that specific position
+                int cannon = pixelColor.getBlue();
+                if (cannon == LevelObjectType.CANNON_RIGHT.ordinal()) {
+                    cannons.add(new Cannon(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.CANNON_RIGHT));
+                } else if (cannon == LevelObjectType.CANNON_LEFT.ordinal()) { // todo make it a CANNON property, not ordinal() to ensure independence of the enum order
+                    cannons.add(new Cannon(colunm * GamePanel.getCurrentTileSize(), row * GamePanel.getCurrentTileSize(), LevelObjectType.CANNON_LEFT));
+                }
+            }
+        }
+
+        return cannons;
+    }
+
+    public static Point getPlayerSpawnPoint(BufferedImage levelAsset) {
 
         for (int row = 0; row < levelAsset.getHeight(); row++) {
             for (int colunm = 0; colunm < levelAsset.getWidth(); colunm++) {
@@ -140,9 +160,11 @@ public class Helper {
     }
 
     public static GravitySettings generateGravitySettingForEntity(EntityType entityType) {
-         return switch (entityType) {
-            case PLAYER -> new GravitySettings(Config.Player.AIR_SPEED, GRAVITY_FORCE, Config.Player.JUMP_SPEED, Config.Player.POST_COLLISION_FALL_SPEED);
-            case ENEMY -> new GravitySettings(Config.Enemy.AIR_SPEED, GRAVITY_FORCE, Config.Enemy.JUMP_SPEED, Config.Enemy.POST_COLLISION_FALL_SPEED);
+        return switch (entityType) {
+            case PLAYER ->
+                    new GravitySettings(Config.Player.AIR_SPEED, GRAVITY_FORCE, Config.Player.JUMP_SPEED, Config.Player.POST_COLLISION_FALL_SPEED);
+            case ENEMY ->
+                    new GravitySettings(Config.Enemy.AIR_SPEED, GRAVITY_FORCE, Config.Enemy.JUMP_SPEED, Config.Enemy.POST_COLLISION_FALL_SPEED);
         };
     }
 }

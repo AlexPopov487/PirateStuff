@@ -30,13 +30,13 @@ public class EnemyManager {
         renderCrabs(graphics, xLevelOffset);
     }
 
-    public void update(int[][] levelData) {
+    public void update(int[][] levelData, Player player) {
         boolean isAnyActiveLeft = false;
 
         for (Crabby c : crabbyList) {
             if (!c.isActive()) continue;
 
-            c.update(levelData, playing.getPlayer());
+            c.update(levelData, player);
             isAnyActiveLeft = true;
         }
 

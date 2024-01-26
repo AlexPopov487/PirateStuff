@@ -33,7 +33,9 @@ public class LevelObject extends BaseEntity {
         isActive = true;
 
         if (LevelObjectType.BARREL.equals(objectType)
-                || LevelObjectType.BOX.equals(objectType)) {
+                || LevelObjectType.BOX.equals(objectType)
+                || LevelObjectType.CANNON_LEFT.equals(objectType)
+                || LevelObjectType.CANNON_RIGHT.equals(objectType)) {
             shouldAnimate = false;
         } else {
             shouldAnimate = true;
@@ -72,6 +74,10 @@ public class LevelObject extends BaseEntity {
         this.shouldAnimate = shouldAnimate;
     }
 
+    public int getAnimationTick() {
+        return animationTick;
+    }
+
     protected void initHitBox(int width, int height) {
         hitBox = new Rectangle2D.Float(x, y, width, height);
     }
@@ -81,6 +87,7 @@ public class LevelObject extends BaseEntity {
         g.setColor(Color.PINK);
         g.drawRect((int) hitBox.x - xLevelOffset, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
     }
+
     protected void updateAnimationTick() {
         animationTick++;
         if (animationTick >= ENTITY_ANIMATION_SPEED) {
@@ -93,6 +100,9 @@ public class LevelObject extends BaseEntity {
                         || LevelObjectType.BOX.equals(objectType)) {
                     shouldAnimate = false;
                     isActive = false;
+                } else if (LevelObjectType.CANNON_RIGHT.equals(objectType)
+                        || LevelObjectType.CANNON_LEFT.equals(objectType)) {
+                    shouldAnimate = false;
                 }
             }
         }
