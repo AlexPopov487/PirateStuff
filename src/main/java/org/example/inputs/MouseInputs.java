@@ -16,7 +16,7 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().mouseClicked(e);
             case MENU -> gamePanel.getGame().getMenu().mouseClicked(e);
             case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().mouseClicked(e);
@@ -25,16 +25,16 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().mousePressed(e);
             case MENU -> gamePanel.getGame().getMenu().mousePressed(e);
-            case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().mouseReleased(e);
+            case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().mousePressed(e);
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().mouseReleased(e);
             case MENU -> gamePanel.getGame().getMenu().mouseReleased(e);
             case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().mouseReleased(e);
@@ -53,7 +53,7 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().mouseDragged(e);
             case MENU -> gamePanel.getGame().getMenu().mouseDragged(e);
             case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().mouseDragged(e);
@@ -62,7 +62,7 @@ public class MouseInputs implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().mouseMoved(e);
             case MENU -> gamePanel.getGame().getMenu().mouseMoved(e);
             case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().mouseMoved(e);

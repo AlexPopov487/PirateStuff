@@ -23,7 +23,7 @@ public class KeyboardInputs implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().keyPressed(e);
             case MENU -> gamePanel.getGame().getMenu().keyPressed(e);
             case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().keyPressed(e);
@@ -33,7 +33,7 @@ public class KeyboardInputs implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> gamePanel.getGame().getPlaying().keyReleased(e);
             case MENU -> gamePanel.getGame().getMenu().keyReleased(e);
             case GAME_OVER -> gamePanel.getGame().getGameOverOverlay().keyReleased(e);

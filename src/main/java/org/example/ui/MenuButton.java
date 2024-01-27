@@ -48,7 +48,7 @@ public class MenuButton implements Drawable {
     }
 
     public void updateGameState() {
-        GameState.state = state;
+        GameState.setState(state);
     }
 
     public void resetMenuButtonState() {

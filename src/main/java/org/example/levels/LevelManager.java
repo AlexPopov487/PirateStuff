@@ -67,7 +67,7 @@ public class LevelManager {
         if (currentLevelIndex >= levels.size()) {
             currentLevelIndex = 0; // todo add allLevelsCompleted overlay
             log.info("No more levels left! The game is completed!");
-            GameState.state = GameState.MENU;
+            GameState.setState(GameState.MENU);
         }
 
         return levels.get(currentLevelIndex);

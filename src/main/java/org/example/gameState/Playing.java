@@ -8,10 +8,10 @@ import org.example.entities.Player;
 import org.example.levelObjects.LevelObjectManager;
 import org.example.levels.Level;
 import org.example.levels.LevelManager;
+import org.example.types.AtlasType;
 import org.example.types.GameState;
 import org.example.ui.LevelCompletedOverlay;
 import org.example.ui.PauseOverlay;
-import org.example.types.AtlasType;
 import org.example.utils.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,6 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private final BufferedImage backgroundCloudBig;
     private final BufferedImage backgroundCloudSmall;
     private int[] smallCloudYPositions;
-
 
     // exceeding the threshold by x% of the windowWidth means that we need to move the level animation to the left
     private final int leftThreshold = (int) (0.4 * GamePanel.getWindowWidth());
@@ -99,12 +98,13 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void update() {
         if (isPaused) {
             pauseOverlay.update();
+//        } else if (shouldLaunchPlayerDyingAnimation) {
+//            player.update();
         } else if (isCurrLevelCompleted) {
             levelCompletedOverlay.update();
         } else {
             levelManager.update();
             player.update();
-            checkPlayerAlive();
             enemyManager.update(levelManager.getCurrentLevel().getLevelData(), player);
             checkPlayerCloseToBorder();
             levelObjectManager.update(levelManager.getCurrentLevel().getLevelData(), player);
@@ -161,7 +161,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void mouseMoved(MouseEvent e) {
         if (isPaused) {
             pauseOverlay.mouseMoved(e);
-        }else if (isCurrLevelCompleted) {
+        } else if (isCurrLevelCompleted) {
             levelCompletedOverlay.mouseMoved(e);
         }
     }
@@ -225,7 +225,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         isCurrLevelCompleted = false;
     }
 
-    public void loadNextLevel(){
+    public void loadNextLevel() {
         resetPlaying();
 
         Level level = levelManager.loadNextLevel();
@@ -265,12 +265,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         player.getActions().setAttacking(true);
     }
 
-    private void checkPlayerAlive() {
-        if (player.getHeath().isDead()) setGameOver();
-    }
-
-    private void setGameOver() {
-        GameState.state = GAME_OVER;
+    public void setGameOver() {
+        GameState.setState(GAME_OVER);
     }
 
     private void switchPaused() {

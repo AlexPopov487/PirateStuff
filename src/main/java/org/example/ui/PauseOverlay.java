@@ -99,7 +99,7 @@ public class PauseOverlay implements Drawable {
         } else if (isHoveredOverButton(e, sfxButton.getHitBox()) && sfxButton.isMousePressed()) {
             sfxButton.switchMuted();
         } else if (isHoveredOverButton(e, exitToMenuButton.getHitBox()) && exitToMenuButton.isMousePressed()) {
-            GameState.state = GameState.MENU;
+            GameState.setState(GameState.MENU);
             playing.resetPlaying();
         } else if (isHoveredOverButton(e, restartButton.getHitBox()) && restartButton.isMousePressed()) {
             playing.resetPlaying();

@@ -7,6 +7,13 @@ public enum GameState {
     QUIT,
     GAME_OVER;
 
-    public static GameState state = MENU;
+    private static GameState state = MENU;
 
+    public static GameState getState() {
+        return state;
+    }
+
+    public static void setState(GameState state) {
+        GameState.state = state;
+    }
 }

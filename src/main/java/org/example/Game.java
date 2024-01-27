@@ -104,13 +104,13 @@ public class Game implements Runnable {
     }
 
     public void pauseGame() {
-        if (GameState.PLAYING.equals(GameState.state)) {
+        if (GameState.PLAYING.equals(GameState.getState())) {
             playing.getPlayer().getDirections().reset();
         }
     }
 
     public void render(Graphics g) {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> playing.render(g);
             case MENU -> menu.render(g);
             case GAME_OVER -> gameOverOverlay.render(g);
@@ -118,7 +118,7 @@ public class Game implements Runnable {
     }
 
     private void update() {
-        switch (GameState.state) {
+        switch (GameState.getState()) {
             case PLAYING -> playing.update();
             case MENU -> menu.update();
             case OPTIONS -> {

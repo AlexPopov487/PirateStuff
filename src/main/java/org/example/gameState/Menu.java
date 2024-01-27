@@ -97,7 +97,7 @@ public class Menu extends StateBase implements GameStateActions, Drawable {
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            GameState.state = GameState.PLAYING;
+            GameState.setState(GameState.PLAYING);
         }
     }
 

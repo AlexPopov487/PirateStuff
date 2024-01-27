@@ -3,7 +3,10 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.types.AtlasType;
-import org.example.utils.*;
+import org.example.utils.CollisionHelper;
+import org.example.utils.Helper;
+import org.example.utils.PlayerConstants;
+import org.example.utils.ResourceLoader;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -11,9 +14,9 @@ import java.awt.image.BufferedImage;
 
 import static org.example.Config.ENTITY_ANIMATION_SPEED;
 import static org.example.Game.SCALE;
-import static org.example.types.EntityType.*;
 import static org.example.gameState.Playing.CHARACTER_SPRITE_HEIGHT;
 import static org.example.gameState.Playing.CHARACTER_SPRITE_WIDTH;
+import static org.example.types.EntityType.PLAYER;
 import static org.example.utils.CollisionHelper.*;
 import static org.example.utils.PlayerConstants.*;
 
@@ -28,6 +31,7 @@ public class Player extends Entity {
     // for handling rendering player sprite when going left
     private int xFlip = 0;
     private int widthFlip = 1;
+    private boolean isActive = true;
 
     PlayerConstants currentAnimation = SPRITE_JUMPING;
 
@@ -58,22 +62,33 @@ public class Player extends Entity {
         }
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public Actions getActions() {
         return actions;
     }
 
     public void update() {
-        updateCharacterPosition();
+        statusBar.update();
+        checkPlayerAlive();
 
-//        if (getDirections().isMoving()) {
+        if (isActive) {
+            updateCharacterPosition();
+
             checkPotionCollected();
             checkSpikeTrapTouched();
-//        }
-        setCharacterAnimation();
 
-        updateAnimationTick();
-        statusBar.update();
-        updateAttackRange();
+            setCharacterAnimation();
+
+            updateAnimationTick();
+            updateAttackRange();
+        }
     }
 
     public void render(Graphics g, int xLevelOffset) {
@@ -87,6 +102,23 @@ public class Player extends Entity {
                 null);
 //        drawHitBox(g, xLevelOffset);
 //        drawAttackRangeBox(g, xLevelOffset);
+    }
+
+    private void checkPlayerAlive() {
+        if (getHeath().isDead()) {
+            // player just died
+            if (isActive()) {
+                setActive(false);
+                resetAnimations();
+                currentAnimation = SPRITE_DEAD;
+            } else if (animationIndex == SPRITE_DEAD.getFrameCount() - 1 &&
+                    animationTick >= ENTITY_ANIMATION_SPEED - 1) {
+                // setting GAME_OVER only at the last frame of a dying animation
+                playing.setGameOver();
+            } else {
+                updateAnimationTick();
+            }
+        }
     }
 
     public void updateAttackRange() {
@@ -104,6 +136,7 @@ public class Player extends Entity {
     }
 
     public void reset() {
+        isActive = true;
         resetGravitySettings();
         getDirections().reset();
         resetInAir();
@@ -280,6 +313,8 @@ public class Player extends Entity {
     private void resetAnimations() {
         actions.setAttacking(false);
         isAttackPerformed = false;
+        animationTick = 0;
+        animationIndex = 0;
     }
 
     private void loadAnimations() {
