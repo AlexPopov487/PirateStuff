@@ -1,9 +1,11 @@
 package org.example;
 
+import org.example.gameState.Settings;
 import org.example.types.GameState;
 import org.example.gameState.Menu;
 import org.example.gameState.Playing;
 import org.example.gameState.GameOverOverlay;
+import org.example.ui.AudioOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +24,15 @@ public class Game implements Runnable {
     private final GamePanel gamePanel;
     private final Playing playing;
     private final Menu menu;
+    private final AudioOptions audioOptions;
+    private final Settings settings;
     private final GameOverOverlay gameOverOverlay;
 
     public Game() {
         gamePanel = new GamePanel(this);
+        audioOptions = new AudioOptions();
         menu = new Menu(this);
+        settings = new Settings(this);
         playing = new Playing(this);
         gameOverOverlay = new GameOverOverlay(playing);
         GameWindow gameWindow = new GameWindow(gamePanel);
@@ -34,10 +40,6 @@ public class Game implements Runnable {
         gamePanel.requestFocus();
 
         startGameLoop(); // should be called last!
-    }
-
-    private void startGameLoop() {
-        Executors.newSingleThreadExecutor().submit(this);
     }
 
     @Override
@@ -114,17 +116,30 @@ public class Game implements Runnable {
             case PLAYING -> playing.render(g);
             case MENU -> menu.render(g);
             case GAME_OVER -> gameOverOverlay.render(g);
+            case OPTIONS -> settings.render(g);
         }
+    }
+
+    public AudioOptions getAudioOptions() {
+        return audioOptions;
+    }
+
+
+    public Settings getSettings() {
+        return settings;
     }
 
     private void update() {
         switch (GameState.getState()) {
             case PLAYING -> playing.update();
             case MENU -> menu.update();
-            case OPTIONS -> {
-            }
+            case OPTIONS -> settings.update();
             case QUIT -> System.exit(0);
             case GAME_OVER -> gameOverOverlay.update();
         }
+    }
+
+    private void startGameLoop() {
+        Executors.newSingleThreadExecutor().submit(this);
     }
 }

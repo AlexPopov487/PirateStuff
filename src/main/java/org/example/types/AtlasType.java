@@ -24,6 +24,7 @@ public enum AtlasType {
     ATLAS_PROJECTILE("ball.png"),
     ATLAS_DEATH_SCREEN("death_screen.png"),
     ATLAS_BACKGROUND_GAME_OVER("background_game_over.png"),
+    ATLAS_BACKGROUND_SETTINGS_OVERLAY("options_background.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

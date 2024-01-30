@@ -23,6 +23,10 @@ public class GameOverOverlay implements Drawable, GameStateActions {
     private BufferedImage gameOverScreenAsset;
     private UrmButton menuButton;
     private UrmButton replayButton;
+    private int gameOverlayX;
+    private int gameOverlayY;
+    private int gameOverlayWidth;
+    private int gameOverlayHeight;
 
     private final Playing playing;
 
@@ -35,13 +39,7 @@ public class GameOverOverlay implements Drawable, GameStateActions {
     @Override
     public void render(Graphics graphics) {
         graphics.drawImage(background, 0, 0, GamePanel.getWindowWidth(), GamePanel.getWindowHeight(), null);
-
-
-        int width = (int) (gameOverScreenAsset.getWidth() * Game.SCALE);
-        int height = (int) (gameOverScreenAsset.getHeight() * Game.SCALE);
-        int x = (GamePanel.getWindowWidth() / 2) - (width / 2);
-        int y = (GamePanel.getWindowHeight() / 2) - (height / 2);
-        graphics.drawImage(gameOverScreenAsset, x, y, width, height, null);
+        graphics.drawImage(gameOverScreenAsset, gameOverlayX, gameOverlayY, gameOverlayWidth, gameOverlayHeight, null);
 
         menuButton.render(graphics);
         replayButton.render(graphics);
@@ -116,6 +114,11 @@ public class GameOverOverlay implements Drawable, GameStateActions {
     private void preloadAssets() {
         gameOverScreenAsset = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_DEATH_SCREEN);
         background = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_BACKGROUND_GAME_OVER);
+
+        gameOverlayWidth = (int) (gameOverScreenAsset.getWidth() * Game.SCALE);
+        gameOverlayHeight = (int) (gameOverScreenAsset.getHeight() * Game.SCALE);
+        gameOverlayX = (GamePanel.getWindowWidth() / 2) - (gameOverlayWidth / 2);
+        gameOverlayY = (GamePanel.getWindowHeight() / 2) - (gameOverlayHeight / 2);
 
     }
 
