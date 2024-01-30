@@ -40,6 +40,10 @@ public class LevelManager {
         return levels.get(currentLevelIndex);
     }
 
+    public int getCurrentLevelIndex() {
+        return currentLevelIndex;
+    }
+
     public void render(Graphics g, int xLevelOffset) {
         Level currLevel = getCurrentLevel();
 

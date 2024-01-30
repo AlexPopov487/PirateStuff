@@ -5,6 +5,7 @@ import org.example.gameState.Playing;
 import org.example.levels.Level;
 import org.example.types.EnemyType;
 import org.example.types.AtlasType;
+import org.example.utils.CollisionHelper;
 import org.example.utils.ResourceLoader;
 
 import java.awt.*;
@@ -50,6 +51,18 @@ public class EnemyManager {
             if (!crabby.isActive()) continue;
 
             if (playerAttackRange.intersects(crabby.getHitBox())) {
+                crabby.takeDamage(Config.Enemy.CRAB_DAMAGE);
+                break;
+            }
+        }
+    }
+
+    public void checkEnemyStumped(Player player) {
+        for (Crabby crabby : crabbyList) {
+            if (!crabby.isActive()) continue;
+
+            if (CollisionHelper.isPlayerStumpsEnemy(player.getHitBox(), crabby.getHitBox())) {
+                //todo play punch sound
                 crabby.takeDamage(Config.Enemy.CRAB_DAMAGE);
                 break;
             }

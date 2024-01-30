@@ -56,9 +56,9 @@ public abstract class Enemy extends Entity {
         heath.subtractHealth(amount);
 
         if (heath.getCurrentHeath() == 0) {
-            enemyState = EnemyState.DEAD;
+            changeEnemyStateTo(EnemyState.DEAD);
         } else {
-            enemyState = EnemyState.HIT;
+            changeEnemyStateTo(EnemyState.HIT);
         }
     }
 

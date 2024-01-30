@@ -30,11 +30,14 @@ public class VolumeButton extends PauseButtonBase implements Drawable {
          size of the slider dragger
         */
         super(x + (width / 2), y, VOLUME_BUTTON_WIDTH, height);
-        dragButtonX = (x - (VOLUME_BUTTON_WIDTH / 2)) + (width / 2);
         volumeSliderX = x;
 
         sliderDraggedMinX = x;
         sliderDraggedMaxX = x + width - VOLUME_BUTTON_WIDTH;
+
+        double quarter = (sliderDraggedMaxX - sliderDraggedMinX) * 0.25;
+        dragButtonX = (int) (sliderDraggedMaxX - quarter);
+        hitBox.x = dragButtonX;
         preloadImages();
     }
 
@@ -71,6 +74,13 @@ public class VolumeButton extends PauseButtonBase implements Drawable {
 
         // update hitBox to a new x value
         hitBox.x = dragButtonX;
+    }
+
+    // For audio controls we need to get a current volume value, where 0f - min, 1f - max
+    public float calculateVolumeValue() {
+        float range = sliderDraggedMaxX - sliderDraggedMinX;
+        float relativeVolumeValue = dragButtonX - sliderDraggedMinX;
+        return relativeVolumeValue / range;
     }
 
     public void resetButtonState() {

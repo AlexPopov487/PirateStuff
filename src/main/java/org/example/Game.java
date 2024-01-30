@@ -1,10 +1,11 @@
 package org.example;
 
-import org.example.gameState.Settings;
-import org.example.types.GameState;
+import org.example.audio.AudioPlayer;
+import org.example.gameState.GameOverOverlay;
 import org.example.gameState.Menu;
 import org.example.gameState.Playing;
-import org.example.gameState.GameOverOverlay;
+import org.example.gameState.Settings;
+import org.example.types.GameState;
 import org.example.ui.AudioOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +28,15 @@ public class Game implements Runnable {
     private final AudioOptions audioOptions;
     private final Settings settings;
     private final GameOverOverlay gameOverOverlay;
+    private final AudioPlayer audioPlayer;
+
+
+    private GameState previosGameState;
 
     public Game() {
         gamePanel = new GamePanel(this);
-        audioOptions = new AudioOptions();
+        this.audioPlayer = new AudioPlayer();
+        audioOptions = new AudioOptions(this);
         menu = new Menu(this);
         settings = new Settings(this);
         playing = new Playing(this);
@@ -105,6 +111,10 @@ public class Game implements Runnable {
         return gameOverOverlay;
     }
 
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
+
     public void pauseGame() {
         if (GameState.PLAYING.equals(GameState.getState())) {
             playing.getPlayer().getDirections().reset();
@@ -137,9 +147,37 @@ public class Game implements Runnable {
             case QUIT -> System.exit(0);
             case GAME_OVER -> gameOverOverlay.update();
         }
+
+        if (!hasGameStateChanged()) return;
+        updateGameStateAudio();
+    }
+
+    private void updateGameStateAudio() {
+        switch (GameState.getState()) {
+            case PLAYING -> {
+                int currentLevelIndex = getPlaying().getLevelManager().getCurrentLevelIndex();
+                getAudioPlayer().playLevelSong(currentLevelIndex);
+            }
+            case MENU -> getAudioPlayer().playSong(Config.Audio.MENU_SONG_INDEX);
+            case OPTIONS -> {
+            }
+            case QUIT -> {
+            }
+            case GAME_OVER -> {
+                getAudioPlayer().stopPlaying();
+                getAudioPlayer().playEffect(Config.Audio.GAME_OVER_EFFECT_INDEX);
+            }
+        }
     }
 
     private void startGameLoop() {
         Executors.newSingleThreadExecutor().submit(this);
+    }
+
+    private boolean hasGameStateChanged() {
+        if (previosGameState == GameState.getState()) return false;
+
+        previosGameState = GameState.getState();
+        return true;
     }
 }

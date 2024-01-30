@@ -2,6 +2,7 @@ package org.example.utils;
 
 import org.example.GamePanel;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 public class CollisionHelper {
@@ -84,6 +85,11 @@ public class CollisionHelper {
         float projectileCenterY = projectileHitBox.y + projectileHitBox.height / 2;
 
         return isSolid(projectileCenterX, projectileCenterY, levelData);
+    }
+
+    public static boolean isPlayerStumpsEnemy(Rectangle2D.Float playerHitBox, Rectangle2D.Float enemyHitBox) {
+        Rectangle2D.Float playerFeet = new Rectangle2D.Float(playerHitBox.x, playerHitBox.y + playerHitBox.height, playerHitBox.width, 5);
+        return playerFeet.intersects(enemyHitBox.getX(), enemyHitBox.getY(), enemyHitBox.getWidth(), 5);
     }
 
     private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData, boolean checkPits) {

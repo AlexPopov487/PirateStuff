@@ -195,4 +195,22 @@ public class Config {
         public static final int HEALTH_BAR_X_START = (int) (34 * Game.SCALE) + STATUS_BAR_X;
         public static final int HEALTH_BAR_Y_START = (int) (14 * Game.SCALE) + STATUS_BAR_Y;
     }
+
+    public static class Audio {
+        public static int MENU_SONG_INDEX = 0;
+        public static int LEVEL_1_SONG_INDEX = 1;
+        public static int LEVEL_2_SONG_INDEX = 2;
+
+        public static int DIE_EFFECT_INDEX = 0;
+        public static int JUMP_EFFECT_INDEX = 1;
+        public static int GAME_OVER_EFFECT_INDEX = 2;
+        public static int LEVEL_COMPLETED_EFFECT_INDEX = 3;
+        public static int ATTACK_1_EFFECT_INDEX = 4;
+        public static int ATTACK_2_EFFECT_INDEX = 5;
+        public static int ATTACK_3_EFFECT_INDEX = 6;
+        public static int CANNON_EFFECT_INDEX = 7;
+        public static int POISON_FOUND_EFFECT_INDEX = 8;
+        public static int PUNCH_EFFECT_INDEX = 9;
+//        public static int PLAYER_HURT_EFFECT_INDEX = 10;
+    }
 }

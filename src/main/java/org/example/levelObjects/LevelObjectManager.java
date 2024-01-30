@@ -32,7 +32,7 @@ public class LevelObjectManager {
     private List<Container> containers;
     private List<Spike> spikes;
     private List<Cannon> cannons;
-    private List<Projectile> projectiles = new ArrayList<>();
+    private final List<Projectile> projectiles = new ArrayList<>();
 
     public LevelObjectManager(Playing playing) {
         this.playing = playing;
@@ -206,10 +206,14 @@ public class LevelObjectManager {
         potions.add(new Potion(container.getHitBox().x + container.getHitBox().width / 2,
                 container.getHitBox().y - container.getHitBox().height / 4,
                 droppedPotionType));
+
+        playing.getGame().getAudioPlayer().playEffect(Config.Audio.POISON_FOUND_EFFECT_INDEX);
     }
 
     private void updateCannons(int[][] levelData, Player player) {
         for (Cannon cannon : cannons) {
+            if (System.currentTimeMillis() - cannon.getLastShotMillis() < Cannon.SHOOT_DELAY_MILLIS) continue;
+
             if (!cannon.shouldAnimate && cannon.canSeePlayer(levelData, player)) {
                 cannon.setShouldAnimate(true);
             }
@@ -237,6 +241,9 @@ public class LevelObjectManager {
         // Do not shoot the cannon right away. Instead, what for cannon shooting animation to begin and only then shoot
         if (cannon.getAnimationIndex() == 4 && cannon.getAnimationTick() == 0) {
             projectiles.add(new Projectile(cannon.getHitBox().x, cannon.getHitBox().y, LevelObjectType.PROJECTILE, cannon.objectType));
+            playing.getGame().getAudioPlayer().playEffect(Config.Audio.CANNON_EFFECT_INDEX);
+
+            cannon.setLastShotMillis(System.currentTimeMillis());
         }
     }
 

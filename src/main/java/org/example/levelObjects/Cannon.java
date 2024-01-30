@@ -13,11 +13,14 @@ import java.awt.*;
 public class Cannon extends LevelObject implements Drawable {
     protected static final float ATTACK_RANGE = GamePanel.getCurrentTileSize();
     protected static final float VISUAL_RANGE = GamePanel.getCurrentTileSize() * 5;
+    protected static final long SHOOT_DELAY_MILLIS = 1000;
+    private long lastShotMillis;
 
 
     private final int currentTileY;
     public Cannon(float x, float y, LevelObjectType levelObjectType) {
         super(x, y, levelObjectType, false);
+        lastShotMillis = System.currentTimeMillis();
         currentTileY = (int) (y / GamePanel.getCurrentTileSize());
         initHitBox(Config.LevelEnv.CANNON_HIT_BOX_WIDTH, Config.LevelEnv.CANNON_HIT_BOX_HEIGHT);
         // Align the cannon img to the center of the tile
@@ -39,6 +42,14 @@ public class Cannon extends LevelObject implements Drawable {
 
     public int getCurrentTileY() {
         return currentTileY;
+    }
+
+    public long getLastShotMillis() {
+        return lastShotMillis;
+    }
+
+    public void setLastShotMillis(long lastShotMillis) {
+        this.lastShotMillis = lastShotMillis;
     }
 
     public boolean canSeePlayer(int[][] levelData, Player player) {

@@ -1,7 +1,7 @@
 package org.example.ui;
 
+import org.example.Game;
 import org.example.gameState.Drawable;
-import org.example.types.GameState;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -12,13 +12,15 @@ import static org.example.Game.SCALE;
 import static org.example.utils.ButtonUtils.isHoveredOverButton;
 
 public class AudioOptions implements Drawable  {
-
+    private final Game game;
     private SoundButton musicButton;
     private SoundButton sfxButton;
     private VolumeButton volumeButton;
 
-    public AudioOptions() {
+    public AudioOptions(Game game) {
+        this.game = game;
         initButtons();
+        game.getAudioPlayer().setVolume(volumeButton.calculateVolumeValue());
     }
 
 
@@ -38,7 +40,13 @@ public class AudioOptions implements Drawable  {
 
     public void mouseDragged(MouseEvent e){
         if (volumeButton.isMousePressed()) {
+            float previousVolume = volumeButton.calculateVolumeValue();
             volumeButton.updateVolume(e.getX());
+            float currentVolume = volumeButton.calculateVolumeValue();
+            if (previousVolume != currentVolume) {
+                game.getAudioPlayer().setVolume(currentVolume);
+            }
+
         }
     }
 
@@ -54,9 +62,11 @@ public class AudioOptions implements Drawable  {
 
     public void mouseReleased(MouseEvent e) {
         if (isHoveredOverButton(e, musicButton.getHitBox()) && musicButton.isMousePressed()) {
-            musicButton.switchMuted();
+            musicButton.toggleMute();
+            game.getAudioPlayer().toggleSongMute();
         } else if (isHoveredOverButton(e, sfxButton.getHitBox()) && sfxButton.isMousePressed()) {
-            sfxButton.switchMuted();
+            sfxButton.toggleMute();
+            game.getAudioPlayer().toggleEffectMute();
         }
     }
 

@@ -45,7 +45,7 @@ public class SoundButton extends PauseButtonBase implements Drawable {
         }
     }
 
-    public void switchMuted() {
+    public void toggleMute() {
         isMuted = !isMuted;
     }
 

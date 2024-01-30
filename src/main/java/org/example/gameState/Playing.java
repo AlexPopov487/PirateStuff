@@ -98,10 +98,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void update() {
         if (isPaused) {
             pauseOverlay.update();
-//        } else if (shouldLaunchPlayerDyingAnimation) {
-//            player.update();
         } else if (isCurrLevelCompleted) {
             levelCompletedOverlay.update();
+
         } else {
             levelManager.update();
             player.update();
@@ -234,6 +233,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         player.setCurrentLevelData(level.getLevelData());
         player.setSpawnPosition(level.getPlayerSpawnPosition());
         maxLevelOffsetX = level.getMaxLevelOffsetX();
+        game.getAudioPlayer().playLevelSong(levelManager.getCurrentLevelIndex());
     }
 
     private void loadStartLevelResources() {
@@ -243,6 +243,10 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public void checkEnemyHit(Rectangle2D.Float playerAttackRange) {
         enemyManager.checkEnemyGotHit(playerAttackRange);
+    }
+
+    public void checkEnemyStumped(Player player) {
+        enemyManager.checkEnemyStumped(player);
     }
 
     public void checkPotionCollected(Rectangle2D.Float playerHitBox) {
@@ -266,6 +270,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     }
 
     public void setGameOver() {
+        resetPlaying();
         GameState.setState(GAME_OVER);
     }
 
@@ -315,5 +320,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public void setCurrLevelCompleted(boolean isCurrLevelCompleted) {
         this.isCurrLevelCompleted = isCurrLevelCompleted;
+        if (isCurrLevelCompleted) {
+            game.getAudioPlayer().playLvlCompletedEffect();
+        }
     }
 }

@@ -85,6 +85,7 @@ public class Player extends Entity {
             checkSpikeTrapTouched();
 
             setCharacterAnimation();
+            checkEnemyStumped();
 
             updateAnimationTick();
             updateAttackRange();
@@ -111,6 +112,7 @@ public class Player extends Entity {
                 setActive(false);
                 resetAnimations();
                 currentAnimation = SPRITE_DEAD;
+                playing.getGame().getAudioPlayer().playEffect(Config.Audio.DIE_EFFECT_INDEX);
             } else if (animationIndex == SPRITE_DEAD.getFrameCount() - 1 &&
                     animationTick >= ENTITY_ANIMATION_SPEED - 1) {
                 // setting GAME_OVER only at the last frame of a dying animation
@@ -218,9 +220,16 @@ public class Player extends Entity {
         playing.checkSpikeTrapTouched(hitBox);
     }
 
+    private void checkEnemyStumped() {
+        if (currentAnimation == SPRITE_FALLING) {
+            playing.checkEnemyStumped(this);
+        }
+    }
+
     private void handleJump() {
         if (getDirections().isInAir()) return;
 
+        playing.getGame().getAudioPlayer().playEffect(Config.Audio.JUMP_EFFECT_INDEX);
         getDirections().setInAir(true);
         getGravitySettings().setAirSpeed(getGravitySettings().getJumpSpeed());
     }
@@ -290,6 +299,8 @@ public class Player extends Entity {
         playing.checkLevelObjectDestroyed(attackRange);
         isAttackPerformed = true;
 
+        int attackEffectIndex = playing.getGame().getAudioPlayer().getAttackEffectRandomIndex();
+        playing.getGame().getAudioPlayer().playEffect(attackEffectIndex);
     }
 
     private void resetAnimationTick() {
