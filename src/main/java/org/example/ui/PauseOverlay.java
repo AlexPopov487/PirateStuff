@@ -83,6 +83,7 @@ public class PauseOverlay implements Drawable {
     public void mouseReleased(MouseEvent e) {
         if (isHoveredOverButton(e, exitToMenuButton.getHitBox()) && exitToMenuButton.isMousePressed()) {
             GameState.setState(GameState.MENU);
+            playing.getLevelManager().setFirstLevel();
             playing.resetPlaying();
         } else if (isHoveredOverButton(e, restartButton.getHitBox()) && restartButton.isMousePressed()) {
             playing.resetPlaying();

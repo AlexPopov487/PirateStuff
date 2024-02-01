@@ -6,14 +6,13 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
 import static org.example.Config.GRAVITY_FORCE;
-import static org.example.Game.SCALE;
 
 public abstract class Entity extends BaseEntity {
     protected int animationTick;
     protected int animationIndex;
     private final Directions directions;
     private final GravitySettings gravitySettings;
-    private final Heath heath;
+    private final Health health;
     private final float walkSpeed;
 
 
@@ -28,7 +27,7 @@ public abstract class Entity extends BaseEntity {
         this.walkSpeed = walkSpeed;
         this.directions = new Directions();
         this.gravitySettings = gravitySettings;
-        this.heath = new Heath(100);
+        this.health = new Health(100);
     }
 
     protected void updateHitBox() {
@@ -96,8 +95,8 @@ public abstract class Entity extends BaseEntity {
         return gravitySettings;
     }
 
-    public Heath getHeath() {
-        return heath;
+    public Health getHeath() {
+        return health;
     }
 
     public float getWalkSpeed() {

@@ -134,6 +134,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             setPlayerAttack();
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            setPlayerPowerAttack();
         }
     }
 
@@ -194,6 +196,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             case KeyEvent.VK_SHIFT -> {
                 log.trace("keyPressed : SHIFT");
                 setPlayerAttack();
+            } case KeyEvent.VK_ALT -> {
+                log.trace("keyPressed : ALT");
+                setPlayerPowerAttack();
             }
         }
     }
@@ -225,8 +230,6 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     }
 
     public void loadNextLevel() {
-        resetPlaying();
-
         Level level = levelManager.loadNextLevel();
         enemyManager.loadEnemies(level);
         levelObjectManager.loadLevelObjects(level);
@@ -234,6 +237,8 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         player.setSpawnPosition(level.getPlayerSpawnPosition());
         maxLevelOffsetX = level.getMaxLevelOffsetX();
         game.getAudioPlayer().playLevelSong(levelManager.getCurrentLevelIndex());
+
+        resetPlaying();
     }
 
     private void loadStartLevelResources() {
@@ -267,6 +272,10 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     private void setPlayerAttack() {
         player.getActions().setAttacking(true);
+    }
+
+    private void setPlayerPowerAttack() {
+        player.doPowerAttack();
     }
 
     public void setGameOver() {

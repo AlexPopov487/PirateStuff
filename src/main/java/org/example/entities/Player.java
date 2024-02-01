@@ -3,7 +3,6 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.types.AtlasType;
-import org.example.utils.CollisionHelper;
 import org.example.utils.Helper;
 import org.example.utils.PlayerConstants;
 import org.example.utils.ResourceLoader;
@@ -24,6 +23,7 @@ public class Player extends Entity {
     private final Playing playing;
     private final Actions actions;
     private final StatusBar statusBar;
+    private final Stamina stamina;
     private boolean isAttackPerformed = false;
     private BufferedImage[][] animations;
     private int[][] currentLevelData;
@@ -32,6 +32,7 @@ public class Player extends Entity {
     private int xFlip = 0;
     private int widthFlip = 1;
     private boolean isActive = true;
+    private int powerAttackTick;
 
     PlayerConstants currentAnimation = SPRITE_JUMPING;
 
@@ -39,7 +40,8 @@ public class Player extends Entity {
         super(x, y, width, height, Helper.generateGravitySettingForEntity(PLAYER), Config.Player.WALK_SPEED);
         this.playing = playing;
         actions = new Actions();
-        statusBar = new StatusBar(getHeath());
+        stamina = new Stamina();
+        statusBar = new StatusBar(getHeath(), stamina);
         loadAnimations();
         initHitBox(Config.Player.HIT_BOX_WIDTH, Config.Player.HIT_BOX_HEIGHT);
         initAttackRange();
@@ -57,7 +59,7 @@ public class Player extends Entity {
     }
 
     public void setInAirIfPlayerNotOnFloor(Player player, int[][] currentLevelData) {
-        if (!CollisionHelper.isOnTheFloor(player.getHitBox(), currentLevelData)) {
+        if (!isOnTheFloor(player.getHitBox(), currentLevelData)) {
             getDirections().setInAir(true);
         }
     }
@@ -87,6 +89,10 @@ public class Player extends Entity {
             setCharacterAnimation();
             checkEnemyStumped();
 
+            if (actions.isAttacking() || actions.isPowerAttacking()) {
+                attack();
+            }
+
             updateAnimationTick();
             updateAttackRange();
         }
@@ -102,7 +108,7 @@ public class Player extends Entity {
                 height,
                 null);
 //        drawHitBox(g, xLevelOffset);
-//        drawAttackRangeBox(g, xLevelOffset);
+        drawAttackRangeBox(g, xLevelOffset);
     }
 
     private void checkPlayerAlive() {
@@ -124,17 +130,28 @@ public class Player extends Entity {
     }
 
     public void updateAttackRange() {
-        if (getDirections().isMovingRight()) {
+        if (getDirections().isMovingToRightAndLeft()) {
+            if (widthFlip == 1) {
+                attackRange.x = hitBox.x + hitBox.width + 10 * SCALE;
+            } else {
+                attackRange.x = hitBox.x - hitBox.width - 10 * SCALE;
+            }
+        } else if (getDirections().isMovingRight() || isPowerAttackingFacingRight()) {
             attackRange.x = hitBox.x + hitBox.width + 10 * SCALE;
-        } else if (getDirections().isMovingLeft()) {
+        } else if (getDirections().isMovingLeft() || isPowerAttackingFacingLeft()) {
             attackRange.x = hitBox.x - hitBox.width - 10 * SCALE;
         }
-
         attackRange.y = hitBox.y + 10 * SCALE;
     }
 
     public void initAttackRange() {
-        attackRange = new Rectangle2D.Float(x, y, 20 * SCALE, 20 * SCALE);
+        float attackX;
+        if (widthFlip == 1) {
+            attackX = hitBox.x + hitBox.width + 10 * SCALE;
+        } else {
+            attackX = hitBox.x - hitBox.width - 10 * SCALE;
+        }
+        attackRange = new Rectangle2D.Float(attackX, y, 20 * SCALE, 20 * SCALE);
     }
 
     public void reset() {
@@ -144,6 +161,7 @@ public class Player extends Entity {
         resetInAir();
         actions.resetAll();
         getHeath().reset();
+        stamina.reset();
         resetAnimations();
         currentAnimation = SPRITE_IDLE;
 
@@ -155,6 +173,16 @@ public class Player extends Entity {
         initAttackRange();
     }
 
+    public void doPowerAttack() {
+        if (actions.isPowerAttacking()) return;
+
+        if (stamina.getCurrentValue() < Config.Player.POWER_ATTACK_STAMINA_COST) return;
+
+        stamina.subtractStamina(Config.Player.POWER_ATTACK_STAMINA_COST);
+        actions.setAttacking(false);
+        actions.setPowerAttacking(true);
+    }
+
     private void updateCharacterPosition() {
         getDirections().setMoving(false);
 
@@ -162,7 +190,7 @@ public class Player extends Entity {
             handleJump();
         }
 
-        if (getDirections().isNoDirectionSet()) return;
+        if (getDirections().isNoDirectionSet() && !actions.isPowerAttacking()) return;
 
         float xDestination = hitBox.x;
 
@@ -178,11 +206,29 @@ public class Player extends Entity {
             widthFlip = 1;
         }
 
+        if (actions.isPowerAttacking()) {
+
+            // if player hit powerAttack but did not set any direction, we need to set the direction automatically
+            if (!getDirections().isMovingLeft() && !getDirections().isMovingRight()) {
+                if (widthFlip == -1) {
+                    xDestination -= getWalkSpeed();
+                } else {
+                    xDestination += getWalkSpeed();
+                }
+            }
+
+            if (widthFlip == -1) {
+                xDestination -= getWalkSpeed() * 2;
+            } else {
+                xDestination += getWalkSpeed() * 2;
+            }
+        }
+
         if (!getDirections().isInAir() && !isOnTheFloor(hitBox, currentLevelData)) {
             getDirections().setInAir(true);
         }
 
-        if (getDirections().isInAir()) {
+        if (getDirections().isInAir() && !actions.isPowerAttacking()) {
             float yDestination = hitBox.y + getGravitySettings().getAirSpeed();
 
             if (canMoveHere(hitBox.x, yDestination, hitBox.width, hitBox.height, currentLevelData)) {
@@ -249,6 +295,10 @@ public class Player extends Entity {
              move the player as close to the obstacle as possible
             */
             hitBox.x = getClosestToObstacleXPos(hitBox, xDestination);
+            if (actions.isPowerAttacking()) {
+                actions.setPowerAttacking(false);
+                powerAttackTick = 0;
+            }
         }
     }
 
@@ -270,16 +320,30 @@ public class Player extends Entity {
             }
         }
 
+        if (actions.isPowerAttacking()) {
+            currentAnimation = SPRITE_ATTACK;
+            resetAnimationTick();
+            animationIndex = 1;
+
+            powerAttackTick++;
+            if (powerAttackTick >= 35) {
+                powerAttackTick = 0;
+                actions.setPowerAttacking(false);
+            }
+
+            return;
+        }
+
         if (actions.isAttacking()) {
             currentAnimation = SPRITE_ATTACK;
 
             // the sprite's attacking animation takes too long, thus we shorten it by one sprite
             if (previousAnimation != SPRITE_ATTACK) {
-                previousAnimation = currentAnimation;
+//                previousAnimation = currentAnimation;
                 resetAnimationTick();
                 animationIndex = 1;
             }
-            attack();
+            return;
         }
 
         // this is necessary to avoid starting new animation from the index of a previous animation (leads to flickering and bugs)
@@ -295,9 +359,14 @@ public class Player extends Entity {
         */
         if (animationIndex != 1 || isAttackPerformed) return;
 
+        isAttackPerformed = true;
+
+        if (actions.isPowerAttacking()) {
+            isAttackPerformed = false;
+        }
+
         playing.checkEnemyHit(attackRange);
         playing.checkLevelObjectDestroyed(attackRange);
-        isAttackPerformed = true;
 
         int attackEffectIndex = playing.getGame().getAudioPlayer().getAttackEffectRandomIndex();
         playing.getGame().getAudioPlayer().playEffect(attackEffectIndex);
@@ -343,5 +412,13 @@ public class Player extends Entity {
                         CHARACTER_SPRITE_HEIGHT);
             }
         }
+    }
+
+    private boolean isPowerAttackingFacingRight() {
+        return actions.isPowerAttacking() && widthFlip == 1;
+    }
+
+    private boolean isPowerAttackingFacingLeft() {
+        return actions.isPowerAttacking() && widthFlip == -1;
     }
 }

@@ -3,8 +3,8 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.levels.Level;
-import org.example.types.EnemyType;
 import org.example.types.AtlasType;
+import org.example.types.EnemyType;
 import org.example.utils.CollisionHelper;
 import org.example.utils.ResourceLoader;
 
@@ -48,11 +48,11 @@ public class EnemyManager {
 
     public void checkEnemyGotHit(Rectangle2D.Float playerAttackRange) {
         for (Crabby crabby : crabbyList) {
-            if (!crabby.isActive()) continue;
+            if (!crabby.isActive() || crabby.getHeath().isDead()) continue;
 
             if (playerAttackRange.intersects(crabby.getHitBox())) {
                 crabby.takeDamage(Config.Enemy.CRAB_DAMAGE);
-                break;
+                return;
             }
         }
     }

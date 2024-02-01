@@ -65,11 +65,15 @@ public class LevelManager {
 
     }
 
+    public void setFirstLevel() {
+//        currentLevelIndex = 0; // todo
+    }
+
     public Level loadNextLevel() {
         currentLevelIndex++;
 
         if (currentLevelIndex >= levels.size()) {
-            currentLevelIndex = 0; // todo add allLevelsCompleted overlay
+            setFirstLevel(); // todo add allLevelsCompleted overlay
             log.info("No more levels left! The game is completed!");
             GameState.setState(GameState.MENU);
         }

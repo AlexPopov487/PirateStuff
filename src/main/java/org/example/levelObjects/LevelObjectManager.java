@@ -1,7 +1,7 @@
 package org.example.levelObjects;
 
 import org.example.Config;
-import org.example.entities.Heath;
+import org.example.entities.Health;
 import org.example.entities.Player;
 import org.example.gameState.Playing;
 import org.example.levels.Level;
@@ -109,8 +109,8 @@ public class LevelObjectManager {
 
     public void applyEffect(Potion potion) {
         if (LevelObjectType.POTION_RED.equals(potion.getObjectType())) {
-            Heath playerHealth = playing.getPlayer().getHeath();
-            playerHealth.setCurrentHeath(Config.LevelEnv.POTION_RED_VALUE + playerHealth.getCurrentHeath());
+            Health playerHealth = playing.getPlayer().getHeath();
+            playerHealth.setCurrentHeath(Config.LevelEnv.POTION_RED_VALUE + playerHealth.getCurrentHealth());
         } else if (LevelObjectType.POTION_BLUE.equals(potion.getObjectType())) {
             // todo change stamina
         }

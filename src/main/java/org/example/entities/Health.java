@@ -1,10 +1,10 @@
 package org.example.entities;
 
-public class Heath {
+public class Health {
     private final int maxHealth;
     private int currentHeath;
 
-    public Heath(int maxHealth) {
+    public Health(int maxHealth) {
         this.maxHealth = maxHealth;
         currentHeath = maxHealth;
     }
@@ -13,7 +13,7 @@ public class Heath {
         return maxHealth;
     }
 
-    public int getCurrentHeath() {
+    public int getCurrentHealth() {
         return currentHeath;
     }
 

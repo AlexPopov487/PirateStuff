@@ -72,6 +72,7 @@ public class Settings extends StateBase implements GameStateActions, Drawable{
     public void mouseReleased(MouseEvent e) {
         if (isHoveredOverButton(e, menuButton.getHitBox()) && menuButton.isMousePressed()) {
             game.getPlaying().resetPlaying();
+            game.getPlaying().getLevelManager().setFirstLevel();
             GameState.setState(GameState.MENU);
         } else {
             audioOptions.mouseReleased(e);
@@ -103,6 +104,8 @@ public class Settings extends StateBase implements GameStateActions, Drawable{
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
             game.getPlaying().resetPlaying();
+            game.getPlaying().getLevelManager().setFirstLevel();
+
             GameState.setState(GameState.MENU);
         }
     }

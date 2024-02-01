@@ -13,7 +13,7 @@ import static org.example.Config.ENTITY_ANIMATION_SPEED;
 public abstract class Enemy extends Entity {
     protected static final float ATTACK_RANGE = GamePanel.getCurrentTileSize();
     protected static final float VISUAL_RANGE = GamePanel.getCurrentTileSize() * 5;
-    private final Heath heath;
+    private final Health health;
     private boolean isActive = true;
     private boolean isAttackPerformed = false;
     protected EnemyState enemyState;
@@ -27,7 +27,7 @@ public abstract class Enemy extends Entity {
         this.enemyState = EnemyState.IDLE;
 
         getDirections().setMovingLeft(true); // todo for testing
-        heath = new Heath(Config.Enemy.getMaxHealth(enemyType));
+        health = new Health(Config.Enemy.getMaxHealth(enemyType));
     }
 
     public void update(int[][] levelData, Player player) {
@@ -53,9 +53,9 @@ public abstract class Enemy extends Entity {
     }
 
     public void takeDamage(int amount) {
-        heath.subtractHealth(amount);
+        health.subtractHealth(amount);
 
-        if (heath.getCurrentHeath() == 0) {
+        if (health.getCurrentHealth() == 0) {
             changeEnemyStateTo(EnemyState.DEAD);
         } else {
             changeEnemyStateTo(EnemyState.HIT);
@@ -89,7 +89,7 @@ public abstract class Enemy extends Entity {
         isFirstPositionUpdate = true;
         isAttackPerformed = false;
 
-        heath.reset();
+        health.reset();
         changeEnemyStateTo(EnemyState.IDLE);
         isActive = true;
         getDirections().reset();

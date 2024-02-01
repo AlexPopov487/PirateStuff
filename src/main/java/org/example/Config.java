@@ -3,9 +3,6 @@ package org.example;
 
 import org.example.types.EnemyState;
 import org.example.types.EnemyType;
-import org.example.types.LevelObjectType;
-
-import java.nio.channels.FileLock;
 
 import static org.example.Game.SCALE;
 
@@ -122,6 +119,9 @@ public class Config {
         public static final float DRAW_OFFSET_X = 21 * SCALE;
         public static final float DRAW_OFFSET_Y = 4 * SCALE;
 
+
+        public static final int POWER_ATTACK_STAMINA_COST = 100;
+
     }
 
     public static class Enemy {
@@ -194,6 +194,14 @@ public class Config {
         public static final int HEALTH_BAR_HEIGHT = (int) (4 * Game.SCALE);
         public static final int HEALTH_BAR_X_START = (int) (34 * Game.SCALE) + STATUS_BAR_X;
         public static final int HEALTH_BAR_Y_START = (int) (14 * Game.SCALE) + STATUS_BAR_Y;
+
+        public static final int STAMINA_BAR_WIDTH = (int) (104 * Game.SCALE);
+        public static final int STAMINA_BAR_HEIGHT = (int) (2 * Game.SCALE);
+        public static final int STAMINA_BAR_X_START = (int) (44 * Game.SCALE) + STATUS_BAR_X;
+        public static final int STAMINA_BAR_Y_START = (int) (34 * Game.SCALE) + STATUS_BAR_Y;
+        public static final int STAMINA_RECOVERY_DELAY = 10;
+        public static final int STAMINA_MAX_VALUE = 200;
+
     }
 
     public static class Audio {

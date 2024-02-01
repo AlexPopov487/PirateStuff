@@ -65,6 +65,7 @@ public class LevelCompletedOverlay implements Drawable, GameStateActions {
     public void mouseReleased(MouseEvent e) {
         if (isHoveredOverButton(e, menuButton.getHitBox()) && menuButton.isMousePressed()) {
             GameState.setState(GameState.MENU);
+            playing.getLevelManager().setFirstLevel();
             playing.resetPlaying();
         } else if (isHoveredOverButton(e, nextLevelButton.getHitBox()) && nextLevelButton.isMousePressed()) {
             playing.loadNextLevel();
