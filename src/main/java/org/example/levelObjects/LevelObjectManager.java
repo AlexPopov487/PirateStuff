@@ -3,6 +3,7 @@ package org.example.levelObjects;
 import org.example.Config;
 import org.example.entities.Health;
 import org.example.entities.Player;
+import org.example.entities.Stamina;
 import org.example.gameState.Playing;
 import org.example.levels.Level;
 import org.example.types.AtlasType;
@@ -26,12 +27,8 @@ public class LevelObjectManager {
     private BufferedImage[][] containerAssets;
     private BufferedImage spikeAsset;
     private BufferedImage[] cannonAssets;
+    private BufferedImage[] grassAssets;
     private BufferedImage projectileAsset;
-    // todo this is not ok that potions, containers and enemies arrays are stored twice (in Level and ObjectManager/EnemyManager)
-    private List<Potion> potions;
-    private List<Container> containers;
-    private List<Spike> spikes;
-    private List<Cannon> cannons;
     private final List<Projectile> projectiles = new ArrayList<>();
 
     public LevelObjectManager(Playing playing) {
@@ -40,21 +37,17 @@ public class LevelObjectManager {
     }
 
     public void loadLevelObjects(Level level) {
-        potions = new ArrayList<>(level.getPotions());
-        containers = new ArrayList<>(level.getContainers());
-        spikes = new ArrayList<>(level.getSpikes());
-        cannons = new ArrayList<>(level.getCannons());
         projectiles.clear();
     }
 
     public void update(int[][] levelData, Player player) {
-        for (Potion potion : potions) {
+        for (Potion potion : playing.getLevelManager().getCurrentLevel().getPotions()) {
             if (potion.isActive) {
                 potion.update();
             }
         }
 
-        for (Container container : containers) {
+        for (Container container : playing.getLevelManager().getCurrentLevel().getContainers()) {
             if (container.isActive) {
                 container.update();
             }
@@ -70,11 +63,12 @@ public class LevelObjectManager {
         renderSpikeTraps(g, xLevelOffset);
         renderCannons(g, xLevelOffset);
         renderProjectiles(g, xLevelOffset);
+        renderGrass(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
         // only potions can be collected
-        for (Potion potion : potions) {
+        for (Potion potion : playing.getLevelManager().getCurrentLevel().getPotions()) {
             if (!potion.isActive) continue;
 
             if (playerHitBox.intersects(potion.getHitBox())) {
@@ -85,7 +79,7 @@ public class LevelObjectManager {
     }
 
     public void checkObjectDestroyed(Rectangle2D.Float playerAttackRange) {
-        for (Container container : containers) {
+        for (Container container : playing.getLevelManager().getCurrentLevel().getContainers()) {
             // the container.shouldAnimate check ensures that the object can be hit only once
             if (!container.isActive || container.shouldAnimate) continue;
 
@@ -98,7 +92,7 @@ public class LevelObjectManager {
     }
 
     public void checkSpikeTrapTouched(Rectangle2D.Float playerHitBox) {
-        for (Spike spike : spikes) {
+        for (Spike spike : playing.getLevelManager().getCurrentLevel().getSpikes()) {
             if (!spike.isActive) continue;
 
             if (playerHitBox.intersects(spike.hitBox)) {
@@ -112,21 +106,19 @@ public class LevelObjectManager {
             Health playerHealth = playing.getPlayer().getHeath();
             playerHealth.setCurrentHeath(Config.LevelEnv.POTION_RED_VALUE + playerHealth.getCurrentHealth());
         } else if (LevelObjectType.POTION_BLUE.equals(potion.getObjectType())) {
-            // todo change stamina
+            Stamina playerStamina = playing.getPlayer().getStamina();
+            playerStamina.incCurrentValue(Config.LevelEnv.POTION_BLUE_VALUE);
         }
     }
 
     public void resetAll() {
         loadLevelObjects(playing.getLevelManager().getCurrentLevel());
 
-        containers.forEach(Container::reset);
-        potions.forEach(Potion::reset);
-        spikes.forEach(Spike::reset);
-        cannons.forEach(Cannon::reset);
+        playing.getLevelManager().getCurrentLevel().resetLevelObjects();
     }
 
     private void renderPotions(Graphics g, int xLevelOffset) {
-        for (Potion potion : potions) {
+        for (Potion potion : playing.getLevelManager().getCurrentLevel().getPotions()) {
             if (!potion.isActive) continue;
 
             g.drawImage(potionAssets[potion.objectType.getSpriteIndex()][potion.getAnimationIndex()],
@@ -139,7 +131,7 @@ public class LevelObjectManager {
     }
 
     private void renderContainers(Graphics g, int xLevelOffset) {
-        for (Container container : containers) {
+        for (Container container : playing.getLevelManager().getCurrentLevel().getContainers()) {
             if (!container.isActive) continue;
 
             g.drawImage(containerAssets[container.objectType.getSpriteIndex()][container.getAnimationIndex()],
@@ -152,7 +144,7 @@ public class LevelObjectManager {
     }
 
     private void renderSpikeTraps(Graphics g, int xLevelOffset) {
-        for (Spike spike : spikes) {
+        for (Spike spike : playing.getLevelManager().getCurrentLevel().getSpikes()) {
             if (!spike.isActive) continue;
 
             g.drawImage(spikeAsset,
@@ -165,7 +157,7 @@ public class LevelObjectManager {
     }
 
     private void renderCannons(Graphics g, int xLevelOffset) {
-        for (Cannon cannon : cannons) {
+        for (Cannon cannon : playing.getLevelManager().getCurrentLevel().getCannons()) {
             int currentX = (int) (cannon.getHitBox().x - xLevelOffset);
             int currentWidth = Config.LevelEnv.CANNON_WIDTH;
 
@@ -181,6 +173,21 @@ public class LevelObjectManager {
                     currentWidth,
                     Config.LevelEnv.CANNON_HEIGHT,
                     null);
+        }
+    }
+
+    private void renderGrass(Graphics g, int xLevelOffset) {
+        for (Grass grass : playing.getLevelManager().getCurrentLevel().getGrassList()) {
+            int currentX = (int) (grass.getX() - xLevelOffset);
+
+            g.drawImage(grassAssets[grass.getGrassType().ordinal()],
+                    currentX,
+                    (int) grass.getY(),
+                    Config.LevelEnv.GRASS_WIDTH,
+                    Config.LevelEnv.GRASS_HEIGHT,
+                    null);
+
+
         }
     }
 
@@ -203,7 +210,7 @@ public class LevelObjectManager {
         } else {
             droppedPotionType = LevelObjectType.POTION_BLUE;
         }
-        potions.add(new Potion(container.getHitBox().x + container.getHitBox().width / 2,
+        playing.getLevelManager().getCurrentLevel().getPotions().add(new Potion(container.getHitBox().x + container.getHitBox().width / 2,
                 container.getHitBox().y - container.getHitBox().height / 4,
                 droppedPotionType));
 
@@ -211,7 +218,7 @@ public class LevelObjectManager {
     }
 
     private void updateCannons(int[][] levelData, Player player) {
-        for (Cannon cannon : cannons) {
+        for (Cannon cannon : playing.getLevelManager().getCurrentLevel().getCannons()) {
             if (System.currentTimeMillis() - cannon.getLastShotMillis() < Cannon.SHOOT_DELAY_MILLIS) continue;
 
             if (!cannon.shouldAnimate && cannon.canSeePlayer(levelData, player)) {
@@ -286,8 +293,18 @@ public class LevelObjectManager {
                     Config.LevelEnv.CANNON_HEIGHT_DEFAULT);
         }
 
-
         projectileAsset = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PROJECTILE);
+
+        BufferedImage grassSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_GRASS);
+        grassAssets = new BufferedImage[2];
+
+        for (int column = 0; column < grassAssets.length; column++) {
+            grassAssets[column] = grassSprite.getSubimage(column * Config.LevelEnv.GRASS_WIDTH_DEFAULT,
+                    0,
+                    Config.LevelEnv.GRASS_WIDTH_DEFAULT,
+                    Config.LevelEnv.GRASS_HEIGHT_DEFAULT);
+        }
+
     }
 }
 

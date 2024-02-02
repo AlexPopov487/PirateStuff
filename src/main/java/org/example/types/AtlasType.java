@@ -4,7 +4,6 @@ public enum AtlasType {
     ATLAS_PLAYER("player_sprites.png"),
     ATLAS_LEVEL_BLOCKS("outside_sprites.png"),
 //    ATLAS_LEVEL_ONE("level_one_data.png"),
-    ATLAS_LEVEL_ONE("level_one_data_long.png"),
     ATLAS_MENU_BUTTONS("button_atlas.png"),
     ATLAS_MENU_TEMPLATE("menu_template.png"),
     ATLAS_MENU_BACKGROUND("background_menu.png"),
@@ -25,6 +24,9 @@ public enum AtlasType {
     ATLAS_DEATH_SCREEN("death_screen.png"),
     ATLAS_BACKGROUND_GAME_OVER("background_game_over.png"),
     ATLAS_BACKGROUND_SETTINGS_OVERLAY("options_background.png"),
+    ATLAS_WATER("water.png"),
+    ATLAS_WATER_TOP("water_atlas_animation.png"),
+    ATLAS_GRASS("grass_atlas.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

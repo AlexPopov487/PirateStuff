@@ -1,5 +1,6 @@
 package org.example.utils;
 
+import org.example.Config;
 import org.example.GamePanel;
 
 import java.awt.geom.Line2D;
@@ -18,8 +19,9 @@ public class CollisionHelper {
     public static boolean isTileSolid(int tileX, int tileY, int[][] lvlData) {
         int spriteIndex = lvlData[tileY][tileX];
 
-        // a tile with index 11 is transparent i.e. not solid
-        return spriteIndex != 11;
+        return (spriteIndex != Config.LevelEnv.TILE_VOID_INDEX
+                && spriteIndex != Config.LevelEnv.TILE_WATER_TOP_INDEX
+                && spriteIndex != Config.LevelEnv.TILE_WATER_BOTTOM_INDEX);
     }
 
     public static float getClosestToObstacleXPos(Rectangle2D.Float hitbox, float xDestination) {
@@ -92,6 +94,12 @@ public class CollisionHelper {
         return playerFeet.intersects(enemyHitBox.getX(), enemyHitBox.getY(), enemyHitBox.getWidth(), 5);
     }
 
+    public static boolean isEntityInWater(Rectangle2D.Float entityHitBox, int[][] lvlData) {
+        // Only check if entity touches top water layer. Can't reach bottom if touched top water layer.
+        return getTileIndex(entityHitBox.x, entityHitBox.y + entityHitBox.height, lvlData) == 48
+                || getTileIndex(entityHitBox.x + entityHitBox.width, entityHitBox.y + entityHitBox.height, lvlData) == 48;
+    }
+
     private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData, boolean checkPits) {
         // loop from the xTile of the first object to the xTile of the second object and check for obstacles
         for (int i = 0; i < endX - startX; i++) {
@@ -120,5 +128,11 @@ public class CollisionHelper {
         int yIndex = (int) y / GamePanel.getCurrentTileSize();
 
         return isTileSolid(xIndex, yIndex, currentLevelData);
+    }
+
+    private static int getTileIndex(float xPos, float yPos, int[][] lvlData) {
+        int xCord = (int) (xPos / GamePanel.getCurrentTileSize());
+        int yCord = (int) (yPos / GamePanel.getCurrentTileSize());
+        return lvlData[yCord][xCord];
     }
 }

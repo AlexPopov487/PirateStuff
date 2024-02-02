@@ -37,6 +37,12 @@ public class Config {
     public static final int ENTITY_ANIMATION_SPEED = 15;
 
     public static class LevelEnv {
+        /*Corresponds to the indexes in int[][] levelData array.*/
+        public static final int TILE_VOID_INDEX = 11;
+        public static final int TILE_WATER_TOP_INDEX = 48;
+        public static final int TILE_WATER_BOTTOM_INDEX = 49;
+
+
         public static final int BIG_CLOUD_WIDTH_DEFAULT = 448;
         public static final int BIG_CLOUD_HEIGHT_DEFAULT = 101;
         public static final int BIG_CLOUD_WIDTH = (int) (BIG_CLOUD_WIDTH_DEFAULT * SCALE);
@@ -72,7 +78,7 @@ public class Config {
         public static final int POTION_DRAW_OFFSET_X = (int) (3 * SCALE);
         public static final int POTION_DRAW_OFFSET_Y = (int) (2 * SCALE);
         public static final int POTION_RED_VALUE = 15;
-        public static final int POTION_BLUE_VALUE = 10;
+        public static final int POTION_BLUE_VALUE = 100;
         public static final int POTION_HOVER_OFFSET_MAX = (int) (7 * SCALE);
 
 
@@ -105,6 +111,13 @@ public class Config {
         public static final int CANNON_BALL_OFFSET_X_RIGHT = (int) (29 * SCALE);
         public static final int CANNON_BALL_OFFSET_Y = (int) (5 * SCALE);
         public static final float CANNON_BALL_SPEED =  (0.75f * SCALE);
+
+
+
+        public static final int GRASS_WIDTH_DEFAULT = 32;
+        public static final int GRASS_HEIGHT_DEFAULT = 32;
+        public static final int GRASS_WIDTH = (int) (GRASS_WIDTH_DEFAULT * SCALE);
+        public static final int GRASS_HEIGHT = (int) (GRASS_HEIGHT_DEFAULT * SCALE);
     }
 
     public static class Player {
@@ -199,7 +212,7 @@ public class Config {
         public static final int STAMINA_BAR_HEIGHT = (int) (2 * Game.SCALE);
         public static final int STAMINA_BAR_X_START = (int) (44 * Game.SCALE) + STATUS_BAR_X;
         public static final int STAMINA_BAR_Y_START = (int) (34 * Game.SCALE) + STATUS_BAR_Y;
-        public static final int STAMINA_RECOVERY_DELAY = 10;
+        public static final int STAMINA_RECOVERY_DELAY = 20;
         public static final int STAMINA_MAX_VALUE = 200;
 
     }

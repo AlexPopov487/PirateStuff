@@ -3,6 +3,7 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.types.AtlasType;
+import org.example.utils.CollisionHelper;
 import org.example.utils.Helper;
 import org.example.utils.PlayerConstants;
 import org.example.utils.ResourceLoader;
@@ -85,6 +86,7 @@ public class Player extends Entity {
 
             checkPotionCollected();
             checkSpikeTrapTouched();
+            checkDrowned();
 
             setCharacterAnimation();
             checkEnemyStumped();
@@ -108,7 +110,7 @@ public class Player extends Entity {
                 height,
                 null);
 //        drawHitBox(g, xLevelOffset);
-        drawAttackRangeBox(g, xLevelOffset);
+//        drawAttackRangeBox(g, xLevelOffset);
     }
 
     private void checkPlayerAlive() {
@@ -142,6 +144,10 @@ public class Player extends Entity {
             attackRange.x = hitBox.x - hitBox.width - 10 * SCALE;
         }
         attackRange.y = hitBox.y + 10 * SCALE;
+    }
+
+    public Stamina getStamina() {
+        return stamina;
     }
 
     public void initAttackRange() {
@@ -258,12 +264,19 @@ public class Player extends Entity {
         getDirections().setMoving(true);
     }
 
-    private void checkPotionCollected() {
+    private void checkPotionCollected() { // todo do not drink potion if heath is full
         playing.checkPotionCollected(hitBox);
     }
 
     private void checkSpikeTrapTouched() {
         playing.checkSpikeTrapTouched(hitBox);
+    }
+
+    private void checkDrowned() {
+        int[][] levelData = playing.getLevelManager().getCurrentLevel().getLevelData();
+        if (CollisionHelper.isEntityInWater(hitBox, levelData)) {
+            getHeath().setCurrentHeath(0);
+        }
     }
 
     private void checkEnemyStumped() {

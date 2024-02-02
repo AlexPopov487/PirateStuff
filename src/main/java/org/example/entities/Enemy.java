@@ -26,7 +26,7 @@ public abstract class Enemy extends Entity {
         this.enemyType = enemyType;
         this.enemyState = EnemyState.IDLE;
 
-        getDirections().setMovingLeft(true); // todo for testing
+        getDirections().setMovingLeft(true);
         health = new Health(Config.Enemy.getMaxHealth(enemyType));
     }
 
