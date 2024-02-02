@@ -118,6 +118,18 @@ public class Config {
         public static final int GRASS_HEIGHT_DEFAULT = 32;
         public static final int GRASS_WIDTH = (int) (GRASS_WIDTH_DEFAULT * SCALE);
         public static final int GRASS_HEIGHT = (int) (GRASS_HEIGHT_DEFAULT * SCALE);
+
+
+        public static final int TREE_STRAIGHT_WIDTH_DEFAULT = 39;
+        public static final int TREE_STRAIGHT_HEIGHT_DEFAULT = 92;
+        public static final int TREE_STRAIGHT_WIDTH = (int) (TREE_STRAIGHT_WIDTH_DEFAULT * SCALE);
+        public static final int TREE_STRAIGHT_HEIGHT = (int) (TREE_STRAIGHT_HEIGHT_DEFAULT * SCALE);
+
+
+        public static final int TREE_BEND_WIDTH_DEFAULT = 62;
+        public static final int TREE_BEND_HEIGHT_DEFAULT = 54;
+        public static final int TREE_BEND_WIDTH = (int) (TREE_BEND_WIDTH_DEFAULT * SCALE);
+        public static final int TREE_BEND_HEIGHT = (int) (TREE_BEND_HEIGHT_DEFAULT * SCALE);
     }
 
     public static class Player {

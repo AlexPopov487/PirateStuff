@@ -27,6 +27,8 @@ public enum AtlasType {
     ATLAS_WATER("water.png"),
     ATLAS_WATER_TOP("water_atlas_animation.png"),
     ATLAS_GRASS("grass_atlas.png"),
+    ATLAS_TREE_STRAIGHT("tree_one_atlas.png"),
+    ATLAS_TREE_BEND("tree_two_atlas.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

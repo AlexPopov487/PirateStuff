@@ -6,7 +6,6 @@ import org.example.entities.Crabby;
 import org.example.levelObjects.*;
 import org.example.levelObjects.Container;
 import org.example.types.EnemyType;
-import org.example.types.GrassType;
 import org.example.types.LevelObjectType;
 import org.example.utils.Helper;
 
@@ -24,6 +23,7 @@ public class Level {
     private final List<Spike> spikes = new ArrayList<>();
     private final List<Cannon> cannons =new ArrayList<>();
     private final List<Grass> grassList =new ArrayList<>();
+    private final List<Tree> trees =new ArrayList<>();
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -80,6 +80,10 @@ public class Level {
         return grassList;
     }
 
+    public List<Tree> getTrees() {
+        return trees;
+    }
+
     private void loadLevel() {
 
         // Looping through the image colors just once. Instead of one per
@@ -128,32 +132,25 @@ public class Level {
     private void loadObjects(int blueValue, int x, int y) {
         if (blueValue == LevelObjectType.BARREL.ordinal()) {
             containers.add(new Container(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.BARREL));
-        } else if (blueValue == LevelObjectType.BOX.ordinal()) {
+        } else if (blueValue == LevelObjectType.BOX.getBluePixelValue()) {
             containers.add(new Container(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.BOX));
-        } else if (blueValue == LevelObjectType.CANNON_RIGHT.ordinal()) {
+        } else if (blueValue == LevelObjectType.CANNON_RIGHT.getBluePixelValue()) {
             cannons.add(new Cannon(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.CANNON_RIGHT));
-        } else if (blueValue == LevelObjectType.CANNON_LEFT.ordinal()) {
+        } else if (blueValue == LevelObjectType.CANNON_LEFT.getBluePixelValue()) {
             cannons.add(new Cannon(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.CANNON_LEFT));
-        } else if (blueValue == LevelObjectType.SPIKE.ordinal()) {
+        } else if (blueValue == LevelObjectType.SPIKE.getBluePixelValue()) {
             spikes.add(new Spike(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.SPIKE));
-        } else if (blueValue == LevelObjectType.POTION_BLUE.ordinal()) {
+        } else if (blueValue == LevelObjectType.POTION_BLUE.getBluePixelValue()) {
             potions.add(new Potion(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_BLUE));
-        } else if (blueValue == LevelObjectType.POTION_RED.ordinal()) {
+        } else if (blueValue == LevelObjectType.POTION_RED.getBluePixelValue()) {
             potions.add(new Potion(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_RED));
+        }  else if (blueValue == LevelObjectType.TREE_STRAIGHT.getBluePixelValue()) {
+            trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_STRAIGHT));
+        } else if (blueValue == LevelObjectType.TREE_BEND_RIGHT.getBluePixelValue()) {
+            trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_BEND_RIGHT));
+        }else if (blueValue == LevelObjectType.TREE_BEND_LEFT.getBluePixelValue()) {
+            trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_BEND_LEFT));
         }
-
-
-        //todo add trees
-//        switch (blueValue) {
-//            case RED_POTION, BLUE_POTION ->
-//                    potions.add(new Potion(x * Game.TILES_SIZE, y * Game.TILES_SIZE, blueValue));
-//            case BOX, BARREL -> containers.add(new GameContainer(x * Game.TILES_SIZE, y * Game.TILES_SIZE, blueValue));
-//            case SPIKE -> spikes.add(new Spike(x * Game.TILES_SIZE, y * Game.TILES_SIZE, SPIKE));
-//            case CANNON_LEFT, CANNON_RIGHT ->
-//                    cannons.add(new Cannon(x * Game.TILES_SIZE, y * Game.TILES_SIZE, blueValue));
-//            case TREE_ONE, TREE_TWO, TREE_THREE ->
-//                    trees.add(new BackgroundTree(x * Game.TILES_SIZE, y * Game.TILES_SIZE, blueValue));
-//        }
     }
 
     private void calculateLevelOffsets() {
@@ -168,5 +165,6 @@ public class Level {
         potions.forEach(Potion::reset);
         spikes.forEach(Spike::reset);
         cannons.forEach(Cannon::reset);
+        trees.forEach(Tree::reset);
     }
 }

@@ -1,6 +1,7 @@
 package org.example.levelObjects;
 
 import org.example.Config;
+import org.example.GamePanel;
 import org.example.entities.Health;
 import org.example.entities.Player;
 import org.example.entities.Stamina;
@@ -28,6 +29,8 @@ public class LevelObjectManager {
     private BufferedImage spikeAsset;
     private BufferedImage[] cannonAssets;
     private BufferedImage[] grassAssets;
+    private BufferedImage[] straightTreesAssets;
+    private BufferedImage[] bendTreesAssets;
     private BufferedImage projectileAsset;
     private final List<Projectile> projectiles = new ArrayList<>();
 
@@ -53,6 +56,10 @@ public class LevelObjectManager {
             }
         }
 
+        for (Tree tree : playing.getLevelManager().getCurrentLevel().getTrees()) {
+            tree.update();
+        }
+
         updateCannons(levelData, player);
         updateProjectiles(levelData, player);
     }
@@ -64,6 +71,7 @@ public class LevelObjectManager {
         renderCannons(g, xLevelOffset);
         renderProjectiles(g, xLevelOffset);
         renderGrass(g, xLevelOffset);
+        renderTrees(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
@@ -191,6 +199,46 @@ public class LevelObjectManager {
         }
     }
 
+    private void renderTrees(Graphics g, int xLevelOffset) {
+        for (Grass grass : playing.getLevelManager().getCurrentLevel().getGrassList()) {
+            int currentX = (int) (grass.getX() - xLevelOffset);
+
+            g.drawImage(grassAssets[grass.getGrassType().ordinal()],
+                    currentX,
+                    (int) grass.getY(),
+                    Config.LevelEnv.GRASS_WIDTH,
+                    Config.LevelEnv.GRASS_HEIGHT,
+                    null);
+        }
+
+        for (Tree tree : playing.getLevelManager().getCurrentLevel().getTrees()) {
+            int currentX = (int) (tree.getX() - xLevelOffset);
+
+            if (LevelObjectType.TREE_STRAIGHT.equals(tree.getObjectType())) {
+                g.drawImage(straightTreesAssets[tree.getAnimationIndex()],
+                        currentX,
+                        (int) tree.getY() - Config.LevelEnv.TREE_STRAIGHT_HEIGHT + (GamePanel.getCurrentTileSize() * 2) ,
+                        Config.LevelEnv.TREE_STRAIGHT_WIDTH,
+                        Config.LevelEnv.TREE_STRAIGHT_HEIGHT,
+                        null);
+            } else if (LevelObjectType.TREE_BEND_RIGHT.equals(tree.getObjectType())) {
+                g.drawImage(bendTreesAssets[tree.getAnimationIndex()],
+                        (int) (currentX + (GamePanel.getCurrentTileSize() / 2.5f)),
+                        (int) ((int) tree.getY() - Config.LevelEnv.TREE_BEND_HEIGHT + (GamePanel.getCurrentTileSize() / 1.25)),
+                        Config.LevelEnv.TREE_BEND_WIDTH,
+                        Config.LevelEnv.TREE_BEND_HEIGHT,
+                        null);
+            } else if (LevelObjectType.TREE_BEND_LEFT.equals(tree.getObjectType())) {
+                g.drawImage(bendTreesAssets[tree.getAnimationIndex()],
+                        (int) (currentX + (GamePanel.getCurrentTileSize() / 1.65f)),
+                        (int) ((int) tree.getY() - Config.LevelEnv.TREE_BEND_HEIGHT + (GamePanel.getCurrentTileSize() / 1.25)),
+                        -Config.LevelEnv.TREE_BEND_WIDTH,
+                        Config.LevelEnv.TREE_BEND_HEIGHT,
+                        null);
+            }
+        }
+    }
+
     private void renderProjectiles(Graphics g, int xLevelOffset) {
         for (Projectile projectile : projectiles) {
             if (!projectile.isActive) continue;
@@ -303,6 +351,27 @@ public class LevelObjectManager {
                     0,
                     Config.LevelEnv.GRASS_WIDTH_DEFAULT,
                     Config.LevelEnv.GRASS_HEIGHT_DEFAULT);
+        }
+
+        BufferedImage straightTreeSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_TREE_STRAIGHT);
+        straightTreesAssets = new BufferedImage[4];
+
+        for (int column = 0; column < straightTreesAssets.length; column++) {
+            straightTreesAssets[column] = straightTreeSprite.getSubimage(column * Config.LevelEnv.TREE_STRAIGHT_WIDTH_DEFAULT,
+                    0,
+                    Config.LevelEnv.TREE_STRAIGHT_WIDTH_DEFAULT,
+                    Config.LevelEnv.TREE_STRAIGHT_HEIGHT_DEFAULT);
+        }
+
+
+        BufferedImage bendTreeSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_TREE_BEND);
+        bendTreesAssets = new BufferedImage[4];
+
+        for (int column = 0; column < bendTreesAssets.length; column++) {
+            bendTreesAssets[column] = bendTreeSprite.getSubimage(column * Config.LevelEnv.TREE_BEND_WIDTH_DEFAULT,
+                    0,
+                    Config.LevelEnv.TREE_BEND_WIDTH_DEFAULT,
+                    Config.LevelEnv.TREE_BEND_HEIGHT_DEFAULT);
         }
 
     }
