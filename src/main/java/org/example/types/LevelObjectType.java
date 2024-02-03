@@ -11,7 +11,10 @@ public enum LevelObjectType {
     PROJECTILE(0,0, -1),
     TREE_STRAIGHT(0, 4,7),
     TREE_BEND_RIGHT(0, 4,8),
-    TREE_BEND_LEFT(0, 4,9);
+    TREE_BEND_LEFT(0, 4,9),
+    WATER_WAVE(0, 0,12),
+    WATER_BODY(0, 4, 11),
+    SHARK(0, 0, 10);
 
     private final int spriteIndex;
     private final int frameCount;

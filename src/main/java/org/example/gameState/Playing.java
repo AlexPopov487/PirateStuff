@@ -266,6 +266,10 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         levelObjectManager.checkSpikeTrapTouched(playerHitBox);
     }
 
+    public void checkDrowned(Rectangle2D.Float playerHitBox) {
+        levelObjectManager.checkDrowned(playerHitBox);
+    }
+
     private void calculateLevelOffset() {
         maxLevelOffsetX = levelManager.getCurrentLevel().getMaxLevelOffsetX();
     }

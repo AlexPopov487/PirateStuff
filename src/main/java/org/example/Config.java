@@ -80,6 +80,7 @@ public class Config {
         public static final int POTION_RED_VALUE = 15;
         public static final int POTION_BLUE_VALUE = 100;
         public static final int POTION_HOVER_OFFSET_MAX = (int) (7 * SCALE);
+        public static final float POTION_HOVER_INC_STEP = 0.075f;
 
 
         public static final int SPIKE_WIDTH_DEFAULT = 32;
@@ -130,6 +131,19 @@ public class Config {
         public static final int TREE_BEND_HEIGHT_DEFAULT = 54;
         public static final int TREE_BEND_WIDTH = (int) (TREE_BEND_WIDTH_DEFAULT * SCALE);
         public static final int TREE_BEND_HEIGHT = (int) (TREE_BEND_HEIGHT_DEFAULT * SCALE);
+
+        
+        public static final int SHARK_WIDTH_DEFAULT = 122;
+        public static final int SHARK_HEIGHT_DEFAULT = 32;
+        public static final int SHARK_WIDTH = (int) ((SHARK_WIDTH_DEFAULT * 0.75) * SCALE);
+        public static final int SHARK_HEIGHT = (int) ((SHARK_HEIGHT_DEFAULT) * SCALE);
+        // 2 is the pixel difference between the sprite start and the hit box start
+        public static final int SHARK_DRAW_OFFSET_X = (int) (2 * SCALE);
+        // 2 is the pixel difference between the sprite start and the hit box start
+        public static final int SHARK_DRAW_OFFSET_Y = (int) (2 * SCALE);
+        public static final int SHARK_HOVER_OFFSET_MAX = (int) (3 * SCALE);
+        public static final float SHARK_HOVER_INC_STEP = 0.045f;
+
     }
 
     public static class Player {

@@ -20,6 +20,10 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.Config.Enemy.CRAB_DRAW_OFFSET_X;
+import static org.example.Config.Enemy.CRAB_DRAW_OFFSET_Y;
+import static org.example.Game.DEFAULT_TILE_SIZE;
+
 public class LevelObjectManager {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -32,6 +36,9 @@ public class LevelObjectManager {
     private BufferedImage[] straightTreesAssets;
     private BufferedImage[] bendTreesAssets;
     private BufferedImage projectileAsset;
+    private BufferedImage sharkAsset;
+    private BufferedImage[] waterAsset;
+
     private final List<Projectile> projectiles = new ArrayList<>();
 
     public LevelObjectManager(Playing playing) {
@@ -60,6 +67,13 @@ public class LevelObjectManager {
             tree.update();
         }
 
+        for (Shark shark : playing.getLevelManager().getCurrentLevel().getSharks()) {
+            shark.updatePosition(playing.getLevelManager().getCurrentLevel().getLevelData());
+        }
+
+        updateWater();
+
+
         updateCannons(levelData, player);
         updateProjectiles(levelData, player);
     }
@@ -72,6 +86,8 @@ public class LevelObjectManager {
         renderProjectiles(g, xLevelOffset);
         renderGrass(g, xLevelOffset);
         renderTrees(g, xLevelOffset);
+        renderSharks(g, xLevelOffset);
+        renderWater(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
@@ -104,6 +120,14 @@ public class LevelObjectManager {
             if (!spike.isActive) continue;
 
             if (playerHitBox.intersects(spike.hitBox)) {
+                playing.getPlayer().getHeath().setCurrentHeath(0);
+            }
+        }
+    }
+
+    public void checkDrowned(Rectangle2D.Float playerHitBox) {
+        for (Water water : playing.getLevelManager().getCurrentLevel().getWaterWaveList()) {
+            if (water.getHitBox().intersects(playerHitBox)) {
                 playing.getPlayer().getHeath().setCurrentHeath(0);
             }
         }
@@ -194,8 +218,6 @@ public class LevelObjectManager {
                     Config.LevelEnv.GRASS_WIDTH,
                     Config.LevelEnv.GRASS_HEIGHT,
                     null);
-
-
         }
     }
 
@@ -251,6 +273,41 @@ public class LevelObjectManager {
         }
     }
 
+    private void renderSharks(Graphics g, int xLevelOffset) {
+        for (Shark shark : playing.getLevelManager().getCurrentLevel().getSharks()) {
+
+
+            g.drawImage(sharkAsset,
+                    (int) shark.getHitBox().x - xLevelOffset - Config.LevelEnv.SHARK_DRAW_OFFSET_X + shark.getXFlip(),
+                    (int) shark.getHitBox().y + Config.LevelEnv.SHARK_DRAW_OFFSET_Y,
+                    Config.LevelEnv.SHARK_WIDTH * shark.getWidthFlip(),
+                    Config.LevelEnv.SHARK_HEIGHT,
+                    null);
+        }
+    }
+
+    private void renderWater(Graphics g, int xLevelOffset) {
+
+        for (Water water : playing.getLevelManager().getCurrentLevel().getWaterBodyList()) {
+
+                g.drawImage(waterAsset[waterAsset.length - 1],
+                        (int) water.getHitBox().x - xLevelOffset,
+                        (int) water.getHitBox().y,
+                        GamePanel.getCurrentTileSize(),
+                        GamePanel.getCurrentTileSize(),
+                        null);
+            }
+
+        for (Water water : playing.getLevelManager().getCurrentLevel().getWaterWaveList()) {
+            g.drawImage(waterAsset[water.getAnimationIndex()],
+                    (int) water.getHitBox().x - xLevelOffset,
+                    (int) water.getHitBox().y,
+                    GamePanel.getCurrentTileSize(),
+                    GamePanel.getCurrentTileSize(),
+                    null);
+        }
+    }
+
     private void dropPotionFromContainer(Container container) {
         LevelObjectType droppedPotionType;
         if (LevelObjectType.BARREL.equals(container.getObjectType())) {
@@ -289,6 +346,16 @@ public class LevelObjectManager {
             } else if (CollisionHelper.hasProjectileHitObstacle(projectile.getHitBox(), levelData)) {
                 projectile.setActive(false);
             }
+        }
+    }
+
+    private void updateWater() {
+        for (Water water : playing.getLevelManager().getCurrentLevel().getWaterWaveList()) {
+            water.update();
+        }
+
+        for (Water water : playing.getLevelManager().getCurrentLevel().getWaterBodyList()) {
+            water.update();
         }
     }
 
@@ -374,6 +441,15 @@ public class LevelObjectManager {
                     Config.LevelEnv.TREE_BEND_HEIGHT_DEFAULT);
         }
 
+
+        sharkAsset = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_SHARK);
+
+        // Indexes 0-3 are for wave animation, index 4 is for non-animated water body
+        waterAsset = new BufferedImage[5];
+        BufferedImage img = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_WATER_TOP);
+        for (int i = 0; i < 4; i++)
+            waterAsset[i] = img.getSubimage(i * DEFAULT_TILE_SIZE, 0, DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
+        waterAsset[4] = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_WATER);
     }
 }
 

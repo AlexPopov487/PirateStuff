@@ -3,8 +3,8 @@ package org.example.levels;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
-import org.example.levelObjects.*;
 import org.example.levelObjects.Container;
+import org.example.levelObjects.*;
 import org.example.types.EnemyType;
 import org.example.types.LevelObjectType;
 import org.example.utils.Helper;
@@ -21,9 +21,13 @@ public class Level {
     private final List<Potion> potions = new ArrayList<>();
     private final List<Container> containers = new ArrayList<>();
     private final List<Spike> spikes = new ArrayList<>();
-    private final List<Cannon> cannons =new ArrayList<>();
-    private final List<Grass> grassList =new ArrayList<>();
-    private final List<Tree> trees =new ArrayList<>();
+    private final List<Cannon> cannons = new ArrayList<>();
+    private final List<Grass> grassList = new ArrayList<>();
+    private final List<Tree> trees = new ArrayList<>();
+    private final List<Shark> sharks = new ArrayList<>();
+    // separating water types into 2 lists, since we need only waterWaves during entity downed check
+    private final List<Water> waterBodyList = new ArrayList<>();
+    private final List<Water> waterWaveList = new ArrayList<>();
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -84,6 +88,18 @@ public class Level {
         return trees;
     }
 
+    public List<Shark> getSharks() {
+        return sharks;
+    }
+
+    public List<Water> getWaterBodyList() {
+        return waterBodyList;
+    }
+
+    public List<Water> getWaterWaveList() {
+        return waterWaveList;
+    }
+
     private void loadLevel() {
 
         // Looping through the image colors just once. Instead of one per
@@ -106,8 +122,7 @@ public class Level {
     private void loadLevelData(int redValue, int x, int y) {
 
         // to avoid ArrayOutOfBounds when RED value is bigger than max index of outsideSpriteArray
-        // + 2 is for the two water sprites
-        if (redValue >= (LevelManager.LVL_TEMPLATE_SPRITES_IN_WIDTH * LevelManager.LVL_TEMPLATE_SPRITES_IN_HEIGHT) + 2) {
+        if (redValue >= (LevelManager.LVL_TEMPLATE_SPRITES_IN_WIDTH * LevelManager.LVL_TEMPLATE_SPRITES_IN_HEIGHT)) {
             redValue = 0;
         } else {
             levelData[y][x] = redValue;
@@ -144,12 +159,18 @@ public class Level {
             potions.add(new Potion(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_BLUE));
         } else if (blueValue == LevelObjectType.POTION_RED.getBluePixelValue()) {
             potions.add(new Potion(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.POTION_RED));
-        }  else if (blueValue == LevelObjectType.TREE_STRAIGHT.getBluePixelValue()) {
+        } else if (blueValue == LevelObjectType.TREE_STRAIGHT.getBluePixelValue()) {
             trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_STRAIGHT));
         } else if (blueValue == LevelObjectType.TREE_BEND_RIGHT.getBluePixelValue()) {
             trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_BEND_RIGHT));
-        }else if (blueValue == LevelObjectType.TREE_BEND_LEFT.getBluePixelValue()) {
+        } else if (blueValue == LevelObjectType.TREE_BEND_LEFT.getBluePixelValue()) {
             trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_BEND_LEFT));
+        } else if (blueValue == LevelObjectType.SHARK.getBluePixelValue()) {
+            sharks.add(new Shark(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
+        } else if (blueValue == LevelObjectType.WATER_BODY.getBluePixelValue()) {
+            waterBodyList.add(new Water(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.WATER_BODY));
+        } else if (blueValue == LevelObjectType.WATER_WAVE.getBluePixelValue()) {
+            waterWaveList.add(new Water(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.WATER_WAVE));
         }
     }
 

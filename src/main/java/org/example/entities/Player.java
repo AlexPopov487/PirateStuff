@@ -273,10 +273,7 @@ public class Player extends Entity {
     }
 
     private void checkDrowned() {
-        int[][] levelData = playing.getLevelManager().getCurrentLevel().getLevelData();
-        if (CollisionHelper.isEntityInWater(hitBox, levelData)) {
-            getHeath().setCurrentHeath(0);
-        }
+        playing.checkDrowned(hitBox);
     }
 
     private void checkEnemyStumped() {

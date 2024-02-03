@@ -16,10 +16,13 @@ public class CollisionHelper {
     }
 
 
-    public static boolean isTileSolid(int tileX, int tileY, int[][] lvlData) {
+    public static boolean isTileSolid(int tileX, int tileY, int[][] lvlData, boolean checkWater) {
         int spriteIndex = lvlData[tileY][tileX];
 
-        return (spriteIndex != Config.LevelEnv.TILE_VOID_INDEX
+        boolean isSolid = spriteIndex != Config.LevelEnv.TILE_VOID_INDEX;
+        if (!checkWater) return isSolid;
+
+        return (isSolid
                 && spriteIndex != Config.LevelEnv.TILE_WATER_TOP_INDEX
                 && spriteIndex != Config.LevelEnv.TILE_WATER_BOTTOM_INDEX);
     }
@@ -103,13 +106,13 @@ public class CollisionHelper {
     private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData, boolean checkPits) {
         // loop from the xTile of the first object to the xTile of the second object and check for obstacles
         for (int i = 0; i < endX - startX; i++) {
-            if (isTileSolid(startX + i, y, levelData)) {
+            if (isTileSolid(startX + i, y, levelData, true)) {
                 return false;
             }
 
             if (checkPits) {
                 // check tiles below to determine whether there is a pit between 2 objects
-                if (!isTileSolid(startX + i, y + 1, levelData)) {
+                if (!isTileSolid(startX + i, y + 1, levelData, true)) {
                     return false;
                 }
             }
@@ -127,7 +130,7 @@ public class CollisionHelper {
         int xIndex = (int) x / GamePanel.getCurrentTileSize();
         int yIndex = (int) y / GamePanel.getCurrentTileSize();
 
-        return isTileSolid(xIndex, yIndex, currentLevelData);
+        return isTileSolid(xIndex, yIndex, currentLevelData, true);
     }
 
     private static int getTileIndex(float xPos, float yPos, int[][] lvlData) {
