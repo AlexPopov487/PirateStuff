@@ -23,7 +23,7 @@ public class Container extends LevelObject implements Drawable {
     public void update() {
         if (shouldAnimate) {
 
-            updateAnimationTick();
+            updateAnimationTick(null);
         }
     }
 

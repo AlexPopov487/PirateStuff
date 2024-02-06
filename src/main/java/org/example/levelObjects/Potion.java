@@ -22,7 +22,7 @@ public class Potion extends LevelObject  implements Drawable {
 
     @Override
     public void update() {
-        updateAnimationTick();
+        updateAnimationTick(null);
         hoverEffect.update(Config.LevelEnv.POTION_HOVER_OFFSET_MAX, Config.LevelEnv.POTION_HOVER_INC_STEP, getHitBox() , y);
     }
 }

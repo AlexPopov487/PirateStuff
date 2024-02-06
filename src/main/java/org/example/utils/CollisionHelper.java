@@ -97,12 +97,6 @@ public class CollisionHelper {
         return playerFeet.intersects(enemyHitBox.getX(), enemyHitBox.getY(), enemyHitBox.getWidth(), 5);
     }
 
-    public static boolean isEntityInWater(Rectangle2D.Float entityHitBox, int[][] lvlData) {
-        // Only check if entity touches top water layer. Can't reach bottom if touched top water layer.
-        return getTileIndex(entityHitBox.x, entityHitBox.y + entityHitBox.height, lvlData) == 48
-                || getTileIndex(entityHitBox.x + entityHitBox.width, entityHitBox.y + entityHitBox.height, lvlData) == 48;
-    }
-
     private static boolean isDistanceClear(int startX, int endX, int y, int[][] levelData, boolean checkPits) {
         // loop from the xTile of the first object to the xTile of the second object and check for obstacles
         for (int i = 0; i < endX - startX; i++) {

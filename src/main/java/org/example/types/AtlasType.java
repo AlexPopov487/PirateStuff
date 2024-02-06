@@ -29,7 +29,9 @@ public enum AtlasType {
     ATLAS_GRASS("grass_atlas.png"),
     ATLAS_TREE_STRAIGHT("tree_one_atlas.png"),
     ATLAS_TREE_BEND("tree_two_atlas.png"),
-    ATLAS_SHARK("old_shark.png"),
+    ATLAS_SHARK("shark.png"),
+    ATLAS_PINK_STAR("pinkstar_atlas.png"),
+    ATLAS_QUESTION_MARK("question_atlas.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

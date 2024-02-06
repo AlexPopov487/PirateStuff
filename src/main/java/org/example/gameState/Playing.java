@@ -231,7 +231,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public void loadNextLevel() {
         Level level = levelManager.loadNextLevel();
-        enemyManager.loadEnemies(level);
+//        enemyManager.loadEnemies(level);
         levelObjectManager.loadLevelObjects(level);
         player.setCurrentLevelData(level.getLevelData());
         player.setSpawnPosition(level.getPlayerSpawnPosition());
@@ -242,7 +242,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     }
 
     private void loadStartLevelResources() {
-        enemyManager.loadEnemies(levelManager.getCurrentLevel());
+//        enemyManager.loadEnemies(levelManager.getCurrentLevel());
         levelObjectManager.loadLevelObjects(levelManager.getCurrentLevel());
     }
 

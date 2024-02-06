@@ -36,7 +36,7 @@ public class Cannon extends LevelObject implements Drawable {
     @Override
     public void update() {
         if (shouldAnimate) {
-            updateAnimationTick();
+            updateAnimationTick(null);
         }
     }
 

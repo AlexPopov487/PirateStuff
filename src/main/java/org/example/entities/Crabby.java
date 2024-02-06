@@ -13,36 +13,20 @@ import static org.example.utils.CollisionHelper.*;
 
 public class Crabby extends Enemy {
     public Crabby(float x, float y) {
-        super(x, y, Config.Enemy.CRAB_SPRITE_WIDTH, Config.Enemy.CRAB_SPRITE_HEIGHT, EnemyType.CRAB);
-        initHitBox(Config.Enemy.CRAB_HIT_BOT_WIDTH, Config.Enemy.CRAB_HIT_BOT_HEIGHT);
+        super(x, y, Config.Enemy.Crabby.SPRITE_WIDTH, Config.Enemy.Crabby.SPRITE_HEIGHT, EnemyType.CRAB);
+        initHitBox(Config.Enemy.Crabby.HIT_BOX_WIDTH, Config.Enemy.Crabby.HIT_BOX_HEIGHT);
         initAttackRange();
-    }
-
-    public int getXFlip() {
-        if (getDirections().isMovingLeft()) {
-            return 0;
-        } else {
-            return width;
-        }
-    }
-
-    public int getWidthFlip() {
-        if (getDirections().isMovingLeft()) {
-            return 1;
-        } else {
-            return -1;
-        }
     }
 
     @Override
     public void updateAttackRange() {
-        attackRange.x = hitBox.x - Config.Enemy.CRAB_ATTACK_RANGE_OFFSET_X;
+        attackRange.x = hitBox.x - Config.Enemy.Crabby.ATTACK_RANGE_OFFSET_X;
         attackRange.y = hitBox.y;
     }
 
     @Override
     public void initAttackRange() {
-        attackRange = new Rectangle2D.Float(x, y, 82 * Game.SCALE, Config.Enemy.CRAB_HIT_BOT_HEIGHT);
+        attackRange = new Rectangle2D.Float(x, y, 82 * Game.SCALE, Config.Enemy.Crabby.HIT_BOX_HEIGHT);
     }
 
     @Override
@@ -86,59 +70,6 @@ public class Crabby extends Enemy {
             }
         }
 
-        float xStep = 0;
-
-        if (getDirections().isMovingLeft()) {
-            xStep = -getWalkSpeed();
-        }
-        if (getDirections().isMovingRight()) {
-            xStep = getWalkSpeed();
-        }
-
-        if (canMoveHere(hitBox.x + xStep, hitBox.y, hitBox.width, hitBox.height, levelData)
-                && isFloor(hitBox, xStep, levelData)) {
-            hitBox.x += xStep;
-        } else {
-            // if enemy has reached either wall or edge, change patrol direction
-            changeWalkingDir();
-        }
+        doPatrol(levelData);
     }
-
-    private void handleFirstUpdate(int[][] levelData) {
-        if (!CollisionHelper.isOnTheFloor(hitBox, levelData)) {
-            getDirections().setInAir(true);
-        }
-        isFirstPositionUpdate = false;
-    }
-
-
-    private void changeWalkingDir() {
-        if (getDirections().isMovingLeft()) {
-            getDirections().setMovingLeft(false);
-            getDirections().setMovingRight(true);
-        } else {
-            getDirections().setMovingLeft(true);
-            getDirections().setMovingRight(false);
-        }
-    }
-
-    private void placeEnemyAtTheFloor(int[][] levelData) {
-        float yDestination = hitBox.y + getGravitySettings().getAirSpeed();
-
-        if (CollisionHelper.canMoveHere(hitBox.x, yDestination, hitBox.width, hitBox.height, levelData)) {
-            hitBox.y = yDestination;
-            getGravitySettings().setAirSpeed(getGravitySettings().getAirSpeed() + getGravitySettings().getGravityForce());
-        } else {
-        /*
-         if we assume that updating position will lead to collision, the pos update will not be made,
-         meaning that there still will be some space between the player and the obstacle. Thus, we need to
-         move the player as close to the obstacle as possible
-        */
-            getDirections().setInAir(false);
-            hitBox.y = getClosestToObstacleYPos(hitBox, yDestination);
-        }
-
-        setEnemyTileY((int) (hitBox.getY() / GamePanel.getCurrentTileSize()));
-    }
-
 }

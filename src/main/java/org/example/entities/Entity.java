@@ -13,7 +13,7 @@ public abstract class Entity extends BaseEntity {
     private final Directions directions;
     private final GravitySettings gravitySettings;
     private final Health health;
-    private final float walkSpeed;
+    private float walkSpeed;
 
 
     protected Rectangle2D.Float hitBox;
@@ -59,12 +59,12 @@ public abstract class Entity extends BaseEntity {
     }
 
     public abstract void initAttackRange();
+
     /*
    attack range should follow the direction of the player
    attack range box position is intentionally not reset, i.e. even in neither of player's directions are set
    (e.g. the player is standing on the spot), the last active direction is set by default
    */
-
     public abstract void updateAttackRange();
 
     public Rectangle2D.Float getHitBox() {
@@ -101,5 +101,9 @@ public abstract class Entity extends BaseEntity {
 
     public float getWalkSpeed() {
         return walkSpeed;
+    }
+
+    public void setWalkSpeed(float walkSpeed) {
+        this.walkSpeed = walkSpeed;
     }
 }

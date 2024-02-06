@@ -88,9 +88,10 @@ public class LevelObject extends BaseEntity {
         g.drawRect((int) hitBox.x - xLevelOffset, (int) hitBox.y, (int) hitBox.width, (int) hitBox.height);
     }
 
-    protected void updateAnimationTick() {
+    protected void updateAnimationTick(Integer customAnimationSpeed) {
         animationTick++;
-        if (animationTick >= ENTITY_ANIMATION_SPEED) {
+        int animationSpeed = customAnimationSpeed == null ? ENTITY_ANIMATION_SPEED : customAnimationSpeed;
+        if (animationTick >= animationSpeed) {
             animationTick = 0;
             animationIndex++;
             if (animationIndex >= objectType.getFrameCount()) {

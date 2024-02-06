@@ -3,6 +3,7 @@ package org.example.levels;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
+import org.example.entities.PinkStar;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.*;
 import org.example.types.EnemyType;
@@ -18,6 +19,7 @@ public class Level {
 
     private final BufferedImage levelAsset;
     private final List<Crabby> crabs = new ArrayList<>();
+    private final List<PinkStar> pinkStars = new ArrayList<>();
     private final List<Potion> potions = new ArrayList<>();
     private final List<Container> containers = new ArrayList<>();
     private final List<Spike> spikes = new ArrayList<>();
@@ -28,6 +30,7 @@ public class Level {
     // separating water types into 2 lists, since we need only waterWaves during entity downed check
     private final List<Water> waterBodyList = new ArrayList<>();
     private final List<Water> waterWaveList = new ArrayList<>();
+    private Dialogue questionMark;
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -100,6 +103,14 @@ public class Level {
         return waterWaveList;
     }
 
+    public List<PinkStar> getPinkStars() {
+        return pinkStars;
+    }
+
+    public Dialogue getQuestionMark() {
+        return questionMark;
+    }
+
     private void loadLevel() {
 
         // Looping through the image colors just once. Instead of one per
@@ -117,6 +128,8 @@ public class Level {
                 loadEntities(green, x, y);
                 loadObjects(blue, x, y);
             }
+
+        questionMark = new Dialogue(0, 0, LevelObjectType.QUESTION_MARK);
     }
 
     private void loadLevelData(int redValue, int x, int y) {
@@ -137,15 +150,17 @@ public class Level {
     }
 
     private void loadEntities(int greenValue, int x, int y) {
-        if (greenValue == EnemyType.CRAB.ordinal()) {
+        if (greenValue == EnemyType.CRAB.getGreenPixelValue()) {
             crabs.add(new Crabby(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
+        } else if (greenValue == EnemyType.STAR.getGreenPixelValue()) {
+            pinkStars.add(new PinkStar(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
         } else if (greenValue == 100) {
             playerSpawnPosition = new Point(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
         }
     }
 
     private void loadObjects(int blueValue, int x, int y) {
-        if (blueValue == LevelObjectType.BARREL.ordinal()) {
+        if (blueValue == LevelObjectType.BARREL.getBluePixelValue()) {
             containers.add(new Container(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.BARREL));
         } else if (blueValue == LevelObjectType.BOX.getBluePixelValue()) {
             containers.add(new Container(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.BOX));

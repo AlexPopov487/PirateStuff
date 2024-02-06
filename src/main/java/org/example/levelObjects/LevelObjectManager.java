@@ -20,8 +20,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.example.Config.Enemy.CRAB_DRAW_OFFSET_X;
-import static org.example.Config.Enemy.CRAB_DRAW_OFFSET_Y;
 import static org.example.Game.DEFAULT_TILE_SIZE;
 
 public class LevelObjectManager {

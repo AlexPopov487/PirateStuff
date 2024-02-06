@@ -39,6 +39,16 @@ public class Directions {
     public void setMovingRight(boolean movingRight) {
         isMovingRight = movingRight;
     }
+
+    public void moveRight() {
+        isMovingLeft = false;
+        isMovingRight = true;
+    }
+
+    public void moveLeft() {
+        isMovingRight = false;
+        isMovingLeft = true;
+    }
     public boolean isMoving() {
         return isMoving;
     }

@@ -32,6 +32,11 @@ public class Config {
     public static final int VOLUME_SLIDER_WIDTH = (int) (VOLUME_SLIDER_WIDTH_DEFAULT * SCALE);
     public static final int VOLUME_SLIDER_HEIGHT = (int) (VOLUME_SLIDER_HEIGHT_DEFAULT * SCALE);
 
+    public static final int DIALOGUE_DEFAULT_WIDTH = 14;
+    public static final int DIALOGUE_DEFAULT_HEIGHT = 12;
+    public static final int DIALOGUE_WIDTH = (int) (DIALOGUE_DEFAULT_WIDTH * Game.SCALE);
+    public static final int DIALOGUE_HEIGHT = (int) (DIALOGUE_DEFAULT_HEIGHT * Game.SCALE);
+
 
     public static final float GRAVITY_FORCE = (float) (0.04 * SCALE);
     public static final int ENTITY_ANIMATION_SPEED = 15;
@@ -164,26 +169,40 @@ public class Config {
     }
 
     public static class Enemy {
-        public static final int CRAB_SPRITE_WIDTH_DEFAULT = 72;
-        public static final int CRAB_SPRITE_HEIGHT_DEFAULT = 32;
-        public static final int CRAB_SPRITE_WIDTH = (int) (72 * SCALE);
-        public static final int CRAB_SPRITE_HEIGHT = (int) (32 * SCALE);
+        public static class Crabby {
+            public static final int SPRITE_WIDTH_DEFAULT = 72;
+            public static final int SPRITE_HEIGHT_DEFAULT = 32;
+            public static final int SPRITE_WIDTH = (int) (72 * SCALE);
+            public static final int SPRITE_HEIGHT = (int) (32 * SCALE);
+            // 26 is the pixel difference between the sprite start and the hit box start
+            public static final int DRAW_OFFSET_X = (int) (26 * SCALE);
+            // 9 is the pixel difference between the sprite start and the hit box start
+            public static final int DRAW_OFFSET_Y = (int) (9 * SCALE);
+            public static final int HIT_BOX_WIDTH = (int) (22 * SCALE);
+            public static final int HIT_BOX_HEIGHT = (int) (19 * SCALE);
+            public static final int ATTACK_RANGE_OFFSET_X = (int) (30 * SCALE);
+        }
 
-        // 26 is the pixel difference between the sprite start and the hit box start
-        public static final int CRAB_DRAW_OFFSET_X = (int) (26 * SCALE);
-        // 9 is the pixel difference between the sprite start and the hit box start
-        public static final int CRAB_DRAW_OFFSET_Y = (int) (9 * SCALE);
+        public static class Star {
+            public static final int SPRITE_WIDTH_DEFAULT = 34;
+            public static final int SPRITE_HEIGHT_DEFAULT = 30;
+            public static final int SPRITE_WIDTH = (int) (SPRITE_WIDTH_DEFAULT * Game.SCALE);
+            public static final int SPRITE_HEIGHT = (int) (SPRITE_HEIGHT_DEFAULT * Game.SCALE);
+            public static final int HIT_BOX_WIDTH = (int) (17 * Game.SCALE);
+            public static final int HIT_BOX_HEIGHT = (int) (21 * Game.SCALE);
+            public static final int DRAW_OFFSET_X = (int) (9 * Game.SCALE);
+            public static final int DRAW_OFFSET_Y = (int) (7 * Game.SCALE);
 
+            public static final long ROLLING_DURATION = 2000;
+            public static final long STUNNED_DURATION = 2000;
+            public static final float ROLLING_SPEED = Config.Enemy.WALK_SPEED * 3;
+        }
+
+        
         public static final float AIR_SPEED = 0f;
         public static final float JUMP_SPEED = (float) (-2.25f * SCALE);
         public static final float POST_COLLISION_FALL_SPEED = (float) (0.5f * SCALE);
         public static final float WALK_SPEED = 0.35f * SCALE;
-
-        public static final int CRAB_HIT_BOT_WIDTH = (int) (22 * Game.SCALE);
-        public static final int CRAB_HIT_BOT_HEIGHT = (int) (19 * Game.SCALE);
-        public static final int CRAB_ATTACK_RANGE_OFFSET_X = (int) (30 * Game.SCALE);
-
-        public static final int CRAB_DAMAGE = 10;
 
 
         public static int getSpriteAmount(EnemyType enemyType, EnemyState enemyState) {
@@ -195,18 +214,12 @@ public class Config {
                     case HIT -> 4;
                     case DEAD -> 5;
                 };
-            };
-        }
-
-        //todo if the sprite animation order is the same for the other enemy, this logic should be put into the EnemyState as a property
-        public static int getSpriteAnimationRowIndex(EnemyType enemyType, EnemyState enemyState) {
-            return switch (enemyType) {
-                case CRAB -> switch (enemyState) {
-                    case IDLE -> 0;
-                    case RUNNING -> 1;
-                    case ATTACKING -> 2;
-                    case HIT -> 3;
-                    case DEAD -> 4;
+                case STAR -> switch (enemyState) {
+                    case IDLE -> 8;
+                    case RUNNING -> 6;
+                    case ATTACKING -> 7;
+                    case HIT -> 4;
+                    case DEAD -> 5;
                 };
             };
         }
@@ -214,30 +227,32 @@ public class Config {
         public static int getMaxHealth(EnemyType enemyType) {
             return switch (enemyType) {
                 case CRAB -> 10;
+                case STAR -> 0;
             };
         }
 
         public static int getMaxDmg(EnemyType enemyType) {
             return switch (enemyType) {
                 case CRAB -> 15;
+                case STAR -> 25;
             };
         }
     }
 
     public static class StatusBar {
-        public static final int STATUS_BAR_WIDTH = (int) (192 * Game.SCALE);
-        public static final int STATUS_BAR_HEIGHT = (int) (58 * Game.SCALE);
-        public static final int STATUS_BAR_X = (int) (10 * Game.SCALE);
-        public static final int STATUS_BAR_Y = (int) (10 * Game.SCALE);
-        public static final int HEALTH_BAR_WIDTH = (int) (150 * Game.SCALE);
-        public static final int HEALTH_BAR_HEIGHT = (int) (4 * Game.SCALE);
-        public static final int HEALTH_BAR_X_START = (int) (34 * Game.SCALE) + STATUS_BAR_X;
-        public static final int HEALTH_BAR_Y_START = (int) (14 * Game.SCALE) + STATUS_BAR_Y;
+        public static final int STATUS_BAR_WIDTH = (int) (192 * SCALE);
+        public static final int STATUS_BAR_HEIGHT = (int) (58 * SCALE);
+        public static final int STATUS_BAR_X = (int) (10 * SCALE);
+        public static final int STATUS_BAR_Y = (int) (10 * SCALE);
+        public static final int HEALTH_BAR_WIDTH = (int) (150 * SCALE);
+        public static final int HEALTH_BAR_HEIGHT = (int) (4 * SCALE);
+        public static final int HEALTH_BAR_X_START = (int) (34 * SCALE) + STATUS_BAR_X;
+        public static final int HEALTH_BAR_Y_START = (int) (14 * SCALE) + STATUS_BAR_Y;
 
-        public static final int STAMINA_BAR_WIDTH = (int) (104 * Game.SCALE);
-        public static final int STAMINA_BAR_HEIGHT = (int) (2 * Game.SCALE);
-        public static final int STAMINA_BAR_X_START = (int) (44 * Game.SCALE) + STATUS_BAR_X;
-        public static final int STAMINA_BAR_Y_START = (int) (34 * Game.SCALE) + STATUS_BAR_Y;
+        public static final int STAMINA_BAR_WIDTH = (int) (104 * SCALE);
+        public static final int STAMINA_BAR_HEIGHT = (int) (2 * SCALE);
+        public static final int STAMINA_BAR_X_START = (int) (44 * SCALE) + STATUS_BAR_X;
+        public static final int STAMINA_BAR_Y_START = (int) (34 * SCALE) + STATUS_BAR_Y;
         public static final int STAMINA_RECOVERY_DELAY = 20;
         public static final int STAMINA_MAX_VALUE = 200;
 
