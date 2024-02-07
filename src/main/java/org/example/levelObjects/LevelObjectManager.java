@@ -339,7 +339,7 @@ public class LevelObjectManager {
             projectile.updatePosition();
 
             if (projectile.getHitBox().intersects(player.getHitBox())) {
-                player.getHeath().subtractHealth(30);
+                player.takeDamage(30);
                 projectile.setActive(false); // todo probably there should be one last animation of a ball explosion
             } else if (CollisionHelper.hasProjectileHitObstacle(projectile.getHitBox(), levelData)) {
                 projectile.setActive(false);

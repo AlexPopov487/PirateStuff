@@ -84,7 +84,7 @@ public abstract class Enemy extends Entity {
 
     protected void attack(Player player) {
         if (attackRange.intersects(player.hitBox)){
-            player.getHeath().subtractHealth(Config.Enemy.getMaxDmg(enemyType));
+            player.takeDamage(Config.Enemy.getMaxDmg(enemyType));
             setAttackPerformed(true);
         }
     }

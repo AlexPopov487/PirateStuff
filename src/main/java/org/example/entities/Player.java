@@ -3,7 +3,6 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.types.AtlasType;
-import org.example.utils.CollisionHelper;
 import org.example.utils.Helper;
 import org.example.utils.PlayerConstants;
 import org.example.utils.ResourceLoader;
@@ -189,6 +188,11 @@ public class Player extends Entity {
         actions.setPowerAttacking(true);
     }
 
+    public void takeDamage(int amount) {
+        getHeath().subtractHealth(amount);
+        actions.setTakingDamage(true);
+    }
+
     private void updateCharacterPosition() {
         getDirections().setMoving(false);
 
@@ -330,6 +334,14 @@ public class Player extends Entity {
             }
         }
 
+        if (actions.isTakingDamage()) {
+            currentAnimation = SPRITE_HIT;
+            if (previousAnimation != SPRITE_HIT) {
+                resetAnimationTick();
+            }
+            return;
+        }
+
         if (actions.isPowerAttacking()) {
             currentAnimation = SPRITE_ATTACK;
             resetAnimationTick();
@@ -340,7 +352,6 @@ public class Player extends Entity {
                 powerAttackTick = 0;
                 actions.setPowerAttacking(false);
             }
-
             return;
         }
 
@@ -369,11 +380,7 @@ public class Player extends Entity {
         */
         if (animationIndex != 1 || isAttackPerformed) return;
 
-        isAttackPerformed = true;
-
-        if (actions.isPowerAttacking()) {
-            isAttackPerformed = false;
-        }
+        isAttackPerformed = !actions.isPowerAttacking();
 
         playing.checkEnemyHit(attackRange);
         playing.checkLevelObjectDestroyed(attackRange);
@@ -403,6 +410,7 @@ public class Player extends Entity {
     private void resetAnimations() {
         actions.setAttacking(false);
         isAttackPerformed = false;
+        actions.setTakingDamage(false);
         animationTick = 0;
         animationIndex = 0;
     }
