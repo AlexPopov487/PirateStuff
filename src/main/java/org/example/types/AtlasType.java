@@ -29,6 +29,7 @@ public enum AtlasType {
     ATLAS_GRASS("grass_atlas.png"),
     ATLAS_TREE_STRAIGHT("tree_one_atlas.png"),
     ATLAS_TREE_BEND("tree_two_atlas.png"),
+    ATLAS_BACK_TREE_STRAIGHT("back_tree_one_atlas.png"),
     ATLAS_SHARK("shark.png"),
     ATLAS_PINK_STAR("pinkstar_atlas.png"),
     ATLAS_QUESTION_MARK("question_atlas.png"),

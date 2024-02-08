@@ -35,4 +35,8 @@ public class Helper {
     public static GrassType getRandomGrassType()  {
         return GrassType.values()[random.nextInt(GrassType.values().length -1)];
     }
+
+    public static int getRandomInt(int min, int max){
+        return random.nextInt(min, max);
+    }
 }

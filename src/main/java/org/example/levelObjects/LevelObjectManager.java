@@ -246,9 +246,10 @@ public class LevelObjectManager {
             int currentX = (int) (tree.getX() - xLevelOffset);
 
             if (LevelObjectType.TREE_STRAIGHT.equals(tree.getObjectType())) {
-                g.drawImage(straightTreesAssets[tree.getAnimationIndex()],
+                g.drawImage(
+                        straightTreesAssets[tree.getAnimationIndex()],
                         currentX,
-                        (int) tree.getY() - Config.LevelEnv.TREE_STRAIGHT_HEIGHT + (GamePanel.getCurrentTileSize() * 2) ,
+                        (int) tree.getY() - Config.LevelEnv.TREE_STRAIGHT_HEIGHT + (GamePanel.getCurrentTileSize() * 2),
                         Config.LevelEnv.TREE_STRAIGHT_WIDTH,
                         Config.LevelEnv.TREE_STRAIGHT_HEIGHT,
                         null);
@@ -299,13 +300,13 @@ public class LevelObjectManager {
 
         for (Water water : playing.getLevelManager().getCurrentLevel().getWaterBodyList()) {
 
-                g.drawImage(waterAsset[waterAsset.length - 1],
-                        (int) water.getHitBox().x - xLevelOffset,
-                        (int) water.getHitBox().y,
-                        GamePanel.getCurrentTileSize(),
-                        GamePanel.getCurrentTileSize(),
-                        null);
-            }
+            g.drawImage(waterAsset[waterAsset.length - 1],
+                    (int) water.getHitBox().x - xLevelOffset,
+                    (int) water.getHitBox().y,
+                    GamePanel.getCurrentTileSize(),
+                    GamePanel.getCurrentTileSize(),
+                    null);
+        }
 
         for (Water water : playing.getLevelManager().getCurrentLevel().getWaterWaveList()) {
             g.drawImage(waterAsset[water.getAnimationIndex()],
@@ -449,6 +450,16 @@ public class LevelObjectManager {
                     Config.LevelEnv.TREE_BEND_WIDTH_DEFAULT,
                     Config.LevelEnv.TREE_BEND_HEIGHT_DEFAULT);
         }
+
+//        BufferedImage backStraightTreeSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_BACK_TREE_STRAIGHT);
+//        backStraightTreesAssets = new BufferedImage[4];
+//
+//        for (int column = 0; column < backStraightTreesAssets.length; column++) {
+//            backStraightTreesAssets[column] = backStraightTreeSprite.getSubimage(column * Config.LevelEnv.TREE_STRAIGHT_WIDTH_DEFAULT,
+//                    0,
+//                    Config.LevelEnv.TREE_STRAIGHT_WIDTH_DEFAULT,
+//                    Config.LevelEnv.BACK_TREE_STRAIGHT_HEIGHT_DEFAULT);
+//        }
 
 
         sharkAsset = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_SHARK);

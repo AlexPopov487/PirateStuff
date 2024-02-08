@@ -1,14 +1,17 @@
 package org.example.levels;
 
+import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
 import org.example.entities.PinkStar;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.*;
+import org.example.types.AtlasType;
 import org.example.types.EnemyType;
 import org.example.types.LevelObjectType;
 import org.example.utils.Helper;
+import org.example.utils.ResourceLoader;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -26,6 +29,7 @@ public class Level {
     private final List<Cannon> cannons = new ArrayList<>();
     private final List<Grass> grassList = new ArrayList<>();
     private final List<Tree> trees = new ArrayList<>();
+    private final List<BackTree> backTrees = new ArrayList<>();
     private final List<Shark> sharks = new ArrayList<>();
     // separating water types into 2 lists, since we need only waterWaves during entity downed check
     private final List<Water> waterBodyList = new ArrayList<>();
@@ -39,6 +43,7 @@ public class Level {
     private int maxLevelOffsetX;
     private int[][] levelData;
     private Point playerSpawnPosition;
+
 
     public Level(BufferedImage levelAsset) {
         this.levelAsset = levelAsset;
@@ -111,6 +116,10 @@ public class Level {
         return questionMark;
     }
 
+    public List<BackTree> getBackTrees() {
+        return backTrees;
+    }
+
     private void loadLevel() {
 
         // Looping through the image colors just once. Instead of one per
@@ -180,6 +189,8 @@ public class Level {
             trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_BEND_RIGHT));
         } else if (blueValue == LevelObjectType.TREE_BEND_LEFT.getBluePixelValue()) {
             trees.add(new Tree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.TREE_BEND_LEFT));
+        } else if (blueValue == LevelObjectType.BACK_TREE_STRAIGHT.getBluePixelValue()) {
+            backTrees.add(new BackTree(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.BACK_TREE_STRAIGHT));
         } else if (blueValue == LevelObjectType.SHARK.getBluePixelValue()) {
             sharks.add(new Shark(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
         } else if (blueValue == LevelObjectType.WATER_BODY.getBluePixelValue()) {
