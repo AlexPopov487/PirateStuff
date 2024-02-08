@@ -40,9 +40,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     private boolean isPaused;
     private final LevelCompletedOverlay levelCompletedOverlay;
     private boolean isCurrLevelCompleted = false;
-    private final BufferedImage background;
-    private final BufferedImage backgroundCloudBig;
-    private final BufferedImage backgroundCloudSmall;
+    private final BufferedImage background = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND);
+    private final BufferedImage backgroundCloudBig = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND_CLOUD_BIG);
+    private final BufferedImage backgroundCloudSmall = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND_CLOUD_SMALL);
     private int[] smallCloudYPositions;
 
     // exceeding the threshold by x% of the windowWidth means that we need to move the level animation to the left
@@ -56,26 +56,16 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public Playing(Game game) {
         super(game);
-        background = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND);
-        backgroundCloudBig = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND_CLOUD_BIG);
-        backgroundCloudSmall = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_PLAYING_BACKGROUND_CLOUD_SMALL);
         generateSmallCloudPositions();
 
         pauseOverlay = new PauseOverlay(this);
         levelManager = new LevelManager(game);
-        calculateLevelOffset();
-
-        player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE), this);
-        int[][] currentLevelData = levelManager.getCurrentLevel().getLevelData();
-        player.setCurrentLevelData(currentLevelData);
-        player.setInAirIfPlayerNotOnFloor(player, currentLevelData);
-        player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
-
         enemyManager = new EnemyManager(this);
         levelObjectManager = new LevelObjectManager(this);
         levelCompletedOverlay = new LevelCompletedOverlay(this);
 
-        loadStartLevelResources();
+        player = new Player(200, 200, (int) (CHARACTER_SPRITE_WIDTH * SCALE), (int) (CHARACTER_SPRITE_HEIGHT * SCALE), this);
+        loadFirstLevelResources();
     }
 
     public Player getPlayer() {
@@ -241,9 +231,15 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         resetPlaying();
     }
 
-    private void loadStartLevelResources() {
-//        enemyManager.loadEnemies(levelManager.getCurrentLevel());
+    public void loadFirstLevelResources() {
+        levelManager.setFirstLevel();
         levelObjectManager.loadLevelObjects(levelManager.getCurrentLevel());
+        player.setCurrentLevelData(levelManager.getCurrentLevel().getLevelData());
+        player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
+        maxLevelOffsetX = levelManager.getCurrentLevel().getMaxLevelOffsetX();
+        game.getAudioPlayer().playLevelSong(levelManager.getCurrentLevelIndex());
+
+        resetPlaying();
     }
 
     public void checkEnemyHit(Rectangle2D.Float playerAttackRange) {

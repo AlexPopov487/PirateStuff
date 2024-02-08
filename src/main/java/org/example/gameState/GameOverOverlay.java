@@ -69,8 +69,7 @@ public class GameOverOverlay implements Drawable, GameStateActions {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (isHoveredOverButton(e, menuButton.getHitBox()) && menuButton.isMousePressed()) {
-            playing.resetPlaying();
-            playing.getLevelManager().setFirstLevel();
+            playing.loadFirstLevelResources();
             GameState.setState(GameState.MENU);
         } else if (isHoveredOverButton(e, replayButton.getHitBox()) && replayButton.isMousePressed()) {
             playing.resetPlaying();
@@ -103,8 +102,9 @@ public class GameOverOverlay implements Drawable, GameStateActions {
     @Override
     public void keyPressed(KeyEvent e) {
         if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
-            playing.resetPlaying();
-            playing.getLevelManager().setFirstLevel();
+//            playing.getLevelManager().setFirstLevel();
+//            playing.resetPlaying();
+            playing.loadFirstLevelResources();
             GameState.setState(GameState.MENU);
         }
     }

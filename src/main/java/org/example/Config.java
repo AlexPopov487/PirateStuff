@@ -272,7 +272,7 @@ public class Config {
         public static int ATTACK_3_EFFECT_INDEX = 6;
         public static int CANNON_EFFECT_INDEX = 7;
         public static int POISON_FOUND_EFFECT_INDEX = 8;
-        public static int PUNCH_EFFECT_INDEX = 9;
+        public static int HIT_EFFECT_INDEX = 9;
 //        public static int PLAYER_HURT_EFFECT_INDEX = 10;
     }
 }

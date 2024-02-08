@@ -64,7 +64,7 @@ public class LevelManager {
     }
 
     public void setFirstLevel() {
-//        currentLevelIndex = 0; // todo
+        currentLevelIndex = 0;
     }
 
     public Level loadNextLevel() {

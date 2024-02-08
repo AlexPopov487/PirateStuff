@@ -94,8 +94,9 @@ public class LevelObjectManager {
             if (!potion.isActive) continue;
 
             if (playerHitBox.intersects(potion.getHitBox())) {
-                applyEffect(potion);
-                potion.setActive(false);
+                if (applyEffect(potion)) {
+                    potion.setActive(false);
+                }
             }
         }
     }
@@ -131,14 +132,24 @@ public class LevelObjectManager {
         }
     }
 
-    public void applyEffect(Potion potion) {
+    public boolean applyEffect(Potion potion) {
         if (LevelObjectType.POTION_RED.equals(potion.getObjectType())) {
             Health playerHealth = playing.getPlayer().getHeath();
+
+            if (playerHealth.getCurrentHealth() == playing.getPlayer().getHeath().getMaxHealth()) {
+                return false;
+            }
             playerHealth.setCurrentHeath(Config.LevelEnv.POTION_RED_VALUE + playerHealth.getCurrentHealth());
+            return true;
         } else if (LevelObjectType.POTION_BLUE.equals(potion.getObjectType())) {
             Stamina playerStamina = playing.getPlayer().getStamina();
+            if (playerStamina.getCurrentValue() == Config.StatusBar.STAMINA_MAX_VALUE) {
+                return false;
+            }
             playerStamina.incCurrentValue(Config.LevelEnv.POTION_BLUE_VALUE);
+            return true;
         }
+        return false;
     }
 
     public void resetAll() {

@@ -189,6 +189,7 @@ public class Player extends Entity {
     }
 
     public void takeDamage(int amount) {
+        playing.getGame().getAudioPlayer().playEffect(Config.Audio.HIT_EFFECT_INDEX);
         getHeath().subtractHealth(amount);
         actions.setTakingDamage(true);
     }
