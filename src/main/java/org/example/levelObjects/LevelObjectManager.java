@@ -36,6 +36,7 @@ public class LevelObjectManager {
     private BufferedImage projectileAsset;
     private BufferedImage sharkAsset;
     private BufferedImage[] waterAsset;
+    private BufferedImage[] flagAsset;
 
     private final List<Projectile> projectiles = new ArrayList<>();
 
@@ -69,6 +70,10 @@ public class LevelObjectManager {
             shark.updatePosition(playing.getLevelManager().getCurrentLevel().getLevelData());
         }
 
+        for (Flag flag : playing.getLevelManager().getCurrentLevel().getFlags()) {
+            flag.update();
+        }
+
         updateWater();
 
 
@@ -86,6 +91,7 @@ public class LevelObjectManager {
         renderTrees(g, xLevelOffset);
         renderSharks(g, xLevelOffset);
         renderWater(g, xLevelOffset);
+        renderFlag(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
@@ -318,6 +324,21 @@ public class LevelObjectManager {
         }
     }
 
+    private void renderFlag(Graphics g, int xLevelOffset) {
+        for (Flag flag : playing.getLevelManager().getCurrentLevel().getFlags()) {
+
+            int currentX = (int) (flag.getX() - xLevelOffset);
+
+            g.drawImage(
+                    flagAsset[flag.getAnimationIndex()],
+                    currentX,
+                    (int) flag.getY() + GamePanel.getCurrentTileSize() - Config.LevelEnv.FLAG_HEIGHT,
+                    Config.LevelEnv.FLAG_WIDTH,
+                    Config.LevelEnv.FLAG_HEIGHT,
+                    null);
+        }
+    }
+
     private void dropPotionFromContainer(Container container) {
         LevelObjectType droppedPotionType;
         if (LevelObjectType.BARREL.equals(container.getObjectType())) {
@@ -451,17 +472,6 @@ public class LevelObjectManager {
                     Config.LevelEnv.TREE_BEND_HEIGHT_DEFAULT);
         }
 
-//        BufferedImage backStraightTreeSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_BACK_TREE_STRAIGHT);
-//        backStraightTreesAssets = new BufferedImage[4];
-//
-//        for (int column = 0; column < backStraightTreesAssets.length; column++) {
-//            backStraightTreesAssets[column] = backStraightTreeSprite.getSubimage(column * Config.LevelEnv.TREE_STRAIGHT_WIDTH_DEFAULT,
-//                    0,
-//                    Config.LevelEnv.TREE_STRAIGHT_WIDTH_DEFAULT,
-//                    Config.LevelEnv.BACK_TREE_STRAIGHT_HEIGHT_DEFAULT);
-//        }
-
-
         sharkAsset = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_SHARK);
 
         // Indexes 0-3 are for wave animation, index 4 is for non-animated water body
@@ -470,6 +480,13 @@ public class LevelObjectManager {
         for (int i = 0; i < 4; i++)
             waterAsset[i] = img.getSubimage(i * DEFAULT_TILE_SIZE, 0, DEFAULT_TILE_SIZE, DEFAULT_TILE_SIZE);
         waterAsset[4] = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_WATER);
+
+
+        flagAsset = new BufferedImage[9];
+        BufferedImage flagSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_FLAG);
+        for (int i = 0; i < flagAsset.length; i++) {
+            flagAsset[i] = flagSprite.getSubimage(i * Config.LevelEnv.FLAG_WIDTH_DEFAULT, 0, Config.LevelEnv.FLAG_WIDTH_DEFAULT, Config.LevelEnv.FLAG_HEIGHT_DEFAULT);
+        }
     }
 }
 

@@ -34,6 +34,7 @@ public class Level {
     // separating water types into 2 lists, since we need only waterWaves during entity downed check
     private final List<Water> waterBodyList = new ArrayList<>();
     private final List<Water> waterWaveList = new ArrayList<>();
+    private final List<Flag> flags = new ArrayList<>();
     private Dialogue questionMark;
 
     private int levelTilesCount;
@@ -120,6 +121,10 @@ public class Level {
         return backTrees;
     }
 
+    public List<Flag> getFlags() {
+        return flags;
+    }
+
     private void loadLevel() {
 
         // Looping through the image colors just once. Instead of one per
@@ -197,6 +202,8 @@ public class Level {
             waterBodyList.add(new Water(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.WATER_BODY));
         } else if (blueValue == LevelObjectType.WATER_WAVE.getBluePixelValue()) {
             waterWaveList.add(new Water(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.WATER_WAVE));
+        } else if (blueValue == LevelObjectType.FLAG.getBluePixelValue()) {
+            flags.add(new Flag(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
         }
     }
 

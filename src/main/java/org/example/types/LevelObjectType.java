@@ -16,7 +16,8 @@ public enum LevelObjectType {
     WATER_WAVE(0, 0,12),
     WATER_BODY(0, 4, 11),
     SHARK(0, 0, 10),
-    QUESTION_MARK(0, 5, -1);
+    QUESTION_MARK(0, 5, -1),
+    FLAG(0, 9, 14);
 
     private final int spriteIndex;
     private final int frameCount;

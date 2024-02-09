@@ -139,7 +139,13 @@ public class Config {
         public static final int TREE_BEND_WIDTH = (int) (TREE_BEND_WIDTH_DEFAULT * SCALE);
         public static final int TREE_BEND_HEIGHT = (int) (TREE_BEND_HEIGHT_DEFAULT * SCALE);
 
-        
+
+        public static final int FLAG_WIDTH_DEFAULT = 50;
+        public static final int FLAG_HEIGHT_DEFAULT = 109;
+        public static final int FLAG_WIDTH = (int) (FLAG_WIDTH_DEFAULT * SCALE * 1.1);
+        public static final int FLAG_HEIGHT = (int) (FLAG_HEIGHT_DEFAULT * SCALE * 1.1);
+
+
         public static final int SHARK_WIDTH_DEFAULT = 122;
         public static final int SHARK_HEIGHT_DEFAULT = 32;
         public static final int SHARK_WIDTH = (int) ((SHARK_WIDTH_DEFAULT * 0.75) * SCALE);

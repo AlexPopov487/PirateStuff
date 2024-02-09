@@ -33,6 +33,7 @@ public enum AtlasType {
     ATLAS_SHARK("shark.png"),
     ATLAS_PINK_STAR("pinkstar_atlas.png"),
     ATLAS_QUESTION_MARK("question_atlas.png"),
+    ATLAS_FLAG("flag.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;
