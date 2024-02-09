@@ -44,7 +44,7 @@ public class StatusBar extends BaseEntity implements Drawable {
     }
 
     private void renderStaminaBar(Graphics graphics) {
-        graphics.setColor(Color.YELLOW);
+        graphics.setColor(Color.CYAN);
         graphics.fillRect(STAMINA_BAR_X_START, STAMINA_BAR_Y_START, staminaBarFill, STAMINA_BAR_HEIGHT);
     }
 
