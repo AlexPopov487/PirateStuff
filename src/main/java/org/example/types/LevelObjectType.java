@@ -9,6 +9,7 @@ public enum LevelObjectType {
     CANNON_LEFT(0, 7, 5),
     CANNON_RIGHT(0, 7, 6),
     PROJECTILE(0,0, -1),
+    EXPLOSION(0,7, -1),
     TREE_STRAIGHT(0, 4,7),
     TREE_BEND_RIGHT(0, 4,8),
     TREE_BEND_LEFT(0, 4,9),
@@ -17,7 +18,9 @@ public enum LevelObjectType {
     WATER_BODY(0, 4, 11),
     SHARK(0, 0, 10),
     QUESTION_MARK(0, 5, -1),
-    FLAG(0, 9, 14);
+    FLAG(0, 9, 14),
+    KEY(0, 8, 15),
+    CHEST(0, 10, 16);
 
     private final int spriteIndex;
     private final int frameCount;

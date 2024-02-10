@@ -40,6 +40,7 @@ public class Config {
 
     public static final float GRAVITY_FORCE = (float) (0.04 * SCALE);
     public static final int ENTITY_ANIMATION_SPEED = 15;
+    public static final int MAX_HEALTH = 100;
 
     public static class LevelEnv {
         /*Corresponds to the indexes in int[][] levelData array.*/
@@ -145,6 +146,31 @@ public class Config {
         public static final int FLAG_WIDTH = (int) (FLAG_WIDTH_DEFAULT * SCALE * 1.1);
         public static final int FLAG_HEIGHT = (int) (FLAG_HEIGHT_DEFAULT * SCALE * 1.1);
 
+        public static final int KEY_WIDTH_DEFAULT = 24;
+        public static final int KEY_HEIGHT_DEFAULT = 24;
+        public static final int KEY_WIDTH = (int) (KEY_WIDTH_DEFAULT * SCALE);
+        public static final int KEY_HEIGHT = (int) (KEY_HEIGHT_DEFAULT * SCALE);
+        public static final int KEY_DRAW_OFFSET_X = (int) (5 * SCALE);
+        public static final int KEY_DRAW_OFFSET_Y = (int) (8 * SCALE);
+        public static final int KEY_HOVER_OFFSET_MAX = (int) (7 * SCALE);
+        public static final float KEY_HOVER_INC_STEP = 0.075f;
+
+
+        public static final int CHEST_WIDTH_DEFAULT = 65;
+        public static final int CHEST_HEIGHT_DEFAULT = 35;
+        public static final int CHEST_WIDTH = (int) (CHEST_WIDTH_DEFAULT * SCALE);
+        public static final int CHEST_HEIGHT = (int) (CHEST_HEIGHT_DEFAULT * SCALE);
+        public static final int CHEST_DRAW_OFFSET_X = 0;
+        public static final int CHEST_DRAW_OFFSET_Y = (int) (2 * SCALE);
+
+
+        public static final int EXPLOSION_WIDTH_DEFAULT = 54;
+        public static final int EXPLOSION_HEIGHT_DEFAULT = 60;
+        public static final int EXPLOSION_WIDTH = (int) (EXPLOSION_WIDTH_DEFAULT * SCALE);
+        public static final int EXPLOSION_HEIGHT = (int) (EXPLOSION_HEIGHT_DEFAULT * SCALE);
+        public static final int EXPLOSION_DRAW_OFFSET_X = (int) (7 * SCALE);
+        // 2 is the pixel difference between the sprite start and the hit box start
+        public static final int EXPLOSION_DRAW_OFFSET_Y = (int) (18 * SCALE);
 
         public static final int SHARK_WIDTH_DEFAULT = 122;
         public static final int SHARK_HEIGHT_DEFAULT = 32;

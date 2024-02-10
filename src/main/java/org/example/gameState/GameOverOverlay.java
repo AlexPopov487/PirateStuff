@@ -102,8 +102,6 @@ public class GameOverOverlay implements Drawable, GameStateActions {
     @Override
     public void keyPressed(KeyEvent e) {
         if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
-//            playing.getLevelManager().setFirstLevel();
-//            playing.resetPlaying();
             playing.loadFirstLevelResources();
             GameState.setState(GameState.MENU);
         }

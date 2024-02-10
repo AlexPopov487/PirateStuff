@@ -34,6 +34,7 @@ public class Player extends Entity {
     private boolean isActive = true;
     private int powerAttackTick;
 
+    private boolean isKeyCollected = false; // todo reset when exited to menu
     PlayerConstants currentAnimation = SPRITE_JUMPING;
 
     public Player(float x, float y, int width, int height, Playing playing) {
@@ -84,6 +85,9 @@ public class Player extends Entity {
             updateCharacterPosition();
 
             checkPotionCollected();
+            if (!isKeyCollected) {
+                checkKeyCollected();
+            }
             checkSpikeTrapTouched();
             checkDrowned();
 
@@ -194,6 +198,14 @@ public class Player extends Entity {
         actions.setTakingDamage(true);
     }
 
+    public void setKeyCollected(boolean isCollected) {
+        isKeyCollected = isCollected;
+    }
+
+    public boolean isKeyCollected() {
+        return isKeyCollected;
+    }
+
     private void updateCharacterPosition() {
         getDirections().setMoving(false);
 
@@ -269,8 +281,12 @@ public class Player extends Entity {
         getDirections().setMoving(true);
     }
 
-    private void checkPotionCollected() { // todo do not drink potion if heath is full
+    private void checkPotionCollected() {
         playing.checkPotionCollected(hitBox);
+    }
+
+    private void checkKeyCollected() {
+        playing.checkKeyCollected(hitBox);
     }
 
     private void checkSpikeTrapTouched() {

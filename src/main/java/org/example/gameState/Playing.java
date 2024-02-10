@@ -236,6 +236,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         levelObjectManager.loadLevelObjects(levelManager.getCurrentLevel());
         player.setCurrentLevelData(levelManager.getCurrentLevel().getLevelData());
         player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
+        player.setKeyCollected(false);
+
+        levelManager.getCurrentLevel().getKey().reset();
         maxLevelOffsetX = levelManager.getCurrentLevel().getMaxLevelOffsetX();
         game.getAudioPlayer().playLevelSong(levelManager.getCurrentLevelIndex());
 
@@ -254,12 +257,20 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         levelObjectManager.checkObjectCollected(playerHitBox);
     }
 
+    public void checkKeyCollected(Rectangle2D.Float playerHitBox) {
+        levelObjectManager.checkObjectCollected(playerHitBox);
+    }
+
     public void checkLevelObjectDestroyed(Rectangle2D.Float attackRange) {
         levelObjectManager.checkObjectDestroyed(attackRange);
     }
 
     public void checkSpikeTrapTouched(Rectangle2D.Float playerHitBox) {
         levelObjectManager.checkSpikeTrapTouched(playerHitBox);
+    }
+
+    public LevelObjectManager getLevelObjectManager() {
+        return levelObjectManager;
     }
 
     public void checkDrowned(Rectangle2D.Float playerHitBox) {

@@ -17,9 +17,11 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.example.Config.StatusBar.*;
 import static org.example.Game.DEFAULT_TILE_SIZE;
 
 public class LevelObjectManager {
@@ -36,13 +38,18 @@ public class LevelObjectManager {
     private BufferedImage projectileAsset;
     private BufferedImage sharkAsset;
     private BufferedImage[] waterAsset;
-    private BufferedImage[] flagAsset;
+    private BufferedImage[] flagAssets;
+    private BufferedImage[] keyAssets;
+    private BufferedImage[] chestAssets;
+    private BufferedImage[] explosionAssets;
 
-    private final List<Projectile> projectiles = new ArrayList<>();
+    private final List<Projectile> projectiles = new CopyOnWriteArrayList<>();
+    private Explosion explosion;
 
     public LevelObjectManager(Playing playing) {
         this.playing = playing;
         preloadAssets(); // todo seems like managers have common behavior. Maybe a universal interface should be created
+
     }
 
     public void loadLevelObjects(Level level) {
@@ -74,11 +81,20 @@ public class LevelObjectManager {
             flag.update();
         }
 
+        if (Objects.nonNull(explosion) && explosion.isActive) {
+            explosion.update();
+        }
+
+
         updateWater();
 
-
         updateCannons(levelData, player);
+
         updateProjectiles(levelData, player);
+
+        updateKey();
+
+        updateChest();
     }
 
     public void render(Graphics g, int xLevelOffset) {
@@ -92,10 +108,12 @@ public class LevelObjectManager {
         renderSharks(g, xLevelOffset);
         renderWater(g, xLevelOffset);
         renderFlag(g, xLevelOffset);
+        renderKey(g);
+        renderChest(g, xLevelOffset);
+        renderExplosion(g);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
-        // only potions can be collected
         for (Potion potion : playing.getLevelManager().getCurrentLevel().getPotions()) {
             if (!potion.isActive) continue;
 
@@ -105,6 +123,9 @@ public class LevelObjectManager {
                 }
             }
         }
+
+        checkKeyCollected(playerHitBox);
+        checkChestTouched(playerHitBox);
     }
 
     public void checkObjectDestroyed(Rectangle2D.Float playerAttackRange) {
@@ -162,6 +183,9 @@ public class LevelObjectManager {
         loadLevelObjects(playing.getLevelManager().getCurrentLevel());
 
         playing.getLevelManager().getCurrentLevel().resetLevelObjects();
+        Key key = playing.getLevelManager().getCurrentLevel().getKey();
+        if (Objects.nonNull(key) && !playing.getPlayer().isKeyCollected())
+        explosion = null;
     }
 
     private void renderPotions(Graphics g, int xLevelOffset) {
@@ -279,7 +303,9 @@ public class LevelObjectManager {
 
     private void renderProjectiles(Graphics g, int xLevelOffset) {
         for (Projectile projectile : projectiles) {
-            if (!projectile.isActive) continue;
+            if (!projectile.isActive) {
+                continue;
+            }
 
             g.drawImage(projectileAsset, (int) (projectile.getHitBox().x - xLevelOffset),
                     (int) projectile.getHitBox().y,
@@ -330,11 +356,53 @@ public class LevelObjectManager {
             int currentX = (int) (flag.getX() - xLevelOffset);
 
             g.drawImage(
-                    flagAsset[flag.getAnimationIndex()],
+                    flagAssets[flag.getAnimationIndex()],
                     currentX,
                     (int) flag.getY() + GamePanel.getCurrentTileSize() - Config.LevelEnv.FLAG_HEIGHT,
                     Config.LevelEnv.FLAG_WIDTH,
                     Config.LevelEnv.FLAG_HEIGHT,
+                    null);
+        }
+    }
+
+    private void renderKey(Graphics g) {
+        Key key = playing.getLevelManager().getCurrentLevel().getKey();
+
+        if (Objects.isNull(key) || !key.isActive) return;
+
+        g.drawImage(
+                keyAssets[key.getAnimationIndex()],
+                ((int) key.getHitBox().x - key.getxDrawOffset()),
+                ((int) key.getHitBox().y - key.getyDrawOffset()),
+                Config.LevelEnv.KEY_WIDTH,
+                Config.LevelEnv.KEY_HEIGHT,
+                null);
+    }
+
+    private void renderChest(Graphics g, int xLevelOffset) {
+
+        Chest chest = playing.getLevelManager().getCurrentLevel().getChest();
+
+        if (Objects.isNull(chest)) return;
+
+        g.drawImage(
+                chestAssets[chest.getAnimationIndex()],
+                ((int) chest.getHitBox().x - chest.getxDrawOffset() - xLevelOffset),
+                ((int) chest.getHitBox().y - chest.getyDrawOffset()),
+                Config.LevelEnv.CHEST_WIDTH,
+                Config.LevelEnv.CHEST_HEIGHT,
+                null);
+    }
+
+    private void renderExplosion(Graphics g) {
+
+        if (Objects.nonNull(explosion) && explosion.isActive) {
+            g.drawImage(
+                    explosionAssets[explosion.getAnimationIndex()],
+                    ((int) explosion.getHitBox().x + Config.LevelEnv.EXPLOSION_DRAW_OFFSET_X),
+                    ((int) explosion.getHitBox().y - Config.LevelEnv.EXPLOSION_DRAW_OFFSET_Y),
+                    Config.LevelEnv.EXPLOSION_WIDTH,
+                    Config.LevelEnv.EXPLOSION_HEIGHT,
                     null);
         }
     }
@@ -368,7 +436,10 @@ public class LevelObjectManager {
 
     private void updateProjectiles(int[][] levelData, Player player) {
         for (Projectile projectile : projectiles) {
-            if (!projectile.isActive) continue;
+            if (!projectile.isActive) {
+                projectiles.remove(projectile);
+                continue;
+            }
             projectile.updatePosition();
 
             if (projectile.getHitBox().intersects(player.getHitBox())) {
@@ -380,6 +451,20 @@ public class LevelObjectManager {
         }
     }
 
+    private void updateKey() {
+        Key key = playing.getLevelManager().getCurrentLevel().getKey();
+        if (Objects.nonNull(key) && key.isActive) {
+            key.update();
+        }
+    }
+
+    private void updateChest() {
+        Chest chest = playing.getLevelManager().getCurrentLevel().getChest();
+        if (Objects.nonNull(chest)) {
+            chest.update();
+        }
+    }
+
     private void updateWater() {
         for (Water water : playing.getLevelManager().getCurrentLevel().getWaterWaveList()) {
             water.update();
@@ -388,6 +473,39 @@ public class LevelObjectManager {
         for (Water water : playing.getLevelManager().getCurrentLevel().getWaterBodyList()) {
             water.update();
         }
+    }
+
+    private void checkChestTouched(Rectangle2D.Float playerHitBox) {
+        Chest chest = playing.getLevelManager().getCurrentLevel().getChest();
+        if (Objects.isNull(chest)) return;
+        if (playerHitBox.intersects(chest.getHitBox())) {
+            if (playing.getPlayer().isKeyCollected()) {
+                chest.setShouldAnimate(true);
+
+            } else {
+                if (Objects.isNull(explosion)) {
+                    explosion = new Explosion(chest.getHitBox().x, chest.getHitBox().y);
+                    playing.getPlayer().getHeath().subtractHealth(Config.MAX_HEALTH);
+                }
+            }
+        }
+    }
+
+    private void checkKeyCollected(Rectangle2D.Float playerHitBox) {
+        Key key = playing.getLevelManager().getCurrentLevel().getKey();
+        if (Objects.isNull(key)) return;
+        if (playerHitBox.intersects(key.getHitBox())) {
+            //todo add sound
+            placeKeyUnderStatusBar(key);
+        }
+    }
+
+    private void placeKeyUnderStatusBar(Key key) {
+        key.setHoverActive(false);
+        key.getHitBox().x = (float) (STATUS_BAR_X + STATUS_BAR_WIDTH - (STATUS_BAR_WIDTH * 0.15));
+        key.setY(STAMINA_BAR_Y_START);
+        key.getHitBox().y = STAMINA_BAR_Y_START;
+        playing.getPlayer().setKeyCollected(true);
     }
 
     private void shootCannon(Cannon cannon) {
@@ -482,10 +600,28 @@ public class LevelObjectManager {
         waterAsset[4] = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_WATER);
 
 
-        flagAsset = new BufferedImage[9];
+        flagAssets = new BufferedImage[9];
         BufferedImage flagSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_FLAG);
-        for (int i = 0; i < flagAsset.length; i++) {
-            flagAsset[i] = flagSprite.getSubimage(i * Config.LevelEnv.FLAG_WIDTH_DEFAULT, 0, Config.LevelEnv.FLAG_WIDTH_DEFAULT, Config.LevelEnv.FLAG_HEIGHT_DEFAULT);
+        for (int i = 0; i < flagAssets.length; i++) {
+            flagAssets[i] = flagSprite.getSubimage(i * Config.LevelEnv.FLAG_WIDTH_DEFAULT, 0, Config.LevelEnv.FLAG_WIDTH_DEFAULT, Config.LevelEnv.FLAG_HEIGHT_DEFAULT);
+        }
+
+        keyAssets = new BufferedImage[8];
+        BufferedImage keySprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_KEY);
+        for (int i = 0; i < keyAssets.length; i++) {
+            keyAssets[i] = keySprite.getSubimage(i * Config.LevelEnv.KEY_WIDTH_DEFAULT, 0, Config.LevelEnv.KEY_WIDTH_DEFAULT, Config.LevelEnv.KEY_HEIGHT_DEFAULT);
+        }
+
+        chestAssets = new BufferedImage[10];
+        BufferedImage chestSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_CHEST);
+        for (int i = 0; i < chestAssets.length; i++) {
+            chestAssets[i] = chestSprite.getSubimage(i * Config.LevelEnv.CHEST_WIDTH_DEFAULT, 0, Config.LevelEnv.CHEST_WIDTH_DEFAULT, Config.LevelEnv.CHEST_HEIGHT_DEFAULT);
+        }
+
+        explosionAssets = new BufferedImage[7];
+        BufferedImage explosionSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_EXPLOSION);
+        for (int i = 0; i < explosionAssets.length; i++) {
+            explosionAssets[i] = explosionSprite.getSubimage(i * Config.LevelEnv.EXPLOSION_WIDTH_DEFAULT, 0, Config.LevelEnv.EXPLOSION_WIDTH_DEFAULT, Config.LevelEnv.EXPLOSION_HEIGHT_DEFAULT);
         }
     }
 }

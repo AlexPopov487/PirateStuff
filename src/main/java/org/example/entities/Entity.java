@@ -27,7 +27,7 @@ public abstract class Entity extends BaseEntity {
         this.walkSpeed = walkSpeed;
         this.directions = new Directions();
         this.gravitySettings = gravitySettings;
-        this.health = new Health(100);
+        this.health = new Health(Config.MAX_HEALTH);
     }
 
     protected void updateHitBox() {

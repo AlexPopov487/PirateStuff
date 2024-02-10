@@ -17,6 +17,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Level {
 
@@ -35,6 +36,8 @@ public class Level {
     private final List<Water> waterBodyList = new ArrayList<>();
     private final List<Water> waterWaveList = new ArrayList<>();
     private final List<Flag> flags = new ArrayList<>();
+    private Key key;
+    private Chest chest;
     private Dialogue questionMark;
 
     private int levelTilesCount;
@@ -125,6 +128,14 @@ public class Level {
         return flags;
     }
 
+    public Key getKey() {
+        return key;
+    }
+
+    public Chest getChest() {
+        return chest;
+    }
+
     private void loadLevel() {
 
         // Looping through the image colors just once. Instead of one per
@@ -204,6 +215,10 @@ public class Level {
             waterWaveList.add(new Water(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), LevelObjectType.WATER_WAVE));
         } else if (blueValue == LevelObjectType.FLAG.getBluePixelValue()) {
             flags.add(new Flag(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
+        } else if (blueValue == LevelObjectType.KEY.getBluePixelValue()) {
+            key = new Key(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
+        } else if (blueValue == LevelObjectType.CHEST.getBluePixelValue()) {
+            chest = new Chest(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
         }
     }
 
@@ -220,5 +235,11 @@ public class Level {
         spikes.forEach(Spike::reset);
         cannons.forEach(Cannon::reset);
         trees.forEach(Tree::reset);
+        backTrees.forEach(Tree::reset);
+        if (Objects.nonNull(chest)) {
+            chest.reset();
+        }
+        flags.forEach(Flag::reset);
+        sharks.forEach(Shark::reset);
     }
 }

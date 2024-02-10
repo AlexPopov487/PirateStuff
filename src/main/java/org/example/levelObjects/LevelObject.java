@@ -35,7 +35,8 @@ public class LevelObject extends BaseEntity {
         if (LevelObjectType.BARREL.equals(objectType)
                 || LevelObjectType.BOX.equals(objectType)
                 || LevelObjectType.CANNON_LEFT.equals(objectType)
-                || LevelObjectType.CANNON_RIGHT.equals(objectType)) {
+                || LevelObjectType.CANNON_RIGHT.equals(objectType)
+                || LevelObjectType.CHEST.equals(objectType)) {
             shouldAnimate = false;
         } else {
             shouldAnimate = true;
@@ -104,6 +105,11 @@ public class LevelObject extends BaseEntity {
                 } else if (LevelObjectType.CANNON_RIGHT.equals(objectType)
                         || LevelObjectType.CANNON_LEFT.equals(objectType)) {
                     shouldAnimate = false;
+                } else if (LevelObjectType.CHEST.equals(objectType)) {
+                    shouldAnimate = false;
+                    animationIndex = objectType.getFrameCount() - 1;
+                } else if (LevelObjectType.EXPLOSION.equals(objectType)) {
+                    isActive = false;
                 }
             }
         }
@@ -126,6 +132,14 @@ public class LevelObject extends BaseEntity {
             case SPIKE -> {
                 xDrawOffset = Config.LevelEnv.SPIKE_DRAW_OFFSET_X;
                 yDrawOffset = Config.LevelEnv.SPIKE_DRAW_OFFSET_Y;
+            }
+            case KEY -> {
+                xDrawOffset = Config.LevelEnv.KEY_DRAW_OFFSET_X;
+                yDrawOffset = Config.LevelEnv.KEY_DRAW_OFFSET_Y;
+            }
+            case CHEST -> {
+                xDrawOffset = Config.LevelEnv.CHEST_DRAW_OFFSET_X;
+                yDrawOffset = Config.LevelEnv.CHEST_DRAW_OFFSET_Y;
             }
         }
     }
