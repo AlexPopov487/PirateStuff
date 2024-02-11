@@ -13,7 +13,7 @@ import java.awt.*;
 public class Cannon extends LevelObject implements Drawable {
     protected static final float ATTACK_RANGE = GamePanel.getCurrentTileSize();
     protected static final float VISUAL_RANGE = GamePanel.getCurrentTileSize() * 5;
-    protected static final long SHOOT_DELAY_MILLIS = 1000;
+    protected static final long SHOOT_DELAY_MILLIS = 1500;
     private long lastShotMillis;
 
 

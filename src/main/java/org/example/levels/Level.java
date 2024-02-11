@@ -1,17 +1,14 @@
 package org.example.levels;
 
-import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.Crabby;
 import org.example.entities.PinkStar;
 import org.example.levelObjects.Container;
 import org.example.levelObjects.*;
-import org.example.types.AtlasType;
 import org.example.types.EnemyType;
 import org.example.types.LevelObjectType;
 import org.example.utils.Helper;
-import org.example.utils.ResourceLoader;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -47,6 +44,7 @@ public class Level {
     private int maxLevelOffsetX;
     private int[][] levelData;
     private Point playerSpawnPosition;
+    private Point levelExit;
 
 
     public Level(BufferedImage levelAsset) {
@@ -74,6 +72,10 @@ public class Level {
 
     public Point getPlayerSpawnPosition() {
         return playerSpawnPosition;
+    }
+
+    public Point getLevelExit() {
+        return levelExit;
     }
 
     public List<Potion> getPotions() {
@@ -219,11 +221,12 @@ public class Level {
             key = new Key(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
         } else if (blueValue == LevelObjectType.CHEST.getBluePixelValue()) {
             chest = new Chest(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
+        } else if (blueValue == 100) {
+            levelExit = new Point(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
         }
     }
 
     private void calculateLevelOffsets() {
-//        levelTilesCount = levelData[0].length;
         levelTilesCount = levelAsset.getWidth();
         maxLevelTilesOffset = levelTilesCount - Game.TILE_VISIBLE_COUNT_WIDTH;
         maxLevelOffsetX = maxLevelTilesOffset * GamePanel.getCurrentTileSize();

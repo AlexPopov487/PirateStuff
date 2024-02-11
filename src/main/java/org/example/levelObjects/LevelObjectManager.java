@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.example.Config.StatusBar.*;
@@ -108,9 +108,9 @@ public class LevelObjectManager {
         renderSharks(g, xLevelOffset);
         renderWater(g, xLevelOffset);
         renderFlag(g, xLevelOffset);
-        renderKey(g);
+        renderKey(g, xLevelOffset);
         renderChest(g, xLevelOffset);
-        renderExplosion(g);
+        renderExplosion(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
@@ -126,6 +126,16 @@ public class LevelObjectManager {
 
         checkKeyCollected(playerHitBox);
         checkChestTouched(playerHitBox);
+    }
+
+    public void checkExitReached(Rectangle2D.Float playerHitBox) {
+        Point levelExit = playing.getLevelManager().getCurrentLevel().getLevelExit();
+        if (Objects.nonNull(levelExit) && playing.isReadyToCompleteLevel()) {
+            boolean hasPlayerReachedExit = isHasPlayerReachedExit(playerHitBox, levelExit);
+            if (hasPlayerReachedExit) {
+                playing.setCurrLevelCompleted(true);
+            }
+        }
     }
 
     public void checkObjectDestroyed(Rectangle2D.Float playerAttackRange) {
@@ -185,7 +195,7 @@ public class LevelObjectManager {
         playing.getLevelManager().getCurrentLevel().resetLevelObjects();
         Key key = playing.getLevelManager().getCurrentLevel().getKey();
         if (Objects.nonNull(key) && !playing.getPlayer().isKeyCollected())
-        explosion = null;
+            explosion = null;
     }
 
     private void renderPotions(Graphics g, int xLevelOffset) {
@@ -199,6 +209,10 @@ public class LevelObjectManager {
                     Config.LevelEnv.POTION_HEIGHT,
                     null);
         }
+    }
+
+    private boolean isHasPlayerReachedExit(Rectangle2D.Float playerHitBox, Point levelExit) {
+        return playerHitBox.intersects(levelExit.x + (GamePanel.getCurrentTileSize() / 1.5), levelExit.y, GamePanel.getCurrentTileSize(), GamePanel.getCurrentTileSize());
     }
 
     private void renderContainers(Graphics g, int xLevelOffset) {
@@ -365,15 +379,15 @@ public class LevelObjectManager {
         }
     }
 
-    private void renderKey(Graphics g) {
+    private void renderKey(Graphics g, int xLevelOffset) {
         Key key = playing.getLevelManager().getCurrentLevel().getKey();
 
         if (Objects.isNull(key) || !key.isActive) return;
 
         g.drawImage(
                 keyAssets[key.getAnimationIndex()],
-                ((int) key.getHitBox().x - key.getxDrawOffset()),
-                ((int) key.getHitBox().y - key.getyDrawOffset()),
+                ((int) key.getHitBox().x - key.getxDrawOffset() - xLevelOffset),
+                (int) ((int) key.getHitBox().y - key.getyDrawOffset() + (GamePanel.getCurrentTileSize() / 2.5)),
                 Config.LevelEnv.KEY_WIDTH,
                 Config.LevelEnv.KEY_HEIGHT,
                 null);
@@ -394,12 +408,12 @@ public class LevelObjectManager {
                 null);
     }
 
-    private void renderExplosion(Graphics g) {
+    private void renderExplosion(Graphics g, int xLevelOffset) {
 
         if (Objects.nonNull(explosion) && explosion.isActive) {
             g.drawImage(
                     explosionAssets[explosion.getAnimationIndex()],
-                    ((int) explosion.getHitBox().x + Config.LevelEnv.EXPLOSION_DRAW_OFFSET_X),
+                    ((int) explosion.getHitBox().x + Config.LevelEnv.EXPLOSION_DRAW_OFFSET_X - xLevelOffset),
                     ((int) explosion.getHitBox().y - Config.LevelEnv.EXPLOSION_DRAW_OFFSET_Y),
                     Config.LevelEnv.EXPLOSION_WIDTH,
                     Config.LevelEnv.EXPLOSION_HEIGHT,
@@ -482,6 +496,9 @@ public class LevelObjectManager {
             if (playing.getPlayer().isKeyCollected()) {
                 chest.setShouldAnimate(true);
 
+                if (chest.isAnimationCompleted()) {
+                    playing.setCurrLevelCompleted(true);
+                }
             } else {
                 if (Objects.isNull(explosion)) {
                     explosion = new Explosion(chest.getHitBox().x, chest.getHitBox().y);

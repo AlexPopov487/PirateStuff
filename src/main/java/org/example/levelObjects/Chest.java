@@ -24,4 +24,8 @@ public class Chest extends LevelObject implements Drawable {
             updateAnimationTick(35);
         }
     }
+
+    public boolean isAnimationCompleted() {
+        return getAnimationIndex() >= objectType.getFrameCount() - 1;
+    }
 }

@@ -12,7 +12,7 @@ public class Projectile extends LevelObject {
                 y + Config.LevelEnv.CANNON_BALL_OFFSET_Y,
                 levelObjectType,
                 false);
-        initHitBox(Config.LevelEnv.CANNON_HIT_BOX_WIDTH, Config.LevelEnv.CANNON_HIT_BOX_HEIGHT);
+        initHitBox(Config.LevelEnv.CANNON_BALL_HIT_BOX_WIDTH, Config.LevelEnv.CANNON_BALL_HIT_BOX_HEIGHT);
         this.directions = new Directions();
 
         if (LevelObjectType.CANNON_RIGHT.equals(parentObjectType)) {

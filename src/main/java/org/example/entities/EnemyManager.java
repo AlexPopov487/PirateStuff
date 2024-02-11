@@ -49,7 +49,7 @@ public class EnemyManager {
         }
 
         if (!isAnyActiveLeft) {
-            playing.setCurrLevelCompleted(true);
+            playing.setReadyToCompleteLevel(true);
         }
 
         playing.getLevelManager().getCurrentLevel().getQuestionMark().update();

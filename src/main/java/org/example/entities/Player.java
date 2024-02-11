@@ -84,6 +84,7 @@ public class Player extends Entity {
         if (isActive) {
             updateCharacterPosition();
 
+            checkExitReached();
             checkPotionCollected();
             if (!isKeyCollected) {
                 checkKeyCollected();
@@ -283,6 +284,10 @@ public class Player extends Entity {
 
     private void checkPotionCollected() {
         playing.checkPotionCollected(hitBox);
+    }
+
+    private void checkExitReached() {
+        playing.checkExitReached(hitBox);
     }
 
     private void checkKeyCollected() {

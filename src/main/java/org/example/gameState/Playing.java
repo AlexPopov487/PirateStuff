@@ -5,6 +5,7 @@ import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.EnemyManager;
 import org.example.entities.Player;
+import org.example.levelObjects.Key;
 import org.example.levelObjects.LevelObjectManager;
 import org.example.levels.Level;
 import org.example.levels.LevelManager;
@@ -21,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 import java.util.Random;
 
 import static org.example.Game.SCALE;
@@ -52,6 +54,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     // shows for how many tiles it is possible to move the level to the left in pixels
     private int maxLevelOffsetX;
+    private boolean isReadyToCompleteLevel = false;
 
 
     public Playing(Game game) {
@@ -122,11 +125,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            setPlayerAttack();
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            setPlayerPowerAttack();
-        }
+//        if (e.getButton() == MouseEvent.BUTTON1) {
+//            setPlayerAttack();
+//        } else if (e.getButton() == MouseEvent.BUTTON3) {
+//            setPlayerPowerAttack();
+//        }
     }
 
     @Override
@@ -135,6 +138,12 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             pauseOverlay.mousePressed(e);
         } else if (isCurrLevelCompleted) {
             levelCompletedOverlay.mousePressed(e);
+        } else {
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                setPlayerAttack();
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                setPlayerPowerAttack();
+            }
         }
 
     }
@@ -217,6 +226,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         enemyManager.resetAll();
         levelObjectManager.resetAll();
         isCurrLevelCompleted = false;
+        isReadyToCompleteLevel = false;
     }
 
     public void loadNextLevel() {
@@ -238,7 +248,10 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
         player.setKeyCollected(false);
 
-        levelManager.getCurrentLevel().getKey().reset();
+        Key key = levelManager.getCurrentLevel().getKey();
+        if (Objects.nonNull(key)) {
+            key.reset();
+        }
         maxLevelOffsetX = levelManager.getCurrentLevel().getMaxLevelOffsetX();
         game.getAudioPlayer().playLevelSong(levelManager.getCurrentLevelIndex());
 
@@ -249,6 +262,14 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         enemyManager.checkEnemyGotHit(playerAttackRange);
     }
 
+    public boolean isReadyToCompleteLevel() {
+        return isReadyToCompleteLevel;
+    }
+
+    public void setReadyToCompleteLevel(boolean readyToCompleteLevel) {
+        isReadyToCompleteLevel = readyToCompleteLevel;
+    }
+
     public void checkEnemyStumped(Player player) {
         enemyManager.checkEnemyStumped(player);
     }
@@ -256,6 +277,11 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void checkPotionCollected(Rectangle2D.Float playerHitBox) {
         levelObjectManager.checkObjectCollected(playerHitBox);
     }
+
+    public void checkExitReached(Rectangle2D.Float playerHitBox) {
+        levelObjectManager.checkExitReached(playerHitBox);
+    }
+
 
     public void checkKeyCollected(Rectangle2D.Float playerHitBox) {
         levelObjectManager.checkObjectCollected(playerHitBox);

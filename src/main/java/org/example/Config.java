@@ -83,7 +83,7 @@ public class Config {
         public static final int POTION_HIT_BOX_HEIGHT = (int) (14 * SCALE);
         public static final int POTION_DRAW_OFFSET_X = (int) (3 * SCALE);
         public static final int POTION_DRAW_OFFSET_Y = (int) (2 * SCALE);
-        public static final int POTION_RED_VALUE = 15;
+        public static final int POTION_RED_VALUE = 25;
         public static final int POTION_BLUE_VALUE = 100;
         public static final int POTION_HOVER_OFFSET_MAX = (int) (7 * SCALE);
         public static final float POTION_HOVER_INC_STEP = 0.075f;
@@ -110,8 +110,8 @@ public class Config {
         public static final int CANNON_BALL_HEIGHT_DEFAULT = 15;
         public static final int CANNON_BALL_WIDTH = (int) (CANNON_BALL_WIDTH_DEFAULT * SCALE);
         public static final int CANNON_BALL_HEIGHT = (int) (CANNON_BALL_HEIGHT_DEFAULT * SCALE);
-        public static final int CANNON_BALL_HIT_BOX_WIDTH = (int) (40 * SCALE);
-        public static final int CANNON_BALL_HIT_BOX_HEIGHT = (int) (26 * SCALE);
+        public static final int CANNON_BALL_HIT_BOX_WIDTH = (int) (15 * SCALE);
+        public static final int CANNON_BALL_HIT_BOX_HEIGHT = (int) (15 * SCALE);
 
         // offsets are needed to tune up the cannon ball spawn point exactly to the end of the cannon barrel
         public static final int CANNON_BALL_OFFSET_X_LEFT = (int) (-3 * SCALE);
