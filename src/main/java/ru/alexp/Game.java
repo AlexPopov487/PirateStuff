@@ -119,6 +119,7 @@ public class Game implements Runnable {
         if (GameState.PLAYING.equals(GameState.getState())) {
             playing.getPlayer().getDirections().reset();
         }
+        playing.pauseGame();
     }
 
     public void render(Graphics g) {
