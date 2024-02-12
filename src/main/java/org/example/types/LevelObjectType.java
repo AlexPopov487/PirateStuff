@@ -20,7 +20,10 @@ public enum LevelObjectType {
     QUESTION_MARK(0, 5, -1),
     FLAG(0, 9, 14),
     KEY(0, 8, 15),
-    CHEST(0, 10, 16);
+    CHEST(0, 10, 16),
+    SHIP(0, 4, 17),
+    MESSAGE_ONBOARDING(0, 0, 18),
+    MESSAGE_KEY_FOUND(0, 0, 19);
 
     private final int spriteIndex;
     private final int frameCount;

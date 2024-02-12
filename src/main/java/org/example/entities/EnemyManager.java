@@ -3,6 +3,7 @@ package org.example.entities;
 import org.example.Config;
 import org.example.gameState.Playing;
 import org.example.levelObjects.Dialogue;
+import org.example.levelObjects.Message;
 import org.example.types.AtlasType;
 import org.example.utils.CollisionHelper;
 import org.example.utils.ResourceLoader;
@@ -53,6 +54,8 @@ public class EnemyManager {
         }
 
         playing.getLevelManager().getCurrentLevel().getQuestionMark().update();
+
+//        playing.getLevelManager().getCurrentLevel().getMessages().forEach(Message::update);
     }
 
     public void checkEnemyGotHit(Rectangle2D.Float playerAttackRange) {

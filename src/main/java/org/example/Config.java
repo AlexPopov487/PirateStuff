@@ -38,6 +38,14 @@ public class Config {
     public static final int DIALOGUE_HEIGHT = (int) (DIALOGUE_DEFAULT_HEIGHT * Game.SCALE);
 
 
+    public static final int SCRIPT_MESSAGE_DEFAULT_WIDTH = 318;
+    public static final int SCRIPT_MESSAGE_DEFAULT_HEIGHT = 78;
+    // the default size is too big, downscaling it
+    public static final int SCRIPT_MESSAGE_WIDTH = (int) ((int) (SCRIPT_MESSAGE_DEFAULT_WIDTH * Game.SCALE)/ 1.5);
+    public static final int SCRIPT_MESSAGE_HEIGHT = (int) ((int) (SCRIPT_MESSAGE_DEFAULT_HEIGHT * Game.SCALE) / 1.5);
+
+
+
     public static final float GRAVITY_FORCE = (float) (0.04 * SCALE);
     public static final int ENTITY_ANIMATION_SPEED = 15;
     public static final int MAX_HEALTH = 100;
@@ -172,6 +180,7 @@ public class Config {
         // 2 is the pixel difference between the sprite start and the hit box start
         public static final int EXPLOSION_DRAW_OFFSET_Y = (int) (18 * SCALE);
 
+        
         public static final int SHARK_WIDTH_DEFAULT = 122;
         public static final int SHARK_HEIGHT_DEFAULT = 32;
         public static final int SHARK_WIDTH = (int) ((SHARK_WIDTH_DEFAULT * 0.75) * SCALE);
@@ -182,6 +191,14 @@ public class Config {
         public static final int SHARK_DRAW_OFFSET_Y = (int) (2 * SCALE);
         public static final int SHARK_HOVER_OFFSET_MAX = (int) (3 * SCALE);
         public static final float SHARK_HOVER_INC_STEP = 0.045f;
+
+        public static final int SHIP_WIDTH_DEFAULT = 78;
+        public static final int SHIP_HEIGHT_DEFAULT = 72;
+        public static final int SHIP_WIDTH = (int) (SHIP_WIDTH_DEFAULT * SCALE);
+        public static final int SHIP_HEIGHT = (int) (SHIP_HEIGHT_DEFAULT * SCALE);
+        public static final int SHIP_HOVER_OFFSET_MAX = (int) (3 * SCALE);
+        public static final float SHIP_HOVER_INC_STEP = 0.045f;
+
 
     }
 

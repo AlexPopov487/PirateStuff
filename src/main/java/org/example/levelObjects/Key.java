@@ -49,8 +49,8 @@ public class Key extends LevelObject implements Drawable {
     public void reset() {
         super.reset();
         // if key was collected, its position was changed to be displayed under the status bar. Restoring init positions.
-        x = initX;
-        y = initY;
+//        x = initX;
+//        y = initY;
         initHitBox(Config.LevelEnv.KEY_WIDTH, Config.LevelEnv.KEY_HEIGHT);
         isHoverActive = true;
     }

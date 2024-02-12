@@ -3,7 +3,9 @@ package org.example.levels;
 import org.example.Config;
 import org.example.Game;
 import org.example.GamePanel;
+import org.example.exception.LoadNextLevelException;
 import org.example.levelObjects.BackTree;
+import org.example.levelObjects.Key;
 import org.example.levelObjects.Tree;
 import org.example.types.AtlasType;
 import org.example.types.GameState;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Objects;
 
 import static org.example.Game.DEFAULT_TILE_SIZE;
 import static org.example.utils.ResourceLoader.getSpriteAtlas;
@@ -78,15 +81,19 @@ public class LevelManager {
 
     public void setFirstLevel() {
         currentLevelIndex = 0;
+        Key key = getCurrentLevel().getKey();
+        if (Objects.nonNull(key)) {
+            key.reset();
+        }
     }
 
-    public Level loadNextLevel() {
+    public Level loadNextLevel() throws LoadNextLevelException {
         currentLevelIndex++;
 
         if (currentLevelIndex >= levels.size()) {
             setFirstLevel(); // todo add allLevelsCompleted overlay
-            log.info("No more levels left! The game is completed!");
             GameState.setState(GameState.MENU);
+            throw new LoadNextLevelException("No more levels left! The game is completed!");
         }
 
         return levels.get(currentLevelIndex);

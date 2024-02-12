@@ -1,6 +1,7 @@
 package org.example.entities;
 
 import org.example.gameState.Drawable;
+import org.example.levelObjects.Key;
 import org.example.utils.ResourceLoader;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ public class StatusBar extends BaseEntity implements Drawable {
     private BufferedImage statusBarAsset;
     private int heathBarFill = HEALTH_BAR_WIDTH;
     private int staminaBarFill = STAMINA_BAR_WIDTH;
+    private Key key;
 
 
     public StatusBar(Health playerHealth, Stamina playerStamina) {
@@ -36,6 +38,14 @@ public class StatusBar extends BaseEntity implements Drawable {
     public void update() {
         updateHeathBar();
         updateStaminaBar();
+    }
+
+    public Key getKey() {
+        return key;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
     }
 
     private void renderHealthBar(Graphics graphics) {

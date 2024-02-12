@@ -8,6 +8,7 @@ import org.example.levelObjects.Container;
 import org.example.levelObjects.*;
 import org.example.types.EnemyType;
 import org.example.types.LevelObjectType;
+import org.example.types.MessageType;
 import org.example.utils.Helper;
 
 import java.awt.*;
@@ -33,9 +34,11 @@ public class Level {
     private final List<Water> waterBodyList = new ArrayList<>();
     private final List<Water> waterWaveList = new ArrayList<>();
     private final List<Flag> flags = new ArrayList<>();
+    private final List<Ship> ships = new ArrayList<>();
     private Key key;
     private Chest chest;
     private Dialogue questionMark;
+    private final List<Message> messages = new ArrayList<>();
 
     private int levelTilesCount;
     // represents how many tiles of the level remain unseen (i.e. for how many tiles it is possible to move the level to the left)
@@ -130,8 +133,20 @@ public class Level {
         return flags;
     }
 
+    public List<Ship> getShips() {
+        return ships;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
     public Key getKey() {
         return key;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
     }
 
     public Chest getChest() {
@@ -221,6 +236,12 @@ public class Level {
             key = new Key(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
         } else if (blueValue == LevelObjectType.CHEST.getBluePixelValue()) {
             chest = new Chest(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
+        } else if (blueValue == LevelObjectType.SHIP.getBluePixelValue()) {
+            ships.add(new Ship(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize()));
+        } else if (blueValue == LevelObjectType.MESSAGE_ONBOARDING.getBluePixelValue()) {
+            messages.add(new Message(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), MessageType.ONBOARDING));
+        } else if (blueValue == LevelObjectType.MESSAGE_KEY_FOUND.getBluePixelValue()) {
+            messages.add(new Message(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize(), MessageType.KEY_FOUND));
         } else if (blueValue == 100) {
             levelExit = new Point(x * GamePanel.getCurrentTileSize(), y * GamePanel.getCurrentTileSize());
         }

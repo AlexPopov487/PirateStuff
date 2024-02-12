@@ -5,6 +5,7 @@ import org.example.Game;
 import org.example.GamePanel;
 import org.example.entities.EnemyManager;
 import org.example.entities.Player;
+import org.example.exception.LoadNextLevelException;
 import org.example.levelObjects.Key;
 import org.example.levelObjects.LevelObjectManager;
 import org.example.levels.Level;
@@ -55,7 +56,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     // shows for how many tiles it is possible to move the level to the left in pixels
     private int maxLevelOffsetX;
     private boolean isReadyToCompleteLevel = false;
-
+    private boolean isScriptMessageShown = false;
 
     public Playing(Game game) {
         super(game);
@@ -177,6 +178,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> {
+                disableScriptMessage();
                 log.trace("keyPressed : D");
                 player.getDirections().setMovingRight(true);
             }
@@ -195,10 +197,16 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
             case KeyEvent.VK_SHIFT -> {
                 log.trace("keyPressed : SHIFT");
                 setPlayerAttack();
-            } case KeyEvent.VK_ALT -> {
+            } case KeyEvent.VK_CONTROL -> {
                 log.trace("keyPressed : ALT");
                 setPlayerPowerAttack();
             }
+        }
+    }
+
+    private void disableScriptMessage() {
+        if (isScriptMessageShown) {
+            isScriptMessageShown = false;
         }
     }
 
@@ -229,8 +237,9 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         isReadyToCompleteLevel = false;
     }
 
-    public void loadNextLevel() {
+    public void loadNextLevel() throws LoadNextLevelException {
         Level level = levelManager.loadNextLevel();
+
 //        enemyManager.loadEnemies(level);
         levelObjectManager.loadLevelObjects(level);
         player.setCurrentLevelData(level.getLevelData());
@@ -242,16 +251,16 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
     }
 
     public void loadFirstLevelResources() {
+        isScriptMessageShown = true;
         levelManager.setFirstLevel();
         levelObjectManager.loadLevelObjects(levelManager.getCurrentLevel());
         player.setCurrentLevelData(levelManager.getCurrentLevel().getLevelData());
         player.setSpawnPosition(levelManager.getCurrentLevel().getPlayerSpawnPosition());
         player.setKeyCollected(false);
-
-        Key key = levelManager.getCurrentLevel().getKey();
-        if (Objects.nonNull(key)) {
-            key.reset();
+        if (Objects.nonNull(player.getStatusBar().getKey())) {
+            player.getStatusBar().setKey(null);
         }
+
         maxLevelOffsetX = levelManager.getCurrentLevel().getMaxLevelOffsetX();
         game.getAudioPlayer().playLevelSong(levelManager.getCurrentLevelIndex());
 
@@ -272,6 +281,14 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
 
     public void checkEnemyStumped(Player player) {
         enemyManager.checkEnemyStumped(player);
+    }
+
+    public boolean isScriptMessageShown() {
+        return isScriptMessageShown;
+    }
+
+    public void setScriptMessageShown(boolean scriptMessageShown) {
+        isScriptMessageShown = scriptMessageShown;
     }
 
     public void checkPotionCollected(Rectangle2D.Float playerHitBox) {

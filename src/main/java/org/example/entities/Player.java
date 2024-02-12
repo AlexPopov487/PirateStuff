@@ -183,6 +183,10 @@ public class Player extends Entity {
         initAttackRange();
     }
 
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
     public void doPowerAttack() {
         if (actions.isPowerAttacking()) return;
 

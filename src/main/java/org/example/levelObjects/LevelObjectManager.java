@@ -41,7 +41,9 @@ public class LevelObjectManager {
     private BufferedImage[] flagAssets;
     private BufferedImage[] keyAssets;
     private BufferedImage[] chestAssets;
+    private BufferedImage[] shipAssets;
     private BufferedImage[] explosionAssets;
+    private BufferedImage[] messageAsset;
 
     private final List<Projectile> projectiles = new CopyOnWriteArrayList<>();
     private Explosion explosion;
@@ -85,6 +87,9 @@ public class LevelObjectManager {
             explosion.update();
         }
 
+        for (Ship ship : playing.getLevelManager().getCurrentLevel().getShips()) {
+            ship.update();
+        }
 
         updateWater();
 
@@ -106,11 +111,13 @@ public class LevelObjectManager {
         renderGrass(g, xLevelOffset);
         renderTrees(g, xLevelOffset);
         renderSharks(g, xLevelOffset);
+        renderShips(g, xLevelOffset);
         renderWater(g, xLevelOffset);
         renderFlag(g, xLevelOffset);
         renderKey(g, xLevelOffset);
         renderChest(g, xLevelOffset);
         renderExplosion(g, xLevelOffset);
+        renderScriptMessage(g, xLevelOffset);
     }
 
     public void checkObjectCollected(Rectangle2D.Float playerHitBox) {
@@ -212,7 +219,7 @@ public class LevelObjectManager {
     }
 
     private boolean isHasPlayerReachedExit(Rectangle2D.Float playerHitBox, Point levelExit) {
-        return playerHitBox.intersects(levelExit.x + (GamePanel.getCurrentTileSize() / 1.5), levelExit.y, GamePanel.getCurrentTileSize(), GamePanel.getCurrentTileSize());
+        return playerHitBox.intersects(levelExit.x, levelExit.y, GamePanel.getCurrentTileSize(), GamePanel.getCurrentTileSize());
     }
 
     private void renderContainers(Graphics g, int xLevelOffset) {
@@ -381,7 +388,13 @@ public class LevelObjectManager {
 
     private void renderKey(Graphics g, int xLevelOffset) {
         Key key = playing.getLevelManager().getCurrentLevel().getKey();
+        drawKey(g, xLevelOffset, key);
 
+        Key statusBarKey = playing.getPlayer().getStatusBar().getKey();
+        drawKey(g, 0, statusBarKey);
+    }
+
+    private void drawKey(Graphics g, int xLevelOffset, Key key) {
         if (Objects.isNull(key) || !key.isActive) return;
 
         g.drawImage(
@@ -390,7 +403,7 @@ public class LevelObjectManager {
                 (int) ((int) key.getHitBox().y - key.getyDrawOffset() + (GamePanel.getCurrentTileSize() / 2.5)),
                 Config.LevelEnv.KEY_WIDTH,
                 Config.LevelEnv.KEY_HEIGHT,
-                null);
+                null); 
     }
 
     private void renderChest(Graphics g, int xLevelOffset) {
@@ -419,6 +432,42 @@ public class LevelObjectManager {
                     Config.LevelEnv.EXPLOSION_HEIGHT,
                     null);
         }
+    }
+
+    private void renderScriptMessage(Graphics g, int xLevelOffset) {
+
+        for (Message message : playing.getLevelManager().getCurrentLevel().getMessages()) {
+            if (playing.isScriptMessageShown()) {
+                // (Config.SCRIPT_MESSAGE_WIDTH / 2.5) - to center x according to player pos
+                int x = (int) ((int) message.getHitBox().x - xLevelOffset - (Config.SCRIPT_MESSAGE_WIDTH / 2.5));
+                int y = (int) ((int) message.getHitBox().y - Config.SCRIPT_MESSAGE_HEIGHT / 2.5);
+                g.drawImage(
+                        messageAsset[message.getMessageType().getAnimationIndex()],
+                        x,
+                        y,
+                        Config.SCRIPT_MESSAGE_WIDTH ,
+                        Config.SCRIPT_MESSAGE_HEIGHT,
+                        null);
+            }
+        }
+
+    }
+
+    private void renderShips(Graphics g, int xLevelOffset) {
+
+        for (Ship ship : playing.getLevelManager().getCurrentLevel().getShips()) {
+            int x = (int) (ship.getHitBox().x - ship.getHitBox().height - xLevelOffset - (GamePanel.getCurrentTileSize() / 2));
+            int y = (int) (ship.getHitBox().y - ship.getHitBox().height);
+
+            g.drawImage(
+                    shipAssets[ship.getAnimationIndex()],
+                    x,
+                    y,
+                    Config.LevelEnv.SHIP_WIDTH,
+                    Config.LevelEnv.SHIP_HEIGHT,
+                    null);
+        }
+
     }
 
     private void dropPotionFromContainer(Container container) {
@@ -470,6 +519,11 @@ public class LevelObjectManager {
         if (Objects.nonNull(key) && key.isActive) {
             key.update();
         }
+
+        Key statusBarKey = playing.getPlayer().getStatusBar().getKey();
+        if (Objects.nonNull(statusBarKey) && statusBarKey.isActive) {
+            statusBarKey.update();
+        }
     }
 
     private void updateChest() {
@@ -512,16 +566,21 @@ public class LevelObjectManager {
         Key key = playing.getLevelManager().getCurrentLevel().getKey();
         if (Objects.isNull(key)) return;
         if (playerHitBox.intersects(key.getHitBox())) {
+            playing.setScriptMessageShown(true);
             //todo add sound
-            placeKeyUnderStatusBar(key);
+            placeKeyUnderStatusBar(playing, key);
         }
     }
 
-    private void placeKeyUnderStatusBar(Key key) {
-        key.setHoverActive(false);
-        key.getHitBox().x = (float) (STATUS_BAR_X + STATUS_BAR_WIDTH - (STATUS_BAR_WIDTH * 0.15));
-        key.setY(STAMINA_BAR_Y_START);
-        key.getHitBox().y = STAMINA_BAR_Y_START;
+    private void placeKeyUnderStatusBar(Playing playing, Key key) {
+
+        Key statusKey = new Key((float) (STATUS_BAR_X + STATUS_BAR_WIDTH - (STATUS_BAR_WIDTH * 0.15)),
+                STAMINA_BAR_Y_START - ((float) Config.LevelEnv.KEY_HEIGHT / 2));
+        statusKey.setHoverActive(false);
+
+        playing.getPlayer().getStatusBar().setKey(statusKey);
+
+        key.setActive(false);
         playing.getPlayer().setKeyCollected(true);
     }
 
@@ -639,6 +698,18 @@ public class LevelObjectManager {
         BufferedImage explosionSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_EXPLOSION);
         for (int i = 0; i < explosionAssets.length; i++) {
             explosionAssets[i] = explosionSprite.getSubimage(i * Config.LevelEnv.EXPLOSION_WIDTH_DEFAULT, 0, Config.LevelEnv.EXPLOSION_WIDTH_DEFAULT, Config.LevelEnv.EXPLOSION_HEIGHT_DEFAULT);
+        }
+
+        shipAssets = new BufferedImage[4];
+        BufferedImage shipSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_SHIP);
+        for (int i = 0; i < shipAssets.length; i++) {
+            shipAssets[i] = shipSprite.getSubimage(i * Config.LevelEnv.SHIP_WIDTH_DEFAULT, 0, Config.LevelEnv.SHIP_WIDTH_DEFAULT, Config.LevelEnv.SHIP_HEIGHT_DEFAULT);
+        }
+
+        messageAsset = new BufferedImage[2];
+        BufferedImage messageSprite = ResourceLoader.getSpriteAtlas(AtlasType.ATLAS_MESSAGE);
+        for (int i = 0; i < messageAsset.length; i++) {
+            messageAsset[i] = messageSprite.getSubimage(0, i * Config.SCRIPT_MESSAGE_DEFAULT_HEIGHT, Config.SCRIPT_MESSAGE_DEFAULT_WIDTH, Config.SCRIPT_MESSAGE_DEFAULT_HEIGHT);
         }
     }
 }

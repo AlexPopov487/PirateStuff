@@ -37,6 +37,8 @@ public enum AtlasType {
     ATLAS_KEY("key.png"),
     ATLAS_CHEST("chest.png"),
     ATLAS_EXPLOSION("explosion.png"),
+    ATLAS_SHIP("ship.png"),
+    ATLAS_MESSAGE("messages.png"),
     ATLAS_VOLUME_BUTTONS("volume_buttons.png");
 
     private final String atlasFileName;

@@ -1,6 +1,7 @@
 package org.example.ui;
 
 import org.example.GamePanel;
+import org.example.exception.LoadNextLevelException;
 import org.example.gameState.Drawable;
 import org.example.gameState.GameStateActions;
 import org.example.types.GameState;
@@ -67,7 +68,11 @@ public class LevelCompletedOverlay implements Drawable, GameStateActions {
             GameState.setState(GameState.MENU);
             playing.loadFirstLevelResources();
         } else if (isHoveredOverButton(e, nextLevelButton.getHitBox()) && nextLevelButton.isMousePressed()) {
-            playing.loadNextLevel();
+           try {
+               playing.loadNextLevel();
+           } catch (LoadNextLevelException ex) {
+               playing.loadFirstLevelResources();
+           }
         }
 
         menuButton.resetButtonState();
