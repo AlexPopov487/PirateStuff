@@ -85,6 +85,11 @@ public class Level {
         return potions;
     }
 
+    // every time a level is restarted, potions should be cleared, and generated at runtime when a container is destroyed
+    public void removePotions() {
+        potions.clear();
+    }
+
     public List<ru.alexp.levelObjects.Container> getContainers() {
         return containers;
     }
@@ -252,6 +257,7 @@ public class Level {
     public void resetLevelObjects() {
         containers.forEach(Container::reset);
         potions.forEach(Potion::reset);
+        removePotions();
         spikes.forEach(Spike::reset);
         cannons.forEach(Cannon::reset);
         trees.forEach(Tree::reset);
