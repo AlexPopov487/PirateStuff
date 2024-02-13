@@ -82,7 +82,6 @@ public class EnemyManager {
             if (!crabby.isActive()) continue;
 
             if (CollisionHelper.isPlayerStumpsEnemy(player.getHitBox(), crabby.getHitBox())) {
-                //todo play punch sound
                 crabby.takeDamage(crabby.getHeath().getMaxHealth());
                 break;
             }

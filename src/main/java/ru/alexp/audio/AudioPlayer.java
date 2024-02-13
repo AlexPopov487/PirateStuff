@@ -39,7 +39,7 @@ public class AudioPlayer {
        return Config.Audio.ATTACK_1_EFFECT_INDEX + random.nextInt(3);
     }
 
-    // todo the volume sets exponentially
+    // todo the volume sets exponentially, to fix this, an 3d party audio library is required
     public void setVolume(float volume) {
         audioControls.setVolume(volume);
         updateSongVolume();

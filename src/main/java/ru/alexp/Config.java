@@ -202,7 +202,7 @@ public class Config {
 
     public static class Player {
         public static final float AIR_SPEED = 0f;
-        public static final float JUMP_SPEED = (float) (-2.25f * Game.SCALE); // todo think of a better naming
+        public static final float JUMP_SPEED = (float) (-3.25f * Game.SCALE);
         public static final float POST_COLLISION_FALL_SPEED = (float) (0.5f * Game.SCALE);
         public static final float WALK_SPEED = 1f * Game.SCALE;
         public static final int HIT_BOX_WIDTH = (int) (20 * Game.SCALE);

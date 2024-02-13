@@ -125,10 +125,4 @@ public class CollisionHelper {
 
         return isTileSolid(xIndex, yIndex, currentLevelData, true);
     }
-
-    private static int getTileIndex(float xPos, float yPos, int[][] lvlData) {
-        int xCord = (int) (xPos / GamePanel.getCurrentTileSize());
-        int yCord = (int) (yPos / GamePanel.getCurrentTileSize());
-        return lvlData[yCord][xCord];
-    }
 }

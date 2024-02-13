@@ -29,7 +29,7 @@ public class Player extends Entity {
     private boolean isActive = true;
     private int powerAttackTick;
 
-    private boolean isKeyCollected = false; // todo reset when exited to menu
+    private boolean isKeyCollected = false;
     PlayerConstants currentAnimation = PlayerConstants.SPRITE_JUMPING;
 
     public Player(float x, float y, int width, int height, Playing playing) {

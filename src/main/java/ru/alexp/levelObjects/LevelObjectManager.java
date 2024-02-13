@@ -507,7 +507,7 @@ public class LevelObjectManager {
 
             if (projectile.getHitBox().intersects(player.getHitBox())) {
                 player.takeDamage(30);
-                projectile.setActive(false); // todo probably there should be one last animation of a ball explosion
+                projectile.setActive(false);
             } else if (CollisionHelper.hasProjectileHitObstacle(projectile.getHitBox(), levelData)) {
                 projectile.setActive(false);
             }
@@ -567,7 +567,6 @@ public class LevelObjectManager {
         if (Objects.isNull(key)) return;
         if (playerHitBox.intersects(key.getHitBox())) {
             playing.setScriptMessageShown(true);
-            //todo add sound
             placeKeyUnderStatusBar(playing, key);
         }
     }
