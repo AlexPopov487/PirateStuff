@@ -62,7 +62,7 @@ public class Playing extends StateBase implements GameStateActions, Drawable {
         generateSmallCloudPositions();
 
         pauseOverlay = new PauseOverlay(this);
-        levelManager = new LevelManager(game);
+        levelManager = new LevelManager();
         enemyManager = new EnemyManager(this);
         levelObjectManager = new LevelObjectManager(this);
         levelCompletedOverlay = new LevelCompletedOverlay(this);

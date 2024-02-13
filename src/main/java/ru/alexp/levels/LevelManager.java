@@ -24,12 +24,8 @@ public class LevelManager {
     public static final int LVL_TEMPLATE_SPRITES_IN_HEIGHT = 4;
     public static final int LVL_TEMPLATE_SPRITES_IN_WIDTH = 12;
 
-    private final Game game;
-
-    private List<Level> levels;
-    private int waterAnimationIndex;
-    private int animationTick;
-
+    private final int levelCount = ResourceLoader.getAllLevelsCount();
+    private Level currentLevel;
     private int currentLevelIndex = 0;
 
     private BufferedImage[] backStraightTreesAssets;
@@ -37,15 +33,14 @@ public class LevelManager {
 
     private BufferedImage[] levelSprites;
 
-    public LevelManager(Game game) {
-        this.game = game;
+    public LevelManager() {
         importOutsideSprite();
-        importLevels();
+        importCurrentLevel();
         importBackgroundObjects();
     }
 
     public Level getCurrentLevel() {
-        return levels.get(currentLevelIndex);
+        return currentLevel;
     }
 
     public int getCurrentLevelIndex() {
@@ -65,9 +60,6 @@ public class LevelManager {
                 g.drawImage(levelSprites[index], x, y, GamePanel.getCurrentTileSize(), GamePanel.getCurrentTileSize(), null);
             }
         }
-
-
-
     }
 
     public void update() {
@@ -85,13 +77,15 @@ public class LevelManager {
     public Level loadNextLevel() throws LoadNextLevelException {
         currentLevelIndex++;
 
-        if (currentLevelIndex >= levels.size()) {
+        if (currentLevelIndex >= levelCount) {
             setFirstLevel(); // todo add allLevelsCompleted overlay
             GameState.setState(GameState.MENU);
             throw new LoadNextLevelException("No more levels left! The game is completed!");
         }
 
-        return levels.get(currentLevelIndex);
+        BufferedImage levelImage = ResourceLoader.getLevelImageByIndex(currentLevelIndex);
+        currentLevel = new Level(levelImage);
+        return currentLevel;
     }
 
     private void importOutsideSprite() {
@@ -113,10 +107,8 @@ public class LevelManager {
         }
     }
 
-    private void importLevels() {
-        levels = ResourceLoader.getAllLevels().stream()
-                .map(Level::new)
-                .toList();
+    private void importCurrentLevel() {
+        currentLevel = new Level(ResourceLoader.getLevelImageByIndex(currentLevelIndex));
     }
 
     private void importBackgroundObjects() {
@@ -142,7 +134,7 @@ public class LevelManager {
             g.drawImage(
                     backStraightTreesAssets[backTree.getAnimationIndex()],
                     currentX,
-                    (int) ((int) backTree.getY() - Config.LevelEnv.BACK_TREE_STRAIGHT_HEIGHT + backTree.getCustomYOffset()),
+                    (int) backTree.getY() - Config.LevelEnv.BACK_TREE_STRAIGHT_HEIGHT + backTree.getCustomYOffset(),
                     Config.LevelEnv.TREE_STRAIGHT_WIDTH,
                     Config.LevelEnv.BACK_TREE_STRAIGHT_HEIGHT,
                     null);

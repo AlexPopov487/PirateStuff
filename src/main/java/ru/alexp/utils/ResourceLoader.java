@@ -37,16 +37,20 @@ public class ResourceLoader {
         return characterAtlas;
     }
 
-
-    public static List<BufferedImage> getAllLevels() {
+    public static int getAllLevelsCount() {
         List<URL> levelFiles = getFilesUrlsFromDir("/levels");
 
-        List<URL> levels = levelFiles.stream()
+        return levelFiles.size();
+    }
+
+    public static BufferedImage getLevelImageByIndex(int idx) {
+        List<URL> levelFiles = getFilesUrlsFromDir("/levels");
+        List<URL> levelsSorted = levelFiles.stream()
                 .sorted(Comparator.comparing(URL::getFile))
                 .toList();
 
-        log.debug("ResourceLoader.getAllLevels(); found the following level files in /levels/ : [{}]", levels);
-        return levels.stream().map(ResourceLoader::readImageFromFile).toList();
+        URL levelUrl = levelsSorted.get(idx);
+        return readImageFromFile(levelUrl);
     }
 
     private static BufferedImage readImageFromFile(URL lvlFileUrl) {
